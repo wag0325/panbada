@@ -20,3 +20,4 @@ type User {
   followers: [User!]! @relation(name: "Following")
   follows: [User!]! @relation(name: "Following")
 }
+

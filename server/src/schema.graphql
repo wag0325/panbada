@@ -1,11 +1,37 @@
 # import Post from "./generated/prisma.graphql"
 
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  avatarURL: String
+  followers: [User!]!
+  follows: [User!]!
+ }
+
+type AuthPayload {
+  token: String
+  user: User
+}
+
+type S3Payload {
+  signedRequest: String!
+  url: String!
+}
+
 type Query {
-  postFeed: [Post!]!
+  postFeed(filter: String, skip: Int, first: Int): [Post!]!
   post(id: ID!): Post
+  users(filter: String, skip: Int, first: Int): [User!]!
+  user(id: ID!): User
 }
 
 type Mutation {
   createPost(title: String!, text: String, pictureURL: String): Post
   deletePost(id: ID!): Post
+  signup(email: String!, password: String!, firstName: String!, lastName: String!): AuthPayload
+  login(email: String!, password: String!): AuthPayload
+  follow(id: ID!): User 
+  signS3(filename: String!, filetype: String!): S3Payload!
 }

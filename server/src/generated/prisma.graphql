@@ -13,6 +13,14 @@ type Post implements Node {
   createdAt: DateTime!
   updatedAt: DateTime!
   pictureURL: String
+  postComments(where: PostCommentWhereInput, orderBy: PostCommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostComment!]
+}
+
+type PostComment implements Node {
+  id: ID!
+  post(where: PostWhereInput): Post!
+  user(where: UserWhereInput): User!
+  text: String!
 }
 
 type User implements Node {
@@ -37,6 +45,10 @@ type AggregatePost {
   count: Int!
 }
 
+type AggregatePostComment {
+  count: Int!
+}
+
 type AggregateUser {
   count: Int!
 }
@@ -58,16 +70,22 @@ scalar Long
 
 type Mutation {
   createPost(data: PostCreateInput!): Post!
+  createPostComment(data: PostCommentCreateInput!): PostComment!
   createUser(data: UserCreateInput!): User!
   updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
+  updatePostComment(data: PostCommentUpdateInput!, where: PostCommentWhereUniqueInput!): PostComment
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   deletePost(where: PostWhereUniqueInput!): Post
+  deletePostComment(where: PostCommentWhereUniqueInput!): PostComment
   deleteUser(where: UserWhereUniqueInput!): User
   upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
+  upsertPostComment(where: PostCommentWhereUniqueInput!, create: PostCommentCreateInput!, update: PostCommentUpdateInput!): PostComment!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   updateManyPosts(data: PostUpdateInput!, where: PostWhereInput!): BatchPayload!
+  updateManyPostComments(data: PostCommentUpdateInput!, where: PostCommentWhereInput!): BatchPayload!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput!): BatchPayload!
   deleteManyPosts(where: PostWhereInput!): BatchPayload!
+  deleteManyPostComments(where: PostCommentWhereInput!): BatchPayload!
   deleteManyUsers(where: UserWhereInput!): BatchPayload!
 }
 
@@ -112,6 +130,256 @@ type PageInfo {
 """
 A connection to a list of items.
 """
+type PostCommentConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [PostCommentEdge]!
+  aggregate: AggregatePostComment!
+}
+
+input PostCommentCreateInput {
+  text: String!
+  post: PostCreateOneWithoutPostCommentsInput!
+  user: UserCreateOneInput!
+}
+
+input PostCommentCreateManyWithoutPostInput {
+  create: [PostCommentCreateWithoutPostInput!]
+  connect: [PostCommentWhereUniqueInput!]
+}
+
+input PostCommentCreateWithoutPostInput {
+  text: String!
+  user: UserCreateOneInput!
+}
+
+"""
+An edge in a connection.
+"""
+type PostCommentEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: PostComment!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum PostCommentOrderByInput {
+  id_ASC
+  id_DESC
+  text_ASC
+  text_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type PostCommentPreviousValues {
+  id: ID!
+  text: String!
+}
+
+type PostCommentSubscriptionPayload {
+  mutation: MutationType!
+  node: PostComment
+  updatedFields: [String!]
+  previousValues: PostCommentPreviousValues
+}
+
+input PostCommentSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PostCommentSubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PostCommentSubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PostCommentWhereInput
+}
+
+input PostCommentUpdateInput {
+  text: String
+  post: PostUpdateOneWithoutPostCommentsInput
+  user: UserUpdateOneInput
+}
+
+input PostCommentUpdateManyWithoutPostInput {
+  create: [PostCommentCreateWithoutPostInput!]
+  connect: [PostCommentWhereUniqueInput!]
+  disconnect: [PostCommentWhereUniqueInput!]
+  delete: [PostCommentWhereUniqueInput!]
+  update: [PostCommentUpdateWithWhereUniqueWithoutPostInput!]
+  upsert: [PostCommentUpsertWithWhereUniqueWithoutPostInput!]
+}
+
+input PostCommentUpdateWithoutPostDataInput {
+  text: String
+  user: UserUpdateOneInput
+}
+
+input PostCommentUpdateWithWhereUniqueWithoutPostInput {
+  where: PostCommentWhereUniqueInput!
+  data: PostCommentUpdateWithoutPostDataInput!
+}
+
+input PostCommentUpsertWithWhereUniqueWithoutPostInput {
+  where: PostCommentWhereUniqueInput!
+  update: PostCommentUpdateWithoutPostDataInput!
+  create: PostCommentCreateWithoutPostInput!
+}
+
+input PostCommentWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PostCommentWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PostCommentWhereInput!]
+  id: ID
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  text: String
+  """
+  All values that are not equal to given value.
+  """
+  text_not: String
+  """
+  All values that are contained in given list.
+  """
+  text_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  text_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  text_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  text_lte: String
+  """
+  All values greater than the given value.
+  """
+  text_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  text_gte: String
+  """
+  All values containing the given string.
+  """
+  text_contains: String
+  """
+  All values not containing the given string.
+  """
+  text_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  text_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  text_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  text_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  text_not_ends_with: String
+  post: PostWhereInput
+  user: UserWhereInput
+}
+
+input PostCommentWhereUniqueInput {
+  id: ID
+}
+
+"""
+A connection to a list of items.
+"""
 type PostConnection {
   """
   Information to aid in pagination.
@@ -125,6 +393,19 @@ type PostConnection {
 }
 
 input PostCreateInput {
+  title: String!
+  text: String!
+  pictureURL: String
+  postedBy: UserCreateOneInput
+  postComments: PostCommentCreateManyWithoutPostInput
+}
+
+input PostCreateOneWithoutPostCommentsInput {
+  create: PostCreateWithoutPostCommentsInput
+  connect: PostWhereUniqueInput
+}
+
+input PostCreateWithoutPostCommentsInput {
   title: String!
   text: String!
   pictureURL: String
@@ -209,6 +490,27 @@ input PostUpdateInput {
   text: String
   pictureURL: String
   postedBy: UserUpdateOneInput
+  postComments: PostCommentUpdateManyWithoutPostInput
+}
+
+input PostUpdateOneWithoutPostCommentsInput {
+  create: PostCreateWithoutPostCommentsInput
+  connect: PostWhereUniqueInput
+  delete: Boolean
+  update: PostUpdateWithoutPostCommentsDataInput
+  upsert: PostUpsertWithoutPostCommentsInput
+}
+
+input PostUpdateWithoutPostCommentsDataInput {
+  title: String
+  text: String
+  pictureURL: String
+  postedBy: UserUpdateOneInput
+}
+
+input PostUpsertWithoutPostCommentsInput {
+  update: PostUpdateWithoutPostCommentsDataInput!
+  create: PostCreateWithoutPostCommentsInput!
 }
 
 input PostWhereInput {
@@ -491,6 +793,9 @@ input PostWhereInput {
   """
   pictureURL_not_ends_with: String
   postedBy: UserWhereInput
+  postComments_every: PostCommentWhereInput
+  postComments_some: PostCommentWhereInput
+  postComments_none: PostCommentWhereInput
 }
 
 input PostWhereUniqueInput {
@@ -499,10 +804,13 @@ input PostWhereUniqueInput {
 
 type Query {
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
+  postComments(where: PostCommentWhereInput, orderBy: PostCommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostComment]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   post(where: PostWhereUniqueInput!): Post
+  postComment(where: PostCommentWhereUniqueInput!): PostComment
   user(where: UserWhereUniqueInput!): User
   postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
+  postCommentsConnection(where: PostCommentWhereInput, orderBy: PostCommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostCommentConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   """
   Fetches an object given its ID
@@ -515,6 +823,7 @@ type Query {
 
 type Subscription {
   post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
+  postComment(where: PostCommentSubscriptionWhereInput): PostCommentSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 

@@ -72,6 +72,28 @@ function deletePost(parent, { id }, ctx, info) {
   return ctx.db.mutation.deletePost({ where: { id } }, info)
 }
 
+function createPostComment(parent, args, context, info) {
+  const userId = getUserId(context)
+  const { id, text } = args
+
+  return context.db.mutation.createPostComment(
+    {
+      data: {
+        text,
+        user: { connect: { id: userId } },
+        post: { connect: { id: id } },
+      },
+    },
+    info,
+  )
+}
+
+function deletePostComment(parent, { id }, context, info) {
+  const userId = getUserId(context)
+
+  return context.db.mutation.deletePostComment({ where: { id: id } }, info,)
+}
+
 async function signup(parent, args, context, info) {
   const password = await bcrypt.hash(args.password, 10)
   const user = await context.db.mutation.createUser({
@@ -124,6 +146,8 @@ function follow(parent, { id }, context, info) {
 module.exports = {
   createPost,
   deletePost,
+  createPostComment,
+  deletePostComment,
   signup,
   login,
   follow,

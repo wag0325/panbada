@@ -30,6 +30,8 @@ type Query {
 type Mutation {
   createPost(title: String!, text: String, pictureURL: String): Post
   deletePost(id: ID!): Post
+  createPostComment(id: ID!, text: String!): PostComment
+  deletePostComment(id: ID!): PostComment
   signup(email: String!, password: String!, firstName: String!, lastName: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
   follow(id: ID!): User 

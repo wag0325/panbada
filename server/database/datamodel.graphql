@@ -6,6 +6,14 @@ type Post {
   createdAt: DateTime!
   updatedAt: DateTime!
   pictureURL: String
+  postComments: [PostComment!]!
+}
+
+type PostComment {
+  id: ID! @unique
+  post: Post!
+  user: User!
+  text: String!
 }
 
 type User {

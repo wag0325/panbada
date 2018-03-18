@@ -5,6 +5,26 @@
 # Model Types
 #
 
+type Gig implements Node {
+  id: ID!
+  type: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String!
+  text: String!
+  url: String
+  postedBy(where: UserWhereInput): User
+}
+
+type Message implements Node {
+  id: ID!
+  createdAt: DateTime!
+  from(where: UserWhereInput): User!
+  to(where: UserWhereInput): User!
+  deliveredAt: DateTime
+  readAt: DateTime
+}
+
 type Post implements Node {
   id: ID!
   title: String!
@@ -34,12 +54,22 @@ type User implements Node {
   avatarURL: String
   followers(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
   follows(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  sentMessages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
+  receivedMessages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
 }
 
 
 #
 # Other Types
 #
+
+type AggregateGig {
+  count: Int!
+}
+
+type AggregateMessage {
+  count: Int!
+}
 
 type AggregatePost {
   count: Int!
@@ -63,30 +93,817 @@ type BatchPayload {
 scalar DateTime
 
 """
+A connection to a list of items.
+"""
+type GigConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [GigEdge]!
+  aggregate: AggregateGig!
+}
+
+input GigCreateInput {
+  type: String!
+  title: String!
+  text: String!
+  url: String
+  postedBy: UserCreateOneInput
+}
+
+"""
+An edge in a connection.
+"""
+type GigEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Gig!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum GigOrderByInput {
+  id_ASC
+  id_DESC
+  type_ASC
+  type_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  title_ASC
+  title_DESC
+  text_ASC
+  text_DESC
+  url_ASC
+  url_DESC
+}
+
+type GigPreviousValues {
+  id: ID!
+  type: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String!
+  text: String!
+  url: String
+}
+
+type GigSubscriptionPayload {
+  mutation: MutationType!
+  node: Gig
+  updatedFields: [String!]
+  previousValues: GigPreviousValues
+}
+
+input GigSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [GigSubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [GigSubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: GigWhereInput
+}
+
+input GigUpdateInput {
+  type: String
+  title: String
+  text: String
+  url: String
+  postedBy: UserUpdateOneInput
+}
+
+input GigWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [GigWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [GigWhereInput!]
+  id: ID
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  type: String
+  """
+  All values that are not equal to given value.
+  """
+  type_not: String
+  """
+  All values that are contained in given list.
+  """
+  type_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  type_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  type_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  type_lte: String
+  """
+  All values greater than the given value.
+  """
+  type_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  type_gte: String
+  """
+  All values containing the given string.
+  """
+  type_contains: String
+  """
+  All values not containing the given string.
+  """
+  type_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  type_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  type_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  type_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  type_not_ends_with: String
+  createdAt: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+  title: String
+  """
+  All values that are not equal to given value.
+  """
+  title_not: String
+  """
+  All values that are contained in given list.
+  """
+  title_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  title_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  title_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  title_lte: String
+  """
+  All values greater than the given value.
+  """
+  title_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  title_gte: String
+  """
+  All values containing the given string.
+  """
+  title_contains: String
+  """
+  All values not containing the given string.
+  """
+  title_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  title_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  title_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  title_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  title_not_ends_with: String
+  text: String
+  """
+  All values that are not equal to given value.
+  """
+  text_not: String
+  """
+  All values that are contained in given list.
+  """
+  text_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  text_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  text_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  text_lte: String
+  """
+  All values greater than the given value.
+  """
+  text_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  text_gte: String
+  """
+  All values containing the given string.
+  """
+  text_contains: String
+  """
+  All values not containing the given string.
+  """
+  text_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  text_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  text_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  text_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  text_not_ends_with: String
+  url: String
+  """
+  All values that are not equal to given value.
+  """
+  url_not: String
+  """
+  All values that are contained in given list.
+  """
+  url_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  url_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  url_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  url_lte: String
+  """
+  All values greater than the given value.
+  """
+  url_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  url_gte: String
+  """
+  All values containing the given string.
+  """
+  url_contains: String
+  """
+  All values not containing the given string.
+  """
+  url_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  url_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  url_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  url_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  url_not_ends_with: String
+  postedBy: UserWhereInput
+}
+
+input GigWhereUniqueInput {
+  id: ID
+}
+
+"""
 The `Long` scalar type represents non-fractional signed whole numeric values.
 Long can represent values between -(2^63) and 2^63 - 1.
 """
 scalar Long
 
+"""
+A connection to a list of items.
+"""
+type MessageConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [MessageEdge]!
+  aggregate: AggregateMessage!
+}
+
+input MessageCreateInput {
+  deliveredAt: DateTime
+  readAt: DateTime
+  from: UserCreateOneWithoutSentMessagesInput!
+  to: UserCreateOneWithoutReceivedMessagesInput!
+}
+
+input MessageCreateManyWithoutFromInput {
+  create: [MessageCreateWithoutFromInput!]
+  connect: [MessageWhereUniqueInput!]
+}
+
+input MessageCreateManyWithoutToInput {
+  create: [MessageCreateWithoutToInput!]
+  connect: [MessageWhereUniqueInput!]
+}
+
+input MessageCreateWithoutFromInput {
+  deliveredAt: DateTime
+  readAt: DateTime
+  to: UserCreateOneWithoutReceivedMessagesInput!
+}
+
+input MessageCreateWithoutToInput {
+  deliveredAt: DateTime
+  readAt: DateTime
+  from: UserCreateOneWithoutSentMessagesInput!
+}
+
+"""
+An edge in a connection.
+"""
+type MessageEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Message!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum MessageOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  deliveredAt_ASC
+  deliveredAt_DESC
+  readAt_ASC
+  readAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type MessagePreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  deliveredAt: DateTime
+  readAt: DateTime
+}
+
+type MessageSubscriptionPayload {
+  mutation: MutationType!
+  node: Message
+  updatedFields: [String!]
+  previousValues: MessagePreviousValues
+}
+
+input MessageSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [MessageSubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [MessageSubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: MessageWhereInput
+}
+
+input MessageUpdateInput {
+  deliveredAt: DateTime
+  readAt: DateTime
+  from: UserUpdateOneWithoutSentMessagesInput
+  to: UserUpdateOneWithoutReceivedMessagesInput
+}
+
+input MessageUpdateManyWithoutFromInput {
+  create: [MessageCreateWithoutFromInput!]
+  connect: [MessageWhereUniqueInput!]
+  disconnect: [MessageWhereUniqueInput!]
+  delete: [MessageWhereUniqueInput!]
+  update: [MessageUpdateWithWhereUniqueWithoutFromInput!]
+  upsert: [MessageUpsertWithWhereUniqueWithoutFromInput!]
+}
+
+input MessageUpdateManyWithoutToInput {
+  create: [MessageCreateWithoutToInput!]
+  connect: [MessageWhereUniqueInput!]
+  disconnect: [MessageWhereUniqueInput!]
+  delete: [MessageWhereUniqueInput!]
+  update: [MessageUpdateWithWhereUniqueWithoutToInput!]
+  upsert: [MessageUpsertWithWhereUniqueWithoutToInput!]
+}
+
+input MessageUpdateWithoutFromDataInput {
+  deliveredAt: DateTime
+  readAt: DateTime
+  to: UserUpdateOneWithoutReceivedMessagesInput
+}
+
+input MessageUpdateWithoutToDataInput {
+  deliveredAt: DateTime
+  readAt: DateTime
+  from: UserUpdateOneWithoutSentMessagesInput
+}
+
+input MessageUpdateWithWhereUniqueWithoutFromInput {
+  where: MessageWhereUniqueInput!
+  data: MessageUpdateWithoutFromDataInput!
+}
+
+input MessageUpdateWithWhereUniqueWithoutToInput {
+  where: MessageWhereUniqueInput!
+  data: MessageUpdateWithoutToDataInput!
+}
+
+input MessageUpsertWithWhereUniqueWithoutFromInput {
+  where: MessageWhereUniqueInput!
+  update: MessageUpdateWithoutFromDataInput!
+  create: MessageCreateWithoutFromInput!
+}
+
+input MessageUpsertWithWhereUniqueWithoutToInput {
+  where: MessageWhereUniqueInput!
+  update: MessageUpdateWithoutToDataInput!
+  create: MessageCreateWithoutToInput!
+}
+
+input MessageWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [MessageWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [MessageWhereInput!]
+  id: ID
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  createdAt: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  deliveredAt: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  deliveredAt_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  deliveredAt_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  deliveredAt_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  deliveredAt_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  deliveredAt_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  deliveredAt_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  deliveredAt_gte: DateTime
+  readAt: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  readAt_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  readAt_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  readAt_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  readAt_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  readAt_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  readAt_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  readAt_gte: DateTime
+  from: UserWhereInput
+  to: UserWhereInput
+}
+
+input MessageWhereUniqueInput {
+  id: ID
+}
+
 type Mutation {
   createPost(data: PostCreateInput!): Post!
   createPostComment(data: PostCommentCreateInput!): PostComment!
+  createGig(data: GigCreateInput!): Gig!
   createUser(data: UserCreateInput!): User!
+  createMessage(data: MessageCreateInput!): Message!
   updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
   updatePostComment(data: PostCommentUpdateInput!, where: PostCommentWhereUniqueInput!): PostComment
+  updateGig(data: GigUpdateInput!, where: GigWhereUniqueInput!): Gig
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateMessage(data: MessageUpdateInput!, where: MessageWhereUniqueInput!): Message
   deletePost(where: PostWhereUniqueInput!): Post
   deletePostComment(where: PostCommentWhereUniqueInput!): PostComment
+  deleteGig(where: GigWhereUniqueInput!): Gig
   deleteUser(where: UserWhereUniqueInput!): User
+  deleteMessage(where: MessageWhereUniqueInput!): Message
   upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
   upsertPostComment(where: PostCommentWhereUniqueInput!, create: PostCommentCreateInput!, update: PostCommentUpdateInput!): PostComment!
+  upsertGig(where: GigWhereUniqueInput!, create: GigCreateInput!, update: GigUpdateInput!): Gig!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertMessage(where: MessageWhereUniqueInput!, create: MessageCreateInput!, update: MessageUpdateInput!): Message!
   updateManyPosts(data: PostUpdateInput!, where: PostWhereInput!): BatchPayload!
   updateManyPostComments(data: PostCommentUpdateInput!, where: PostCommentWhereInput!): BatchPayload!
+  updateManyGigs(data: GigUpdateInput!, where: GigWhereInput!): BatchPayload!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput!): BatchPayload!
+  updateManyMessages(data: MessageUpdateInput!, where: MessageWhereInput!): BatchPayload!
   deleteManyPosts(where: PostWhereInput!): BatchPayload!
   deleteManyPostComments(where: PostCommentWhereInput!): BatchPayload!
+  deleteManyGigs(where: GigWhereInput!): BatchPayload!
   deleteManyUsers(where: UserWhereInput!): BatchPayload!
+  deleteManyMessages(where: MessageWhereInput!): BatchPayload!
 }
 
 enum MutationType {
@@ -805,13 +1622,19 @@ input PostWhereUniqueInput {
 type Query {
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
   postComments(where: PostCommentWhereInput, orderBy: PostCommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostComment]!
+  gigs(where: GigWhereInput, orderBy: GigOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Gig]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message]!
   post(where: PostWhereUniqueInput!): Post
   postComment(where: PostCommentWhereUniqueInput!): PostComment
+  gig(where: GigWhereUniqueInput!): Gig
   user(where: UserWhereUniqueInput!): User
+  message(where: MessageWhereUniqueInput!): Message
   postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
   postCommentsConnection(where: PostCommentWhereInput, orderBy: PostCommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostCommentConnection!
+  gigsConnection(where: GigWhereInput, orderBy: GigOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): GigConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  messagesConnection(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MessageConnection!
   """
   Fetches an object given its ID
   """
@@ -824,7 +1647,9 @@ type Query {
 type Subscription {
   post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
   postComment(where: PostCommentSubscriptionWhereInput): PostCommentSubscriptionPayload
+  gig(where: GigSubscriptionWhereInput): GigSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  message(where: MessageSubscriptionWhereInput): MessageSubscriptionPayload
 }
 
 """
@@ -850,6 +1675,8 @@ input UserCreateInput {
   avatarURL: String
   followers: UserCreateManyWithoutFollowsInput
   follows: UserCreateManyWithoutFollowersInput
+  sentMessages: MessageCreateManyWithoutFromInput
+  receivedMessages: MessageCreateManyWithoutToInput
 }
 
 input UserCreateManyWithoutFollowersInput {
@@ -867,6 +1694,16 @@ input UserCreateOneInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutReceivedMessagesInput {
+  create: UserCreateWithoutReceivedMessagesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutSentMessagesInput {
+  create: UserCreateWithoutSentMessagesInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateWithoutFollowersInput {
   firstName: String!
   lastName: String!
@@ -874,6 +1711,8 @@ input UserCreateWithoutFollowersInput {
   password: String!
   avatarURL: String
   follows: UserCreateManyWithoutFollowersInput
+  sentMessages: MessageCreateManyWithoutFromInput
+  receivedMessages: MessageCreateManyWithoutToInput
 }
 
 input UserCreateWithoutFollowsInput {
@@ -883,6 +1722,30 @@ input UserCreateWithoutFollowsInput {
   password: String!
   avatarURL: String
   followers: UserCreateManyWithoutFollowsInput
+  sentMessages: MessageCreateManyWithoutFromInput
+  receivedMessages: MessageCreateManyWithoutToInput
+}
+
+input UserCreateWithoutReceivedMessagesInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  avatarURL: String
+  followers: UserCreateManyWithoutFollowsInput
+  follows: UserCreateManyWithoutFollowersInput
+  sentMessages: MessageCreateManyWithoutFromInput
+}
+
+input UserCreateWithoutSentMessagesInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  avatarURL: String
+  followers: UserCreateManyWithoutFollowsInput
+  follows: UserCreateManyWithoutFollowersInput
+  receivedMessages: MessageCreateManyWithoutToInput
 }
 
 """
@@ -972,6 +1835,8 @@ input UserUpdateDataInput {
   avatarURL: String
   followers: UserUpdateManyWithoutFollowsInput
   follows: UserUpdateManyWithoutFollowersInput
+  sentMessages: MessageUpdateManyWithoutFromInput
+  receivedMessages: MessageUpdateManyWithoutToInput
 }
 
 input UserUpdateInput {
@@ -982,6 +1847,8 @@ input UserUpdateInput {
   avatarURL: String
   followers: UserUpdateManyWithoutFollowsInput
   follows: UserUpdateManyWithoutFollowersInput
+  sentMessages: MessageUpdateManyWithoutFromInput
+  receivedMessages: MessageUpdateManyWithoutToInput
 }
 
 input UserUpdateManyWithoutFollowersInput {
@@ -1011,6 +1878,22 @@ input UserUpdateOneInput {
   upsert: UserUpsertNestedInput
 }
 
+input UserUpdateOneWithoutReceivedMessagesInput {
+  create: UserCreateWithoutReceivedMessagesInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateWithoutReceivedMessagesDataInput
+  upsert: UserUpsertWithoutReceivedMessagesInput
+}
+
+input UserUpdateOneWithoutSentMessagesInput {
+  create: UserCreateWithoutSentMessagesInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateWithoutSentMessagesDataInput
+  upsert: UserUpsertWithoutSentMessagesInput
+}
+
 input UserUpdateWithoutFollowersDataInput {
   firstName: String
   lastName: String
@@ -1018,6 +1901,8 @@ input UserUpdateWithoutFollowersDataInput {
   password: String
   avatarURL: String
   follows: UserUpdateManyWithoutFollowersInput
+  sentMessages: MessageUpdateManyWithoutFromInput
+  receivedMessages: MessageUpdateManyWithoutToInput
 }
 
 input UserUpdateWithoutFollowsDataInput {
@@ -1027,6 +1912,30 @@ input UserUpdateWithoutFollowsDataInput {
   password: String
   avatarURL: String
   followers: UserUpdateManyWithoutFollowsInput
+  sentMessages: MessageUpdateManyWithoutFromInput
+  receivedMessages: MessageUpdateManyWithoutToInput
+}
+
+input UserUpdateWithoutReceivedMessagesDataInput {
+  firstName: String
+  lastName: String
+  email: String
+  password: String
+  avatarURL: String
+  followers: UserUpdateManyWithoutFollowsInput
+  follows: UserUpdateManyWithoutFollowersInput
+  sentMessages: MessageUpdateManyWithoutFromInput
+}
+
+input UserUpdateWithoutSentMessagesDataInput {
+  firstName: String
+  lastName: String
+  email: String
+  password: String
+  avatarURL: String
+  followers: UserUpdateManyWithoutFollowsInput
+  follows: UserUpdateManyWithoutFollowersInput
+  receivedMessages: MessageUpdateManyWithoutToInput
 }
 
 input UserUpdateWithWhereUniqueWithoutFollowersInput {
@@ -1042,6 +1951,16 @@ input UserUpdateWithWhereUniqueWithoutFollowsInput {
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutReceivedMessagesInput {
+  update: UserUpdateWithoutReceivedMessagesDataInput!
+  create: UserCreateWithoutReceivedMessagesInput!
+}
+
+input UserUpsertWithoutSentMessagesInput {
+  update: UserUpdateWithoutSentMessagesDataInput!
+  create: UserCreateWithoutSentMessagesInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutFollowersInput {
@@ -1447,6 +2366,12 @@ input UserWhereInput {
   follows_every: UserWhereInput
   follows_some: UserWhereInput
   follows_none: UserWhereInput
+  sentMessages_every: MessageWhereInput
+  sentMessages_some: MessageWhereInput
+  sentMessages_none: MessageWhereInput
+  receivedMessages_every: MessageWhereInput
+  receivedMessages_some: MessageWhereInput
+  receivedMessages_none: MessageWhereInput
 }
 
 input UserWhereUniqueInput {

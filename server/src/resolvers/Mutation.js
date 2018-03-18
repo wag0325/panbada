@@ -94,6 +94,33 @@ function deletePostComment(parent, { id }, context, info) {
   return context.db.mutation.deletePostComment({ where: { id: id } }, info,)
 }
 
+function createGig(parent, { title, text, type }, context, info) {
+  const userId = getUserId(context)
+  return context.db.mutation.createGig(
+    { data: { title, text, type, postedBy: { connect: { id: userId } } } },
+    info,
+  )
+}
+
+function deleteGig(parent, { id }, context, info) {
+  const userId = getUserId(context)
+
+  return context.db.mutation.deleteGig({ where: { id: id } }, info,)
+}
+
+function createMessage(parent, { id, text }, context, info ) {
+  const userId = getUserId(context)
+
+  return context.db.mutation.createMessage(
+    { data: {
+        from: { connect: { id: userId } },
+        to: { connect: { id: id } },
+      }
+    },
+    info
+  )
+}
+
 async function signup(parent, args, context, info) {
   const password = await bcrypt.hash(args.password, 10)
   const user = await context.db.mutation.createUser({
@@ -148,6 +175,9 @@ module.exports = {
   deletePost,
   createPostComment,
   deletePostComment,
+  createGig,
+  deleteGig,
+  createMessage,
   signup,
   login,
   follow,

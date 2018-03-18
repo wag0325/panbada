@@ -23,6 +23,8 @@ type S3Payload {
 type Query {
   postFeed(filter: String, skip: Int, first: Int): [Post!]!
   post(id: ID!): Post
+  gigFeed(filter: String, skip: Int, first: Int): [Gig!]!
+  gig(gigId: ID!): Gig
   users(filter: String, skip: Int, first: Int): [User!]!
   user(id: ID!): User
 }
@@ -32,6 +34,9 @@ type Mutation {
   deletePost(id: ID!): Post
   createPostComment(id: ID!, text: String!): PostComment
   deletePostComment(id: ID!): PostComment
+  createGig(title: String!, text: String!, type: String!): Gig
+  deleteGig(id: ID!): Gig
+  createMessage(id: ID!, text: String!): Message
   signup(email: String!, password: String!, firstName: String!, lastName: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
   follow(id: ID!): User 

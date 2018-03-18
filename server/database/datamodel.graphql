@@ -16,6 +16,17 @@ type PostComment {
   text: String!
 }
 
+type Gig {
+  id: ID! @unique
+  type: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String!
+  text: String!
+  url: String
+  postedBy: User
+}
+
 type User {
   id: ID! @unique
   firstName: String!
@@ -27,5 +38,16 @@ type User {
   avatarURL: String
   followers: [User!]! @relation(name: "Following")
   follows: [User!]! @relation(name: "Following")
+  sentMessages: [Message!]! @relation(name: "SentMessages")
+  receivedMessages: [Message!]! @relation(name: "ReceivedMessages")
+}
+
+type Message {
+  id: ID! @unique
+  createdAt: DateTime!
+  from: User! @relation(name: "SentMessages")
+  to: User! @relation(name: "ReceivedMessages")
+  deliveredAt: DateTime
+  readAt: DateTime
 }
 

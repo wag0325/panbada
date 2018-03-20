@@ -170,6 +170,43 @@ function follow(parent, { id }, context, info) {
   // update following user's followers
 }
 
+async function createMessage(parent, args, context, info) {
+  const userId = getUserId(context)
+  const { id, text } = args 
+
+  const channel = await context.db.query.channel({ where: { id: id } })
+  if (!channel) {
+    throw new Error(`Could not find conversation: ${args.channel}`)
+  }
+  
+  return context.db.mutation.createMessage({ 
+    data: { 
+      to: { connect: { id: id }  },
+      from: { connect: { id: userId } }, 
+      text: text
+    } 
+  }, info)
+}
+
+function createChannel(parent, { id, text }, context, info ) {
+  const userId = getUserId(context)
+  console.log(id)
+  console.log(text)
+  console.log(userId)
+
+  return context.db.mutation.createChannel({
+    data: {
+      users: { connect: [{ id: id }, { id: userId }] },
+      messages: {
+        create: [{ 
+          text: text, 
+          from: { connect: { id: userId }},
+        }] 
+      },
+    }
+  }, info)
+}
+
 module.exports = {
   createPost,
   deletePost,
@@ -182,4 +219,6 @@ module.exports = {
   login,
   follow,
   signS3,
+  createMessage,
+  createChannel,
 }

@@ -5,6 +5,12 @@
 # Model Types
 #
 
+type Channel implements Node {
+  id: ID!
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
+}
+
 type Gig implements Node {
   id: ID!
   type: String!
@@ -19,10 +25,9 @@ type Gig implements Node {
 type Message implements Node {
   id: ID!
   createdAt: DateTime!
+  to(where: ChannelWhereInput): Channel!
   from(where: UserWhereInput): User!
-  to(where: UserWhereInput): User!
-  deliveredAt: DateTime
-  readAt: DateTime
+  text: String!
 }
 
 type Post implements Node {
@@ -54,14 +59,18 @@ type User implements Node {
   avatarURL: String
   followers(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
   follows(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
-  sentMessages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
-  receivedMessages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
+  channels(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Channel!]
+  messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
 }
 
 
 #
 # Other Types
 #
+
+type AggregateChannel {
+  count: Int!
+}
 
 type AggregateGig {
   count: Int!
@@ -88,6 +97,226 @@ type BatchPayload {
   The number of nodes that have been affected by the Batch operation.
   """
   count: Long!
+}
+
+"""
+A connection to a list of items.
+"""
+type ChannelConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [ChannelEdge]!
+  aggregate: AggregateChannel!
+}
+
+input ChannelCreateInput {
+  users: UserCreateManyWithoutChannelsInput
+  messages: MessageCreateManyWithoutToInput
+}
+
+input ChannelCreateManyWithoutUsersInput {
+  create: [ChannelCreateWithoutUsersInput!]
+  connect: [ChannelWhereUniqueInput!]
+}
+
+input ChannelCreateOneWithoutMessagesInput {
+  create: ChannelCreateWithoutMessagesInput
+  connect: ChannelWhereUniqueInput
+}
+
+input ChannelCreateWithoutMessagesInput {
+  users: UserCreateManyWithoutChannelsInput
+}
+
+input ChannelCreateWithoutUsersInput {
+  messages: MessageCreateManyWithoutToInput
+}
+
+"""
+An edge in a connection.
+"""
+type ChannelEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Channel!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum ChannelOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ChannelPreviousValues {
+  id: ID!
+}
+
+type ChannelSubscriptionPayload {
+  mutation: MutationType!
+  node: Channel
+  updatedFields: [String!]
+  previousValues: ChannelPreviousValues
+}
+
+input ChannelSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ChannelSubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ChannelSubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ChannelWhereInput
+}
+
+input ChannelUpdateInput {
+  users: UserUpdateManyWithoutChannelsInput
+  messages: MessageUpdateManyWithoutToInput
+}
+
+input ChannelUpdateManyWithoutUsersInput {
+  create: [ChannelCreateWithoutUsersInput!]
+  connect: [ChannelWhereUniqueInput!]
+  disconnect: [ChannelWhereUniqueInput!]
+  delete: [ChannelWhereUniqueInput!]
+  update: [ChannelUpdateWithWhereUniqueWithoutUsersInput!]
+  upsert: [ChannelUpsertWithWhereUniqueWithoutUsersInput!]
+}
+
+input ChannelUpdateOneWithoutMessagesInput {
+  create: ChannelCreateWithoutMessagesInput
+  connect: ChannelWhereUniqueInput
+  delete: Boolean
+  update: ChannelUpdateWithoutMessagesDataInput
+  upsert: ChannelUpsertWithoutMessagesInput
+}
+
+input ChannelUpdateWithoutMessagesDataInput {
+  users: UserUpdateManyWithoutChannelsInput
+}
+
+input ChannelUpdateWithoutUsersDataInput {
+  messages: MessageUpdateManyWithoutToInput
+}
+
+input ChannelUpdateWithWhereUniqueWithoutUsersInput {
+  where: ChannelWhereUniqueInput!
+  data: ChannelUpdateWithoutUsersDataInput!
+}
+
+input ChannelUpsertWithoutMessagesInput {
+  update: ChannelUpdateWithoutMessagesDataInput!
+  create: ChannelCreateWithoutMessagesInput!
+}
+
+input ChannelUpsertWithWhereUniqueWithoutUsersInput {
+  where: ChannelWhereUniqueInput!
+  update: ChannelUpdateWithoutUsersDataInput!
+  create: ChannelCreateWithoutUsersInput!
+}
+
+input ChannelWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ChannelWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ChannelWhereInput!]
+  id: ID
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  users_every: UserWhereInput
+  users_some: UserWhereInput
+  users_none: UserWhereInput
+  messages_every: MessageWhereInput
+  messages_some: MessageWhereInput
+  messages_none: MessageWhereInput
+}
+
+input ChannelWhereUniqueInput {
+  id: ID
 }
 
 scalar DateTime
@@ -560,10 +789,9 @@ type MessageConnection {
 }
 
 input MessageCreateInput {
-  deliveredAt: DateTime
-  readAt: DateTime
-  from: UserCreateOneWithoutSentMessagesInput!
-  to: UserCreateOneWithoutReceivedMessagesInput!
+  text: String!
+  to: ChannelCreateOneWithoutMessagesInput!
+  from: UserCreateOneWithoutMessagesInput!
 }
 
 input MessageCreateManyWithoutFromInput {
@@ -577,15 +805,13 @@ input MessageCreateManyWithoutToInput {
 }
 
 input MessageCreateWithoutFromInput {
-  deliveredAt: DateTime
-  readAt: DateTime
-  to: UserCreateOneWithoutReceivedMessagesInput!
+  text: String!
+  to: ChannelCreateOneWithoutMessagesInput!
 }
 
 input MessageCreateWithoutToInput {
-  deliveredAt: DateTime
-  readAt: DateTime
-  from: UserCreateOneWithoutSentMessagesInput!
+  text: String!
+  from: UserCreateOneWithoutMessagesInput!
 }
 
 """
@@ -607,10 +833,8 @@ enum MessageOrderByInput {
   id_DESC
   createdAt_ASC
   createdAt_DESC
-  deliveredAt_ASC
-  deliveredAt_DESC
-  readAt_ASC
-  readAt_DESC
+  text_ASC
+  text_DESC
   updatedAt_ASC
   updatedAt_DESC
 }
@@ -618,8 +842,7 @@ enum MessageOrderByInput {
 type MessagePreviousValues {
   id: ID!
   createdAt: DateTime!
-  deliveredAt: DateTime
-  readAt: DateTime
+  text: String!
 }
 
 type MessageSubscriptionPayload {
@@ -658,10 +881,9 @@ input MessageSubscriptionWhereInput {
 }
 
 input MessageUpdateInput {
-  deliveredAt: DateTime
-  readAt: DateTime
-  from: UserUpdateOneWithoutSentMessagesInput
-  to: UserUpdateOneWithoutReceivedMessagesInput
+  text: String
+  to: ChannelUpdateOneWithoutMessagesInput
+  from: UserUpdateOneWithoutMessagesInput
 }
 
 input MessageUpdateManyWithoutFromInput {
@@ -683,15 +905,13 @@ input MessageUpdateManyWithoutToInput {
 }
 
 input MessageUpdateWithoutFromDataInput {
-  deliveredAt: DateTime
-  readAt: DateTime
-  to: UserUpdateOneWithoutReceivedMessagesInput
+  text: String
+  to: ChannelUpdateOneWithoutMessagesInput
 }
 
 input MessageUpdateWithoutToDataInput {
-  deliveredAt: DateTime
-  readAt: DateTime
-  from: UserUpdateOneWithoutSentMessagesInput
+  text: String
+  from: UserUpdateOneWithoutMessagesInput
 }
 
 input MessageUpdateWithWhereUniqueWithoutFromInput {
@@ -807,66 +1027,61 @@ input MessageWhereInput {
   All values greater than or equal the given value.
   """
   createdAt_gte: DateTime
-  deliveredAt: DateTime
+  text: String
   """
   All values that are not equal to given value.
   """
-  deliveredAt_not: DateTime
+  text_not: String
   """
   All values that are contained in given list.
   """
-  deliveredAt_in: [DateTime!]
+  text_in: [String!]
   """
   All values that are not contained in given list.
   """
-  deliveredAt_not_in: [DateTime!]
+  text_not_in: [String!]
   """
   All values less than the given value.
   """
-  deliveredAt_lt: DateTime
+  text_lt: String
   """
   All values less than or equal the given value.
   """
-  deliveredAt_lte: DateTime
+  text_lte: String
   """
   All values greater than the given value.
   """
-  deliveredAt_gt: DateTime
+  text_gt: String
   """
   All values greater than or equal the given value.
   """
-  deliveredAt_gte: DateTime
-  readAt: DateTime
+  text_gte: String
   """
-  All values that are not equal to given value.
+  All values containing the given string.
   """
-  readAt_not: DateTime
+  text_contains: String
   """
-  All values that are contained in given list.
+  All values not containing the given string.
   """
-  readAt_in: [DateTime!]
+  text_not_contains: String
   """
-  All values that are not contained in given list.
+  All values starting with the given string.
   """
-  readAt_not_in: [DateTime!]
+  text_starts_with: String
   """
-  All values less than the given value.
+  All values not starting with the given string.
   """
-  readAt_lt: DateTime
+  text_not_starts_with: String
   """
-  All values less than or equal the given value.
+  All values ending with the given string.
   """
-  readAt_lte: DateTime
+  text_ends_with: String
   """
-  All values greater than the given value.
+  All values not ending with the given string.
   """
-  readAt_gt: DateTime
-  """
-  All values greater than or equal the given value.
-  """
-  readAt_gte: DateTime
+  text_not_ends_with: String
+  to: ChannelWhereInput
   from: UserWhereInput
-  to: UserWhereInput
 }
 
 input MessageWhereUniqueInput {
@@ -879,31 +1094,37 @@ type Mutation {
   createGig(data: GigCreateInput!): Gig!
   createUser(data: UserCreateInput!): User!
   createMessage(data: MessageCreateInput!): Message!
+  createChannel(data: ChannelCreateInput!): Channel!
   updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
   updatePostComment(data: PostCommentUpdateInput!, where: PostCommentWhereUniqueInput!): PostComment
   updateGig(data: GigUpdateInput!, where: GigWhereUniqueInput!): Gig
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateMessage(data: MessageUpdateInput!, where: MessageWhereUniqueInput!): Message
+  updateChannel(data: ChannelUpdateInput!, where: ChannelWhereUniqueInput!): Channel
   deletePost(where: PostWhereUniqueInput!): Post
   deletePostComment(where: PostCommentWhereUniqueInput!): PostComment
   deleteGig(where: GigWhereUniqueInput!): Gig
   deleteUser(where: UserWhereUniqueInput!): User
   deleteMessage(where: MessageWhereUniqueInput!): Message
+  deleteChannel(where: ChannelWhereUniqueInput!): Channel
   upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
   upsertPostComment(where: PostCommentWhereUniqueInput!, create: PostCommentCreateInput!, update: PostCommentUpdateInput!): PostComment!
   upsertGig(where: GigWhereUniqueInput!, create: GigCreateInput!, update: GigUpdateInput!): Gig!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertMessage(where: MessageWhereUniqueInput!, create: MessageCreateInput!, update: MessageUpdateInput!): Message!
+  upsertChannel(where: ChannelWhereUniqueInput!, create: ChannelCreateInput!, update: ChannelUpdateInput!): Channel!
   updateManyPosts(data: PostUpdateInput!, where: PostWhereInput!): BatchPayload!
   updateManyPostComments(data: PostCommentUpdateInput!, where: PostCommentWhereInput!): BatchPayload!
   updateManyGigs(data: GigUpdateInput!, where: GigWhereInput!): BatchPayload!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput!): BatchPayload!
   updateManyMessages(data: MessageUpdateInput!, where: MessageWhereInput!): BatchPayload!
+  updateManyChannels(data: ChannelUpdateInput!, where: ChannelWhereInput!): BatchPayload!
   deleteManyPosts(where: PostWhereInput!): BatchPayload!
   deleteManyPostComments(where: PostCommentWhereInput!): BatchPayload!
   deleteManyGigs(where: GigWhereInput!): BatchPayload!
   deleteManyUsers(where: UserWhereInput!): BatchPayload!
   deleteManyMessages(where: MessageWhereInput!): BatchPayload!
+  deleteManyChannels(where: ChannelWhereInput!): BatchPayload!
 }
 
 enum MutationType {
@@ -1625,16 +1846,19 @@ type Query {
   gigs(where: GigWhereInput, orderBy: GigOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Gig]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message]!
+  channels(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Channel]!
   post(where: PostWhereUniqueInput!): Post
   postComment(where: PostCommentWhereUniqueInput!): PostComment
   gig(where: GigWhereUniqueInput!): Gig
   user(where: UserWhereUniqueInput!): User
   message(where: MessageWhereUniqueInput!): Message
+  channel(where: ChannelWhereUniqueInput!): Channel
   postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
   postCommentsConnection(where: PostCommentWhereInput, orderBy: PostCommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostCommentConnection!
   gigsConnection(where: GigWhereInput, orderBy: GigOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): GigConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   messagesConnection(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MessageConnection!
+  channelsConnection(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ChannelConnection!
   """
   Fetches an object given its ID
   """
@@ -1650,6 +1874,7 @@ type Subscription {
   gig(where: GigSubscriptionWhereInput): GigSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   message(where: MessageSubscriptionWhereInput): MessageSubscriptionPayload
+  channel(where: ChannelSubscriptionWhereInput): ChannelSubscriptionPayload
 }
 
 """
@@ -1675,8 +1900,13 @@ input UserCreateInput {
   avatarURL: String
   followers: UserCreateManyWithoutFollowsInput
   follows: UserCreateManyWithoutFollowersInput
-  sentMessages: MessageCreateManyWithoutFromInput
-  receivedMessages: MessageCreateManyWithoutToInput
+  channels: ChannelCreateManyWithoutUsersInput
+  messages: MessageCreateManyWithoutFromInput
+}
+
+input UserCreateManyWithoutChannelsInput {
+  create: [UserCreateWithoutChannelsInput!]
+  connect: [UserWhereUniqueInput!]
 }
 
 input UserCreateManyWithoutFollowersInput {
@@ -1694,14 +1924,20 @@ input UserCreateOneInput {
   connect: UserWhereUniqueInput
 }
 
-input UserCreateOneWithoutReceivedMessagesInput {
-  create: UserCreateWithoutReceivedMessagesInput
+input UserCreateOneWithoutMessagesInput {
+  create: UserCreateWithoutMessagesInput
   connect: UserWhereUniqueInput
 }
 
-input UserCreateOneWithoutSentMessagesInput {
-  create: UserCreateWithoutSentMessagesInput
-  connect: UserWhereUniqueInput
+input UserCreateWithoutChannelsInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  avatarURL: String
+  followers: UserCreateManyWithoutFollowsInput
+  follows: UserCreateManyWithoutFollowersInput
+  messages: MessageCreateManyWithoutFromInput
 }
 
 input UserCreateWithoutFollowersInput {
@@ -1711,8 +1947,8 @@ input UserCreateWithoutFollowersInput {
   password: String!
   avatarURL: String
   follows: UserCreateManyWithoutFollowersInput
-  sentMessages: MessageCreateManyWithoutFromInput
-  receivedMessages: MessageCreateManyWithoutToInput
+  channels: ChannelCreateManyWithoutUsersInput
+  messages: MessageCreateManyWithoutFromInput
 }
 
 input UserCreateWithoutFollowsInput {
@@ -1722,11 +1958,11 @@ input UserCreateWithoutFollowsInput {
   password: String!
   avatarURL: String
   followers: UserCreateManyWithoutFollowsInput
-  sentMessages: MessageCreateManyWithoutFromInput
-  receivedMessages: MessageCreateManyWithoutToInput
+  channels: ChannelCreateManyWithoutUsersInput
+  messages: MessageCreateManyWithoutFromInput
 }
 
-input UserCreateWithoutReceivedMessagesInput {
+input UserCreateWithoutMessagesInput {
   firstName: String!
   lastName: String!
   email: String!
@@ -1734,18 +1970,7 @@ input UserCreateWithoutReceivedMessagesInput {
   avatarURL: String
   followers: UserCreateManyWithoutFollowsInput
   follows: UserCreateManyWithoutFollowersInput
-  sentMessages: MessageCreateManyWithoutFromInput
-}
-
-input UserCreateWithoutSentMessagesInput {
-  firstName: String!
-  lastName: String!
-  email: String!
-  password: String!
-  avatarURL: String
-  followers: UserCreateManyWithoutFollowsInput
-  follows: UserCreateManyWithoutFollowersInput
-  receivedMessages: MessageCreateManyWithoutToInput
+  channels: ChannelCreateManyWithoutUsersInput
 }
 
 """
@@ -1835,8 +2060,8 @@ input UserUpdateDataInput {
   avatarURL: String
   followers: UserUpdateManyWithoutFollowsInput
   follows: UserUpdateManyWithoutFollowersInput
-  sentMessages: MessageUpdateManyWithoutFromInput
-  receivedMessages: MessageUpdateManyWithoutToInput
+  channels: ChannelUpdateManyWithoutUsersInput
+  messages: MessageUpdateManyWithoutFromInput
 }
 
 input UserUpdateInput {
@@ -1847,8 +2072,17 @@ input UserUpdateInput {
   avatarURL: String
   followers: UserUpdateManyWithoutFollowsInput
   follows: UserUpdateManyWithoutFollowersInput
-  sentMessages: MessageUpdateManyWithoutFromInput
-  receivedMessages: MessageUpdateManyWithoutToInput
+  channels: ChannelUpdateManyWithoutUsersInput
+  messages: MessageUpdateManyWithoutFromInput
+}
+
+input UserUpdateManyWithoutChannelsInput {
+  create: [UserCreateWithoutChannelsInput!]
+  connect: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutChannelsInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutChannelsInput!]
 }
 
 input UserUpdateManyWithoutFollowersInput {
@@ -1878,20 +2112,23 @@ input UserUpdateOneInput {
   upsert: UserUpsertNestedInput
 }
 
-input UserUpdateOneWithoutReceivedMessagesInput {
-  create: UserCreateWithoutReceivedMessagesInput
+input UserUpdateOneWithoutMessagesInput {
+  create: UserCreateWithoutMessagesInput
   connect: UserWhereUniqueInput
   delete: Boolean
-  update: UserUpdateWithoutReceivedMessagesDataInput
-  upsert: UserUpsertWithoutReceivedMessagesInput
+  update: UserUpdateWithoutMessagesDataInput
+  upsert: UserUpsertWithoutMessagesInput
 }
 
-input UserUpdateOneWithoutSentMessagesInput {
-  create: UserCreateWithoutSentMessagesInput
-  connect: UserWhereUniqueInput
-  delete: Boolean
-  update: UserUpdateWithoutSentMessagesDataInput
-  upsert: UserUpsertWithoutSentMessagesInput
+input UserUpdateWithoutChannelsDataInput {
+  firstName: String
+  lastName: String
+  email: String
+  password: String
+  avatarURL: String
+  followers: UserUpdateManyWithoutFollowsInput
+  follows: UserUpdateManyWithoutFollowersInput
+  messages: MessageUpdateManyWithoutFromInput
 }
 
 input UserUpdateWithoutFollowersDataInput {
@@ -1901,8 +2138,8 @@ input UserUpdateWithoutFollowersDataInput {
   password: String
   avatarURL: String
   follows: UserUpdateManyWithoutFollowersInput
-  sentMessages: MessageUpdateManyWithoutFromInput
-  receivedMessages: MessageUpdateManyWithoutToInput
+  channels: ChannelUpdateManyWithoutUsersInput
+  messages: MessageUpdateManyWithoutFromInput
 }
 
 input UserUpdateWithoutFollowsDataInput {
@@ -1912,11 +2149,11 @@ input UserUpdateWithoutFollowsDataInput {
   password: String
   avatarURL: String
   followers: UserUpdateManyWithoutFollowsInput
-  sentMessages: MessageUpdateManyWithoutFromInput
-  receivedMessages: MessageUpdateManyWithoutToInput
+  channels: ChannelUpdateManyWithoutUsersInput
+  messages: MessageUpdateManyWithoutFromInput
 }
 
-input UserUpdateWithoutReceivedMessagesDataInput {
+input UserUpdateWithoutMessagesDataInput {
   firstName: String
   lastName: String
   email: String
@@ -1924,18 +2161,12 @@ input UserUpdateWithoutReceivedMessagesDataInput {
   avatarURL: String
   followers: UserUpdateManyWithoutFollowsInput
   follows: UserUpdateManyWithoutFollowersInput
-  sentMessages: MessageUpdateManyWithoutFromInput
+  channels: ChannelUpdateManyWithoutUsersInput
 }
 
-input UserUpdateWithoutSentMessagesDataInput {
-  firstName: String
-  lastName: String
-  email: String
-  password: String
-  avatarURL: String
-  followers: UserUpdateManyWithoutFollowsInput
-  follows: UserUpdateManyWithoutFollowersInput
-  receivedMessages: MessageUpdateManyWithoutToInput
+input UserUpdateWithWhereUniqueWithoutChannelsInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutChannelsDataInput!
 }
 
 input UserUpdateWithWhereUniqueWithoutFollowersInput {
@@ -1953,14 +2184,15 @@ input UserUpsertNestedInput {
   create: UserCreateInput!
 }
 
-input UserUpsertWithoutReceivedMessagesInput {
-  update: UserUpdateWithoutReceivedMessagesDataInput!
-  create: UserCreateWithoutReceivedMessagesInput!
+input UserUpsertWithoutMessagesInput {
+  update: UserUpdateWithoutMessagesDataInput!
+  create: UserCreateWithoutMessagesInput!
 }
 
-input UserUpsertWithoutSentMessagesInput {
-  update: UserUpdateWithoutSentMessagesDataInput!
-  create: UserCreateWithoutSentMessagesInput!
+input UserUpsertWithWhereUniqueWithoutChannelsInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutChannelsDataInput!
+  create: UserCreateWithoutChannelsInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutFollowersInput {
@@ -2366,12 +2598,12 @@ input UserWhereInput {
   follows_every: UserWhereInput
   follows_some: UserWhereInput
   follows_none: UserWhereInput
-  sentMessages_every: MessageWhereInput
-  sentMessages_some: MessageWhereInput
-  sentMessages_none: MessageWhereInput
-  receivedMessages_every: MessageWhereInput
-  receivedMessages_some: MessageWhereInput
-  receivedMessages_none: MessageWhereInput
+  channels_every: ChannelWhereInput
+  channels_some: ChannelWhereInput
+  channels_none: ChannelWhereInput
+  messages_every: MessageWhereInput
+  messages_some: MessageWhereInput
+  messages_none: MessageWhereInput
 }
 
 input UserWhereUniqueInput {

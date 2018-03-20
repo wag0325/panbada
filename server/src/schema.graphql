@@ -27,6 +27,7 @@ type Query {
   gig(gigId: ID!): Gig
   users(filter: String, skip: Int, first: Int): [User!]!
   user(id: ID!): User
+  channels(filter: String, skip: Int, first: Int): [Channel!]!
 }
 
 type Mutation {
@@ -36,9 +37,10 @@ type Mutation {
   deletePostComment(id: ID!): PostComment
   createGig(title: String!, text: String!, type: String!): Gig
   deleteGig(id: ID!): Gig
-  createMessage(id: ID!, text: String!): Message
   signup(email: String!, password: String!, firstName: String!, lastName: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
   follow(id: ID!): User 
   signS3(filename: String!, filetype: String!): S3Payload!
+  createMessage(id: ID!, text: String!): Message
+  createChannel(id: ID!, text: String!): Channel
 }

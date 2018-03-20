@@ -19,9 +19,14 @@ function users(parent, args, context, info) {
   return context.db.query.users({ first, skip, where }, info)
 }
 
+function channels(parent, args, context, info) {
+  return context.db.query.channels({ where: {} }, info)
+}
+
 module.exports = {
 	postFeed,
 	post,
 	users,
-	user
+	user,
+  channels,
 }

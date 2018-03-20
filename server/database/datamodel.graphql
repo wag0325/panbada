@@ -44,8 +44,9 @@ type User {
 
 type Message {
   id: ID! @unique
+  channel: Channel!
   createdAt: DateTime!
-  to: Channel! 
+  toUserId: String! 
   from: User! 
   text: String!
 }

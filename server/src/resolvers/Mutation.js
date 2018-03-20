@@ -171,40 +171,44 @@ function follow(parent, { id }, context, info) {
 }
 
 async function createMessage(parent, args, context, info) {
+  // channel ID, user ID, toUser ID, text 
   const userId = getUserId(context)
   const { id, text } = args 
+  var channel
 
-  const channel = await context.db.query.channel({ where: { id: id } })
-  if (!channel) {
-    throw new Error(`Could not find conversation: ${args.channel}`)
+  // check if there's already a message existing btw two users
+  const messages = await context.db.query.messages({ where: { toUserId: id } }, info)
+  console.log("messages ", messages)
+  if (messages.length > 0) {
+    console.log("yes, eists!")
+    channel = messages[0].channel
+    console.log(messages[0].channel)
+  } else {
+    console.log("No, doesn't exists")
+    channel = await context.db.mutation.createChannel({
+      data: {
+        users: { connect: [{ id: id }, { id: userId }] },
+      }
+    }, info)
+    console.log(channel)
   }
   
   return context.db.mutation.createMessage({ 
     data: { 
-      to: { connect: { id: id }  },
+      toUserId: id,
       from: { connect: { id: userId } }, 
-      text: text
+      text: text,
+      channel: { connect: { id: channel.id } },
     } 
   }, info)
 }
 
-function createChannel(parent, { id, text }, context, info ) {
-  const userId = getUserId(context)
-  console.log(id)
-  console.log(text)
-  console.log(userId)
+function deleteMessage(parent, { id }, ctx, info) {
+  return ctx.db.mutation.deleteMessage({ where: { id } }, info)
+}
 
-  return context.db.mutation.createChannel({
-    data: {
-      users: { connect: [{ id: id }, { id: userId }] },
-      messages: {
-        create: [{ 
-          text: text, 
-          from: { connect: { id: userId }},
-        }] 
-      },
-    }
-  }, info)
+function deleteChannel(parent, { id }, ctx, info) {
+  return ctx.db.mutation.deleteChannel({ where: { id } }, info)
 }
 
 module.exports = {
@@ -220,5 +224,6 @@ module.exports = {
   follow,
   signS3,
   createMessage,
-  createChannel,
+  deleteMessage,
+  deleteChannel,
 }

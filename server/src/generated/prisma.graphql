@@ -24,8 +24,9 @@ type Gig implements Node {
 
 type Message implements Node {
   id: ID!
+  channel(where: ChannelWhereInput): Channel!
   createdAt: DateTime!
-  to(where: ChannelWhereInput): Channel!
+  toUserId: String!
   from(where: UserWhereInput): User!
   text: String!
 }
@@ -116,7 +117,7 @@ type ChannelConnection {
 
 input ChannelCreateInput {
   users: UserCreateManyWithoutChannelsInput
-  messages: MessageCreateManyWithoutToInput
+  messages: MessageCreateManyWithoutChannelInput
 }
 
 input ChannelCreateManyWithoutUsersInput {
@@ -134,7 +135,7 @@ input ChannelCreateWithoutMessagesInput {
 }
 
 input ChannelCreateWithoutUsersInput {
-  messages: MessageCreateManyWithoutToInput
+  messages: MessageCreateManyWithoutChannelInput
 }
 
 """
@@ -201,7 +202,7 @@ input ChannelSubscriptionWhereInput {
 
 input ChannelUpdateInput {
   users: UserUpdateManyWithoutChannelsInput
-  messages: MessageUpdateManyWithoutToInput
+  messages: MessageUpdateManyWithoutChannelInput
 }
 
 input ChannelUpdateManyWithoutUsersInput {
@@ -226,7 +227,7 @@ input ChannelUpdateWithoutMessagesDataInput {
 }
 
 input ChannelUpdateWithoutUsersDataInput {
-  messages: MessageUpdateManyWithoutToInput
+  messages: MessageUpdateManyWithoutChannelInput
 }
 
 input ChannelUpdateWithWhereUniqueWithoutUsersInput {
@@ -789,9 +790,15 @@ type MessageConnection {
 }
 
 input MessageCreateInput {
+  toUserId: String!
   text: String!
-  to: ChannelCreateOneWithoutMessagesInput!
+  channel: ChannelCreateOneWithoutMessagesInput!
   from: UserCreateOneWithoutMessagesInput!
+}
+
+input MessageCreateManyWithoutChannelInput {
+  create: [MessageCreateWithoutChannelInput!]
+  connect: [MessageWhereUniqueInput!]
 }
 
 input MessageCreateManyWithoutFromInput {
@@ -799,19 +806,16 @@ input MessageCreateManyWithoutFromInput {
   connect: [MessageWhereUniqueInput!]
 }
 
-input MessageCreateManyWithoutToInput {
-  create: [MessageCreateWithoutToInput!]
-  connect: [MessageWhereUniqueInput!]
+input MessageCreateWithoutChannelInput {
+  toUserId: String!
+  text: String!
+  from: UserCreateOneWithoutMessagesInput!
 }
 
 input MessageCreateWithoutFromInput {
+  toUserId: String!
   text: String!
-  to: ChannelCreateOneWithoutMessagesInput!
-}
-
-input MessageCreateWithoutToInput {
-  text: String!
-  from: UserCreateOneWithoutMessagesInput!
+  channel: ChannelCreateOneWithoutMessagesInput!
 }
 
 """
@@ -833,6 +837,8 @@ enum MessageOrderByInput {
   id_DESC
   createdAt_ASC
   createdAt_DESC
+  toUserId_ASC
+  toUserId_DESC
   text_ASC
   text_DESC
   updatedAt_ASC
@@ -842,6 +848,7 @@ enum MessageOrderByInput {
 type MessagePreviousValues {
   id: ID!
   createdAt: DateTime!
+  toUserId: String!
   text: String!
 }
 
@@ -881,9 +888,19 @@ input MessageSubscriptionWhereInput {
 }
 
 input MessageUpdateInput {
+  toUserId: String
   text: String
-  to: ChannelUpdateOneWithoutMessagesInput
+  channel: ChannelUpdateOneWithoutMessagesInput
   from: UserUpdateOneWithoutMessagesInput
+}
+
+input MessageUpdateManyWithoutChannelInput {
+  create: [MessageCreateWithoutChannelInput!]
+  connect: [MessageWhereUniqueInput!]
+  disconnect: [MessageWhereUniqueInput!]
+  delete: [MessageWhereUniqueInput!]
+  update: [MessageUpdateWithWhereUniqueWithoutChannelInput!]
+  upsert: [MessageUpsertWithWhereUniqueWithoutChannelInput!]
 }
 
 input MessageUpdateManyWithoutFromInput {
@@ -895,23 +912,21 @@ input MessageUpdateManyWithoutFromInput {
   upsert: [MessageUpsertWithWhereUniqueWithoutFromInput!]
 }
 
-input MessageUpdateManyWithoutToInput {
-  create: [MessageCreateWithoutToInput!]
-  connect: [MessageWhereUniqueInput!]
-  disconnect: [MessageWhereUniqueInput!]
-  delete: [MessageWhereUniqueInput!]
-  update: [MessageUpdateWithWhereUniqueWithoutToInput!]
-  upsert: [MessageUpsertWithWhereUniqueWithoutToInput!]
+input MessageUpdateWithoutChannelDataInput {
+  toUserId: String
+  text: String
+  from: UserUpdateOneWithoutMessagesInput
 }
 
 input MessageUpdateWithoutFromDataInput {
+  toUserId: String
   text: String
-  to: ChannelUpdateOneWithoutMessagesInput
+  channel: ChannelUpdateOneWithoutMessagesInput
 }
 
-input MessageUpdateWithoutToDataInput {
-  text: String
-  from: UserUpdateOneWithoutMessagesInput
+input MessageUpdateWithWhereUniqueWithoutChannelInput {
+  where: MessageWhereUniqueInput!
+  data: MessageUpdateWithoutChannelDataInput!
 }
 
 input MessageUpdateWithWhereUniqueWithoutFromInput {
@@ -919,21 +934,16 @@ input MessageUpdateWithWhereUniqueWithoutFromInput {
   data: MessageUpdateWithoutFromDataInput!
 }
 
-input MessageUpdateWithWhereUniqueWithoutToInput {
+input MessageUpsertWithWhereUniqueWithoutChannelInput {
   where: MessageWhereUniqueInput!
-  data: MessageUpdateWithoutToDataInput!
+  update: MessageUpdateWithoutChannelDataInput!
+  create: MessageCreateWithoutChannelInput!
 }
 
 input MessageUpsertWithWhereUniqueWithoutFromInput {
   where: MessageWhereUniqueInput!
   update: MessageUpdateWithoutFromDataInput!
   create: MessageCreateWithoutFromInput!
-}
-
-input MessageUpsertWithWhereUniqueWithoutToInput {
-  where: MessageWhereUniqueInput!
-  update: MessageUpdateWithoutToDataInput!
-  create: MessageCreateWithoutToInput!
 }
 
 input MessageWhereInput {
@@ -1027,6 +1037,59 @@ input MessageWhereInput {
   All values greater than or equal the given value.
   """
   createdAt_gte: DateTime
+  toUserId: String
+  """
+  All values that are not equal to given value.
+  """
+  toUserId_not: String
+  """
+  All values that are contained in given list.
+  """
+  toUserId_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  toUserId_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  toUserId_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  toUserId_lte: String
+  """
+  All values greater than the given value.
+  """
+  toUserId_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  toUserId_gte: String
+  """
+  All values containing the given string.
+  """
+  toUserId_contains: String
+  """
+  All values not containing the given string.
+  """
+  toUserId_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  toUserId_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  toUserId_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  toUserId_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  toUserId_not_ends_with: String
   text: String
   """
   All values that are not equal to given value.
@@ -1080,7 +1143,7 @@ input MessageWhereInput {
   All values not ending with the given string.
   """
   text_not_ends_with: String
-  to: ChannelWhereInput
+  channel: ChannelWhereInput
   from: UserWhereInput
 }
 

@@ -39,8 +39,9 @@ type Mutation {
   deleteGig(id: ID!): Gig
   signup(email: String!, password: String!, firstName: String!, lastName: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
-  follow(id: ID!): User 
+  follow(id: ID!): User
   signS3(filename: String!, filetype: String!): S3Payload!
   createMessage(id: ID!, text: String!): Message
-  createChannel(id: ID!, text: String!): Channel
+  deleteChannel(id: ID!): Channel
+  deleteMessage(id: ID!): Message
 }

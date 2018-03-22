@@ -2,6 +2,10 @@ function postFeed(parent, args, ctx, info) {
   return ctx.db.query.posts({ where: {} }, info)
 }
 
+function postsConnection(parent, args, ctx, info) {
+  return ctx.db.query.postsConnection({ where: {}, ...args }, info)
+}
+
 function post(parent, { id }, ctx, info) {
   return ctx.db.query.post({ where: { id } }, info)
 }
@@ -25,6 +29,7 @@ function channels(parent, args, context, info) {
 
 module.exports = {
 	postFeed,
+  postsConnection,
 	post,
 	users,
 	user,

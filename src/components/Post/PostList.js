@@ -36,7 +36,7 @@ class PostList extends Component {
   // }
 
   render() {
-    if (this.props.postFeedQuery && this.props.postFeedQuery.loading) {
+    if (this.props.postsConnectionQuery && this.props.postsConnectionQuery.loading) {
       // return <CircularProgress className={this.props.progress} size={50} />
       return (
         <div className={this.props.root}>
@@ -45,7 +45,7 @@ class PostList extends Component {
         )
     }
     
-    if (this.props.postFeedQuery && this.props.postFeedQuery.error) {
+    if (this.props.postsConnectionQuery && this.props.postsConnectionQuery.error) {
       return <div>Error</div>
     }
 
@@ -58,32 +58,22 @@ class PostList extends Component {
 
 
     return (
-      <div>
-        <div>{postsToRender.map((post, index) =>
-          <Post key={post.id} index={index} post={post} page={page} updateStoreAfterPostLike={this._updateCacheAfterPostLike} />
-          )}
-        </div>
-        {isNewPage &&
-        <div className='flex ml4 mv3 gray'>
-          <div className='pointer mr2' onClick={() => this._previousPage()}>Previous</div>
-          <div className='pointer' onClick={() => this._nextPage()}>Next</div>
-        </div>}
-      </div>
+      <div>Hello</div>
     )
   }
   
   _getPostsToRender = (isNewPage) => {
     if (isNewPage) {
-      return this.props.postFeedQuery.postFeed
+      return this.props.postsConnectionQuery.postFeed
     }
-    const rankedPosts = this.props.postFeedQuery.postFeed.slice()
+    const rankedPosts = this.props.postsConnectionQuery.postFeed.slice()
     rankedPosts.sort((l1, l2) => l2.postLikes.length - l1.postLikes.length)
     return rankedPosts
   }
 
   _nextPage = () => {
     const page = parseInt(this.props.match.params.page, 10)
-    if (page <= this.props.postFeedQuery.postFeed.length / POSTS_PER_PAGE) {
+    if (page <= this.props.postsConnectionQuery.postFeed.length / POSTS_PER_PAGE) {
       const nextPage = page + 1
       this.props.history.push(`/new/${nextPage}`)
     }
@@ -161,35 +151,66 @@ export const POST_FEED_QUERY = gql`
   }
 `
 
-export default withStyles(styles)(graphql(POST_FEED_QUERY, {
-  name: 'postFeedQuery',
-  options: ownProps => {
-    const page = parseInt(ownProps.match.params.page, 10)
-    const isNewPage = ownProps.location.pathname.includes('new')
-    const skip = isNewPage ? (page - 1) * POSTS_PER_PAGE : 0
-    const first = isNewPage ? POSTS_PER_PAGE : 100
-    const orderBy = isNewPage ? 'createdAt_DESC' : null
-    return {
-      variables: { first, skip, orderBy },
+export const POSTS_CONNECTION_QUERY = gql`
+  query PostsConnectionQuery($after: String, $orderBy: PostOrderByInput, $where: PostWhereInput) {
+    postsConnection(after: $after, first: 5, orderBy: $orderBy, where: $where) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      edges {
+        cursor
+        node {
+          id
+          title
+          text
+          createdAt
+          pictureURL
+          postedBy {
+            firstName
+            lastName
+            avatarURL
+            id
+          } 
+          postComments {
+            text
+          }
+        }
+      }
     }
-  },
-  // props: (props) => ({
-  //   props,
-  //   loadMorePosts: () => {
-  //     return props.data.fetchMore({
-  //       variables: {
-  //         skip: props.data.postFeed.length
-  //       },
-  //       updateQuery: (previousResult, { fetchMoreResult }) => {
-  //         if (!fetchMoreResult) {
-  //           return previousResult
-  //         }
-  //         return Object.assign({}, previousResult, {
-  //           // Append the new posts results to the old one
-  //           postFeed: [...previousResult.postFeed, ...fetchMoreResult.postFeed]
-  //         })
-  //       }
-  //     })
-  //   }
-  // }),
-})(PostList))
+  }
+`
+
+export default graphql(POSTS_CONNECTION_QUERY, {name: 'postsConnectionQuery'})(PostList)
+// export default withStyles(styles)(graphql(POSTS_CONNECTION_QUERY, {
+//   name: 'postsConnectionQuery',
+//   // options: ownProps => {
+//   //   const page = parseInt(ownProps.match.params.page, 10)
+//   //   const isNewPage = ownProps.location.pathname.includes('new')
+//   //   const skip = isNewPage ? (page - 1) * POSTS_PER_PAGE : 0
+//   //   const first = isNewPage ? POSTS_PER_PAGE : 100
+//   //   const orderBy = isNewPage ? 'createdAt_DESC' : null
+//   //   return {
+//   //     variables: { first, skip, orderBy },
+//   //   }
+//   // },
+//   // props: (props) => ({
+//   //   props,
+//   //   loadMorePosts: () => {
+//   //     return props.data.fetchMore({
+//   //       variables: {
+//   //         skip: props.data.postFeed.length
+//   //       },
+//   //       updateQuery: (previousResult, { fetchMoreResult }) => {
+//   //         if (!fetchMoreResult) {
+//   //           return previousResult
+//   //         }
+//   //         return Object.assign({}, previousResult, {
+//   //           // Append the new posts results to the old one
+//   //           postFeed: [...previousResult.postFeed, ...fetchMoreResult.postFeed]
+//   //         })
+//   //       }
+//   //     })
+//   //   }
+//   // }),
+// })(PostList))

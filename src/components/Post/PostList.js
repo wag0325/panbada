@@ -34,62 +34,25 @@ class PostList extends Component {
       return <div>Error</div>
     }
 
-    const postsToRender = this.props.postFeedQuery.postFeed
+    const postsToRender = this.props.postFeedQuery.postsConnection.edges
 
     return (
-      <div>{postsToRender.map(post => <Post key={post.id} post={post} />)}</div>
+      <div>{postsToRender.map(post => <Post key={post.node.id} post={post.node} />)}</div>
     )
   }
 }
 
-export const POST_FEED_QUERY = gql`
-  query PostFeedQuery{
-    postFeed {
-      id
-      title
-      text
-      createdAt
-      pictureURL
-      postedBy {
-        firstName
-        lastName
-        avatarURL
-        id
-      } 
-      postComments {
-        text
-      }
-    }
-  }
-`
-
 export const POSTS_CONNECTION_QUERY = gql`
-  query PostsConnectionQuery($after: String, $orderBy: PostOrderByInput, $where: PostWhereInput) {
-    postsConnection(after: $after, first: 5, orderBy: $orderBy, where: $where) {
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
+  query PostsConnectionQuery {
+    postsConnection {
       edges {
-        cursor
         node {
           id
           title
           text
-          createdAt
-          pictureURL
-          postedBy {
-            firstName
-            lastName
-            avatarURL
-            id
-          } 
-          postComments {
-            text
-          }
         }
       }
     }
   }
 `
-export default graphql(POST_FEED_QUERY, { name: 'postFeedQuery' }) (PostList)
+export default graphql(POSTS_CONNECTION_QUERY, { name: 'postFeedQuery' }) (PostList)

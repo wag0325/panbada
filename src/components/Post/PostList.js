@@ -42,9 +42,13 @@ class PostList extends Component {
   }
 }
 
-export const POSTS_CONNECTION_QUERY = gql`
-  query PostsConnectionQuery {
-    postsConnection {
+export const POST_FEED_QUERY = gql`
+  query PostsConnectionQuery($first: Int, $after: String) {
+    postsConnection(first: $first, after: $after) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
       edges {
         node {
           id
@@ -52,7 +56,18 @@ export const POSTS_CONNECTION_QUERY = gql`
           text
         }
       }
+      aggregate {
+        count
+      }
     }
   }
 `
-export default graphql(POSTS_CONNECTION_QUERY, { name: 'postFeedQuery' }) (PostList)
+export default graphql(POST_FEED_QUERY, { 
+  name: 'postFeedQuery',
+  options: ownProps => {
+    let after = ownProps.endCursor || null
+    return {
+      variables: { first: 5, after:after }
+    }
+  },
+}) (PostList)

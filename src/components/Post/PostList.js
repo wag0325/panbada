@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 
 import { InfiniteLoader, List } from 'react-virtualized'
 import 'react-virtualized/styles.css'
-
+import InfiniteScroll from 'react-infinite-scroller'
 
 import { withStyles } from 'material-ui/styles'
 import { CircularProgress } from 'material-ui/Progress'
@@ -23,17 +23,24 @@ const styles = theme => ({
 })
 
 let postData = []
+let postArrEndCursor = ''
 
 class PostList extends Component {
   state = {
     page: '', 
     isLoading: false,
     isError: false, 
+    hasMoreItems: true,
+    hasNextPage: true,
   }
   
-  componentDidUpdate() {
-    // this._rowRenderer()
-  }
+  // componentWillMount() {
+  //   document.addEventListener('scroll', this._trackScrolling)
+  // }
+  
+  // componentWillUnmount() {
+  //   document.removeEventListener('scroll', this._trackScrolling)
+  // }
 
   render() {
     if (this.props.postFeedQuery && this.props.postFeedQuery.loading) {
@@ -44,70 +51,54 @@ class PostList extends Component {
       return <div>Error</div>
     }
     
-    console.log("data ", this.props)
-    const remoteRowCount = this.props.postFeedQuery.postsConnection.aggregate.count
-    // const remoteRowCount = 3
-    postData = this.props.postFeedQuery.postsConnection.edges
-    console.log("postData ", postData)
-    return (
-      <InfiniteLoader
-        isRowLoaded={this._isRowLoaded}
-        loadMoreRows={this._loadMoreRows}
-        rowCount={remoteRowCount}
-      >
-        {({ onRowsRendered, registerChild }) => (
-          <List
-            height={40}
-            onRowsRendered={onRowsRendered}
-            ref={registerChild}
-            rowCount={remoteRowCount}
-            rowHeight={100}
-            rowRenderer={this._rowRenderer}
-            width={300}
-          />
-        )}
-      </InfiniteLoader>
-    )
-  }
-
-  _isRowLoaded = ({index}) => {
-    return !!postData[index]
-  }
-
-  _rowRenderer = ({key, index, style }) => {
-    console.log(key)
-    console.log("index", index)
-    console.log("posts", postData.length)
-    console.log(postData[index])
-    let content
-    if ( index < postData.length) {
-      const post = postData[index].node
-      return (
-        <div>{post.title}</div>
-      )
-    } else {
-      return (<div>Loading...</div>)
+    
+    const endCursor = this.props.postFeedQuery.postsConnection.pageInfo.endCursor
+    if (this.props.postFeedQuery.postsConnection.pageInfo.hasNextPage === false
+        && this.state.hasNextPage === true) {
+      this.setState({ hasNextPage: false })  
     }
+
+    if (endCursor !== postArrEndCursor) {
+      this.props.postFeedQuery.postsConnection.edges.map((edge) => {
+        postData.push(edge.node)
+        postArrEndCursor = edge.node.id
+      })
+    }
+
+    return (
+      <div id='post-feed-wrapper'>{postData.map((post, index) =>
+          <Post key={post.id} index={index} post={post} />
+          )}
+        {this.state.hasNextPage && <button onClick={this._loadMoreRows}>Load More</button>}
+      </div>
+         )
+  }
+  
+  _trackScrolling = () => {
+    const postFeedDiv = document.getElementById('post-feed-wrapper').offsetHeight
   }
 
   _loadMoreRows = () => {
-    console.log("loadMoreRows")
     const { postsConnection, fetchMore } = this.props.postFeedQuery
-    console.log("last ", postsConnection.pageInfo.endCursor)
     fetchMore({
       variables: { after: postsConnection.pageInfo.endCursor },
       updateQuery: (previousResult, { fetchMoreResult, queryVariables }) => {
-        const prevResult =
-          previousResult.postsConnection.edges
+        if (!fetchMoreResult) {
+          console.log("no more data from fetchmore")
+          return false
+        }
+
+        const prevResult = previousResult.postsConnection.edges
         const newResult =
           fetchMoreResult.postsConnection.edges
         const pageInfo =
           fetchMoreResult.postsConnection.pageInfo
         const aggregate = previousResult.postsConnection.aggregate.count
+        
         return {
           postsConnection: {
             aggregate,
-            edges: [...prevResult, ...newResult],
+            edges: newResult,
             pageInfo,
           }
         }
@@ -141,7 +132,7 @@ export default graphql(POST_FEED_QUERY, {
   options: ownProps => {
     let after = ownProps.endCursor || null
     return {
-      variables: { first: 3, after:after }
+      variables: { first: 5, after:after }
     }
   },
 }) (PostList)

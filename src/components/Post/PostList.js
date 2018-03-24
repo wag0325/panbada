@@ -7,6 +7,7 @@ import gql from 'graphql-tag'
 import { withStyles } from 'material-ui/styles'
 import { CircularProgress } from 'material-ui/Progress'
 import { LinearProgress } from 'material-ui/Progress'
+import Button from 'material-ui/Button'
 
 import { POSTS_PER_PAGE, POSTS_ORDER_BY } from '../../constants'
 
@@ -16,6 +17,13 @@ const styles = theme => ({
   },
    root: {
     flexGrow: 1,
+  },
+  button: {
+    margin: theme.spacing.unit,
+  },
+  buttonWrapper: {
+    margin: 5,
+    textAlign: 'center',
   },
 })
 
@@ -49,6 +57,7 @@ class PostList extends Component {
       return <div>Error</div>
     }
     
+    const { classes } = this.props
     const { postsConnection } = this.props.postFeedQuery
     console.log("postFeedQuery ", this.props.postFeedQuery)
     console.log("postsConnection ", postsConnection)
@@ -79,7 +88,11 @@ class PostList extends Component {
       <div id='post-feed-wrapper'>{postData.map((post, index) =>
           <Post key={post.id} index={index} post={post} />
           )}
-        {this.state.hasNextPage && <button onClick={this._loadMoreRows}>Load More</button>}
+        {this.state.hasNextPage && 
+          <div className={classes.buttonWrapper}><Button variant="raised" className={classes.button} onClick={this._loadMoreRows}>
+            Load More
+          </Button></div>
+        }
       </div>
          )
   }
@@ -155,7 +168,7 @@ export const POST_FEED_QUERY = gql`
     }
   }
 `
-export default graphql(POST_FEED_QUERY, { 
+export default withStyles(styles)(graphql(POST_FEED_QUERY, { 
   name: 'postFeedQuery',
   options: ownProps => {
     let after = ownProps.endCursor || null
@@ -163,4 +176,4 @@ export default graphql(POST_FEED_QUERY, {
       variables: { first: POSTS_PER_PAGE, after:after, orderBy: POSTS_ORDER_BY }
     }
   },
-}) (PostList)
+})(PostList))

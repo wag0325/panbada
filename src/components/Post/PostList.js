@@ -117,8 +117,26 @@ export const POST_FEED_QUERY = gql`
       edges {
         node {
           id
+          createdAt
           title
           text
+          pictureURL
+          postedBy {
+            id
+            firstName
+            lastName
+            avatarURL
+          }
+          postComments {
+            id
+            text
+            user {
+              id
+              firstName
+              lastName
+              avatarURL
+            }
+          }
         }
       }
       aggregate {

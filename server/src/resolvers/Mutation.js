@@ -53,9 +53,9 @@ function signS3(parent, { filename, filetype }, context, info) {
   }
 }
 
-function createPost(parent, { title, text, pictureURL }, ctx, info) {
+function createPost(parent, { title, text, pictureURL }, context, info) {
   const userId = getUserId(context)
-  return ctx.db.mutation.createPost(
+  return context.db.mutation.createPost(
     {
       data: {
         title,

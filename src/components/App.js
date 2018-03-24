@@ -32,6 +32,7 @@ class App extends Component {
         <div className="">
           <Switch>
             <Route exact path='/' component={HomeContainer}/>
+            <Route exact path='/submit' component={CreatePost}/>
             <Route exact path='/login' component={Login}/>
           </Switch>
         </div>

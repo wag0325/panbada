@@ -10,7 +10,7 @@ import Button from 'material-ui/Button'
 import Dropzone from 'react-dropzone'
 
 import { POST_FEED_QUERY } from './PostList'
-import { POSTS_PER_PAGE } from '../../constants'
+import { POSTS_PER_PAGE, POSTS_ORDER_BY } from '../../constants'
 
 const styles = theme => ({
   container: {
@@ -31,7 +31,7 @@ class CreatePost extends Component {
   state = {
     title: '',
     text: '',
-    picture_url: '',
+    pictureURL: '',
     file: null,
   }
 
@@ -70,7 +70,7 @@ class CreatePost extends Component {
     const date = moment().format("YYYYMMDD");
     const randomString = Math.random()
       .toString(36)
-      .substring(2, 7);
+      .substring(2, 7)
     const cleanFileName = filename.toLowerCase().replace(/[^a-z0-9]/g, "-");
     console.log(cleanFileName)
     const newFilename = `images/${date}-${randomString}-${cleanFileName}`;
@@ -87,7 +87,7 @@ class CreatePost extends Component {
   }
 
   _createPost = async () => {
-    const { title, text, file, picture_url } = this.state
+    const { title, text, file, pictureURL } = this.state
     var pic_url = '';
 
     if ( file ) {
@@ -99,8 +99,8 @@ class CreatePost extends Component {
       })
 
       const { signedRequest, url } = response.data.signS3
-      // picture_url = url
-      this.setState({ picture_url: url })
+      // pictureURL = url
+      this.setState({ pictureURL: url })
       
       pic_url = url 
       await this._uploadToS3(file, signedRequest)
@@ -110,27 +110,31 @@ class CreatePost extends Component {
       variables: {
         title,
         text,
-        picture_url: pic_url,
+        pictureURL: pic_url,
       }
       ,
       update: (store, { data: { createPost }}) => {
-        const skip = 0
+        const after = null
         const first = POSTS_PER_PAGE
-        const orderBy = 'createdAt_DESC'
+        const orderBy = POSTS_ORDER_BY
 
-        const data = store.readQuery({ query: POST_FEED_QUERY, variables: { first, skip, orderBy } })
+        const data = store.readQuery({ query: POST_FEED_QUERY, variables: { first, after, orderBy } })
         console.log("data ", data)
         console.log("createPost ", createPost)
-        data.postFeed.splice(0, 0, createPost)
+        
+        data.postsConnection.edges.splice(0, 0, {node: createPost} )
+        
         console.log("data ", data)
         store.writeQuery({
           query: POST_FEED_QUERY,
           data,
-          variables: { first, skip, orderBy },
+          variables: { first, after, orderBy },
         })
       }
     })
-    this.props.history.push('/')
+
+    this.props.onClose()
+    // this.props.history.push('/')
   }
   
 
@@ -150,20 +154,37 @@ class CreatePost extends Component {
         image_uri: upload.target.result,
         // filename: file.name,
         // filetype: file.type
-      });
-    };
+      })
+    }
 
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(file)
   }
 }
 
 const POST_MUTATION = gql`
-  mutation PostMutation($title: String!, $text: String!, $picture_url: String) {
-    createPost(title: $title, text: $text, picture_url: $picture_url) {
+  mutation PostMutation($title: String!, $text: String!, $pictureURL: String) {
+    createPost(title: $title, text: $text, pictureURL: $pictureURL) {
       id
       title
       text
-      picture_url
+      pictureURL
+      createdAt
+      postedBy {
+        id
+        firstName
+        lastName
+        avatarURL
+      }
+      postComments {
+        id
+        text
+        user {
+          id
+          firstName
+          lastName
+          avatarURL
+        }
+      }
     }
   }
 `
@@ -175,7 +196,7 @@ const S3_SIGN_MUTATION = gql`
       signedRequest
     }
   }
-`;
+`
 
 export default withStyles(styles)(compose(
   graphql(POST_MUTATION, {name: 'postMutation'}),

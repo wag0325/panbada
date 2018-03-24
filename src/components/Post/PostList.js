@@ -12,6 +12,7 @@ import { withStyles } from 'material-ui/styles'
 import { CircularProgress } from 'material-ui/Progress'
 import { LinearProgress } from 'material-ui/Progress'
 
+import { POSTS_PER_PAGE, POSTS_ORDER_BY } from '../../constants'
 
 const styles = theme => ({
   progress: {
@@ -51,18 +52,28 @@ class PostList extends Component {
       return <div>Error</div>
     }
     
-    
-    const endCursor = this.props.postFeedQuery.postsConnection.pageInfo.endCursor
-    if (this.props.postFeedQuery.postsConnection.pageInfo.hasNextPage === false
-        && this.state.hasNextPage === true) {
-      this.setState({ hasNextPage: false })  
-    }
+    const { postsConnection } = this.props.postFeedQuery
+    console.log("postFeedQuery ", this.props.postFeedQuery)
+    console.log("postsConnection ", postsConnection)
+    if (postsConnection) {
+      const endCursor = postsConnection.pageInfo.endCursor
+      
+      if (this.props.postFeedQuery.postsConnection.pageInfo.hasNextPage === false
+          && this.state.hasNextPage === true) {
+        this.setState({ hasNextPage: false })  
+      }
 
-    if (endCursor !== postArrEndCursor) {
-      this.props.postFeedQuery.postsConnection.edges.map((edge) => {
-        postData.push(edge.node)
-        postArrEndCursor = edge.node.id
-      })
+      if (endCursor !== postArrEndCursor ) {
+        this.props.postFeedQuery.postsConnection.edges.map((edge) => {
+          postData.push(edge.node)
+          postArrEndCursor = edge.node.id
+        })
+      }
+      
+      // Created a new post
+      if (postsConnection.edges.length !== POSTS_PER_PAGE) {
+        postData.splice(0, 0, postsConnection.edges[0].node)
+      }
     }
 
     return (
@@ -108,8 +119,8 @@ class PostList extends Component {
 }
 
 export const POST_FEED_QUERY = gql`
-  query PostsConnectionQuery($first: Int, $after: String) {
-    postsConnection(first: $first, after: $after) {
+  query PostsConnectionQuery($first: Int, $after: String, $orderBy: PostOrderByInput) {
+    postsConnection(first: $first, after: $after, orderBy: $orderBy,) {
       pageInfo {
         endCursor
         hasNextPage
@@ -150,7 +161,7 @@ export default graphql(POST_FEED_QUERY, {
   options: ownProps => {
     let after = ownProps.endCursor || null
     return {
-      variables: { first: 5, after:after }
+      variables: { first: POSTS_PER_PAGE, after:after, orderBy: POSTS_ORDER_BY }
     }
   },
 }) (PostList)

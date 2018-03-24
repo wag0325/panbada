@@ -3,11 +3,10 @@ import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
 import Grid from 'material-ui/Grid'
 
-import AddIcon from 'material-ui-icons/Add'
-import Icon from 'material-ui/Icon';
-import Button from 'material-ui/Button';
+import Dialog, { DialogTitle } from 'material-ui/Dialog'
 
 import PostList from '../Post/PostList'
+import PostModalContainer from './PostModalContainer'
 
 const styles = theme => ({
   root: {
@@ -23,6 +22,10 @@ const styles = theme => ({
 })
 
 class HomeContainer extends Component {
+	state = {
+		modalOpen: false,
+	}
+
 	render() {
 		const { classes } = this.props
 
@@ -39,11 +42,17 @@ class HomeContainer extends Component {
 	        	Hello
 	        </Grid>
 				</Grid>
-				<Button variant="fab" color="primary" aria-label="add" className={classes.button}>
-	        <AddIcon />
-	      </Button>
+	      <PostModalContainer />
 			</div>
 			)
+	}
+
+	_handleModalOpen = () => {
+		this.setState({ modalOpen: true, })
+	}
+
+	_handleModalClose = () => {
+		this.setState({ modalOpen: false, })
 	}
 }
 

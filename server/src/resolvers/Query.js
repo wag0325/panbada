@@ -3,9 +3,9 @@ function postFeed(parent, args, ctx, info) {
 }
 
 function postsConnection(parent, args, ctx, info) {
-  const { first, after } = args
+  const { first, after, orderBy } = args
   console.log(first)
-  return ctx.db.query.postsConnection({ after, first }, info)
+  return ctx.db.query.postsConnection({ after, first, orderBy }, info)
 }
 
 function post(parent, { id }, ctx, info) {

@@ -6,12 +6,12 @@ type Post {
   createdAt: DateTime!
   updatedAt: DateTime!
   pictureURL: String
-  postComments: [PostComment!]!
+  postComments: [PostComment!]! @relation(name: "PostComments")
 }
 
 type PostComment {
   id: ID! @unique
-  post: Post!
+  post: Post! @relation(name: "PostComments")
   user: User!
   text: String!
 }

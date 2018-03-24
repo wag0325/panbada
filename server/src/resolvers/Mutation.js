@@ -68,8 +68,9 @@ function createPost(parent, { title, text, pictureURL }, context, info) {
   )
 }
 
-function deletePost(parent, { id }, ctx, info) {
-  return ctx.db.mutation.deletePost({ where: { id } }, info)
+async function deletePost(parent, { id }, context, info) {
+  await context.db.mutation.deleteManyPostComments({ where: { post : {id: id} }})
+  return context.db.mutation.deletePost({ where: { id: id} }, info)
 }
 
 function createPostComment(parent, args, context, info) {

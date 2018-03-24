@@ -25,6 +25,7 @@ const styles = theme => ({
 
 let postData = []
 let postArrEndCursor = ''
+let postArrStartCursor = ''
 
 class PostList extends Component {
   state = {
@@ -57,13 +58,14 @@ class PostList extends Component {
     console.log("postsConnection ", postsConnection)
     if (postsConnection) {
       const endCursor = postsConnection.pageInfo.endCursor
-      
+      const startCursor = postsConnection.edges[0].node.id
       if (this.props.postFeedQuery.postsConnection.pageInfo.hasNextPage === false
           && this.state.hasNextPage === true) {
         this.setState({ hasNextPage: false })  
       }
 
       if (endCursor !== postArrEndCursor ) {
+        postArrStartCursor = postsConnection.edges[0].node.id
         this.props.postFeedQuery.postsConnection.edges.map((edge) => {
           postData.push(edge.node)
           postArrEndCursor = edge.node.id
@@ -71,7 +73,8 @@ class PostList extends Component {
       }
       
       // Created a new post
-      if (postsConnection.edges.length !== POSTS_PER_PAGE) {
+      if (startCursor !== postArrStartCursor) {
+        postArrStartCursor = postsConnection.edges[0].node.id
         postData.splice(0, 0, postsConnection.edges[0].node)
       }
     }

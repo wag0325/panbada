@@ -15,7 +15,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 
 import Header from './Header'
 import Login from './Login'
-import PostList from './Post/PostList'
+import HomeContainer from './container/HomeContainer'
 import CreatePost from './Post/CreatePost'
 import UserList from './User/UserList'
 import UserDetails from './User/UserDetails'
@@ -31,7 +31,7 @@ class App extends Component {
         <Header />
         <div className="">
           <Switch>
-            <Route exact path='/' component={PostList}/>
+            <Route exact path='/' component={HomeContainer}/>
             <Route exact path='/login' component={Login}/>
           </Switch>
         </div>

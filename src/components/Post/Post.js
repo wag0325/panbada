@@ -40,7 +40,6 @@ const styles = theme => ({
     color: theme.palette.text.secondary,
   },
   card: {
-    maxWidth: 400,
   },
   media: {
     height: 194,

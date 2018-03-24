@@ -10,7 +10,6 @@ import Dialog, {
   DialogTitle,
 } from 'material-ui/Dialog'
 import AddIcon from 'material-ui-icons/Add'
-import Icon from 'material-ui/Icon'
 import Tooltip from 'material-ui/Tooltip' 
 
 import CreatePost from '../Post/CreatePost'
@@ -54,28 +53,19 @@ class PostModalContainer extends Component {
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
+          aria-labelledby='alert-dialog-title'
+          aria-describedby='alert-dialog-description'
         >
-          <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+          <DialogTitle id='alert-dialog-title'>{'Creat A New Post'}</DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Let Google help apps determine location. This means sending anonymous location data to
-              Google, even when no apps are running.
+            <DialogContentText id='alert-dialog-description'>
+              Share your thoughts or cool photos with everyone.
             </DialogContentText>
             <CreatePost onClose={this.handleClose}/>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
-              Disagree
-            </Button>
-            <Button onClick={this.handleClose} color="primary" autoFocus>
-              Agree
-            </Button>
-          </DialogActions>
         </Dialog>
       </div>
-    );
+    )
   }
 }
 

@@ -4,10 +4,6 @@ import Post from './Post'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
-import { InfiniteLoader, List } from 'react-virtualized'
-import 'react-virtualized/styles.css'
-import InfiniteScroll from 'react-infinite-scroller'
-
 import { withStyles } from 'material-ui/styles'
 import { CircularProgress } from 'material-ui/Progress'
 import { LinearProgress } from 'material-ui/Progress'

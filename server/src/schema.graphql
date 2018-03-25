@@ -23,6 +23,7 @@ type S3Payload {
 type Query {
   postFeed(filter: String, skip: Int, first: Int): [Post!]!
   postsConnection(filter: String, after: String, first: Int, orderBy: PostOrderByInput): PostConnection
+  usersConnection(filter: String, after: String, first: Int, orderBy: UserOrderByInput): UserConnection
   post(id: ID!): Post
   gigFeed(filter: String, skip: Int, first: Int): [Gig!]!
   gig(gigId: ID!): Gig

@@ -4,12 +4,16 @@ function postFeed(parent, args, ctx, info) {
 
 function postsConnection(parent, args, ctx, info) {
   const { first, after, orderBy } = args
-  console.log(first)
   return ctx.db.query.postsConnection({ after, first, orderBy }, info)
 }
 
 function post(parent, { id }, ctx, info) {
   return ctx.db.query.post({ where: { id } }, info)
+}
+
+function usersConnection(parent, args, ctx, info) {
+  const { first, after, orderBy } = args
+  return ctx.db.query.usersConnection({ after, first, orderBy }, info)
 }
 
 function user(parent, { userId }, context, info) {
@@ -25,6 +29,7 @@ function users(parent, args, context, info) {
   return context.db.query.users({ first, skip, where }, info)
 }
 
+
 function channels(parent, args, context, info) {
   return context.db.query.channels({ where: {} }, info)
 }
@@ -34,6 +39,7 @@ module.exports = {
   postsConnection,
 	post,
 	users,
+  usersConnection,
 	user,
   channels,
 }

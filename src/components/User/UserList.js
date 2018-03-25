@@ -7,8 +7,11 @@ import gql from 'graphql-tag'
 import { withStyles } from 'material-ui/styles';
 import { CircularProgress } from 'material-ui/Progress';
 import { LinearProgress } from 'material-ui/Progress';
+import List from 'material-ui/List'
 
-import List from 'material-ui/List';
+import { USERS_PER_PAGE, USERS_ORDER_BY } from '../../constants'
+
+
 const styles = theme => ({
   progress: {
     margin: theme.spacing.unit * 2,
@@ -39,26 +42,46 @@ class UserList extends Component {
       return <div>Error</div>
     }
 
-    const usersToRender = this.props.userFeedQuery.userFeed
+    const usersToRender = this.props.userFeedQuery.usersConnection.edges
     
     return (
       <List dense={dense}>
         {usersToRender.map((user, index) => 
-          <User key={user.id} index={index} user={user} />)}
+          <User key={user.node.id} index={index} user={user.node} />)}
       </List>
     )
   }
 }
 
 export const USER_FEED_QUERY = gql`
-  query UserFeedQuery {
-    userFeed {
-      id
-      firstName
-      lastName
-      email
-      avatar_url
+  query UsersConnectionQuery($first: Int, $after: String, $orderBy: UserOrderByInput) {
+    usersConnection(first: $first, after: $after, orderBy: $orderBy,) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      edges {
+        node {
+          id
+          email
+          firstName
+          lastName
+          avatarURL
+        }
+      }
+      aggregate {
+        count
+      }
     }
   }
 `
-export default withStyles(styles)(graphql(USER_FEED_QUERY, { name: 'userFeedQuery'})(UserList))
+
+export default withStyles(styles)(graphql(USER_FEED_QUERY, {
+ name: 'userFeedQuery',
+ options: ownProps => {
+    let after = ownProps.endCursor || null
+    return {
+      variables: { first: USERS_PER_PAGE, after:after, orderBy: USERS_ORDER_BY }
+    }
+  },
+})(UserList))

@@ -1,6 +1,6 @@
 // user component for user list
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo'
+import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import { Link } from 'react-router-dom'
 
@@ -38,16 +38,22 @@ const styles = theme => ({
     marginBottom: 12,
     color: theme.palette.text.secondary,
   },
-});
+})
 
 class User extends Component {
   state = {
     secondary: false,
-  };
+    followed: false,
+    userId: '',
+  }
+
+  componentWillMount() {
+    this.setState({userId: this.props.user.id})
+  }
 
   render() {
     const authToken = localStorage.getItem(AUTH_TOKEN)
-    const { secondary } = this.state
+    const { secondary, followed } = this.state
     const { user } = this.props
 
     return (
@@ -65,7 +71,7 @@ class User extends Component {
         <ListItemSecondaryAction>
           <IconButton aria-label="Delete">
           </IconButton>
-          <Button variant="raised" size="small" onClick={() => this._connectUser()}>Follow</Button>
+          {followed ? (<Button variant="raised" size="small" onClick={() => this._unfollowUser()}>Unfollow</Button>) : (<Button variant="raised" size="small" onClick={() => this._followUser()}>Follow</Button>)}
         </ListItemSecondaryAction>
       </ListItem>
     )
@@ -82,27 +88,49 @@ class User extends Component {
       },
     })
   }
+
+  _followUser = async () => {
+    const id = this.props.user.id
+    await this.props.followMutation({
+      variables: {
+        id
+      },
+      update: (store, {data: {follow}}) => {
+        this.setState({ followed: true })
+      },
+    })
+  }
+
+  _unfollowUser = async () => {
+    const id = this.props.user.id
+    await this.props.unfollowMutation({
+      variables: {
+        id
+      },
+      update: (store, {data: {unfollow}}) => {
+        this.setState({ followed: false })
+      },
+    })
+  }
 }
 
-const POST_LIKE_MUTATION = gql`
-  mutation PostLikeMutation($postId: ID!) {
-    postLike(postId: $postId) {
+const FOLLOW_MUTATION = gql`
+  mutation FollowMutation($id: ID!) {
+    follow(id: $id) {
       id
-      post {
-        postLikes {
-          id
-          user {
-            id
-          }
-        }
-      }
-      user {
-        id
-      }
     }
   }
 `
 
-export default withStyles(styles)(graphql(POST_LIKE_MUTATION, {
-  name: 'postLikeMutation',
-})(User))
+const UNFOLLOW_MUTATION = gql`
+  mutation UnfollowMutation($id: ID!) {
+    unfollow(id: $id) {
+      id
+    }
+  }
+`
+
+export default withStyles(styles)(compose(
+  graphql(FOLLOW_MUTATION, {name: 'followMutation',}),
+  graphql(UNFOLLOW_MUTATION, {name: 'unfollowMutation',})
+)(User))

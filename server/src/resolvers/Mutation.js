@@ -202,18 +202,28 @@ async function login(parent, args, context, info) {
 
 function follow(parent, { id }, context, info) {
   const userId = getUserId(context)
-  
-  // add a user to my follows 
+
   return context.db.mutation.updateUser({
     data: { 
       follows: {
-        connect: [{ id: id}]
+        connect: [{ id }]
       }
     },
     where: { id: userId },
   }, info)
+}
 
-  // update following user's followers
+function unfollow(parent, { id }, context, info) {
+  const userId = getUserId(context)
+  
+  return context.db.mutation.updateUser({
+    data: { 
+      follows: {
+        disconnect: [{ id }]
+      }
+    },
+    where: { id: userId },
+  }, info)
 }
 
 async function createMessage(parent, args, context, info) {
@@ -266,10 +276,10 @@ module.exports = {
   deletePostComment,
   createGig,
   deleteGig,
-  createMessage,
   signup,
   login,
   follow,
+  unfollow,
   signS3,
   createMessage,
   deleteMessage,

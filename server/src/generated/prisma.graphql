@@ -40,6 +40,7 @@ type Post implements Node {
   updatedAt: DateTime!
   pictureURL: String
   postComments(where: PostCommentWhereInput, orderBy: PostCommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostComment!]
+  postLikes(where: PostLikeWhereInput, orderBy: PostLikeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostLike!]
 }
 
 type PostComment implements Node {
@@ -47,6 +48,12 @@ type PostComment implements Node {
   post(where: PostWhereInput): Post!
   user(where: UserWhereInput): User!
   text: String!
+}
+
+type PostLike implements Node {
+  id: ID!
+  post(where: PostWhereInput): Post!
+  user(where: UserWhereInput): User!
 }
 
 type User implements Node {
@@ -62,6 +69,7 @@ type User implements Node {
   follows(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
   channels(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Channel!]
   messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
+  postLikes(where: PostLikeWhereInput, orderBy: PostLikeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostLike!]
 }
 
 
@@ -86,6 +94,10 @@ type AggregatePost {
 }
 
 type AggregatePostComment {
+  count: Int!
+}
+
+type AggregatePostLike {
   count: Int!
 }
 
@@ -1154,36 +1166,42 @@ input MessageWhereUniqueInput {
 type Mutation {
   createPost(data: PostCreateInput!): Post!
   createPostComment(data: PostCommentCreateInput!): PostComment!
+  createPostLike(data: PostLikeCreateInput!): PostLike!
   createGig(data: GigCreateInput!): Gig!
   createUser(data: UserCreateInput!): User!
   createMessage(data: MessageCreateInput!): Message!
   createChannel(data: ChannelCreateInput!): Channel!
   updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
   updatePostComment(data: PostCommentUpdateInput!, where: PostCommentWhereUniqueInput!): PostComment
+  updatePostLike(data: PostLikeUpdateInput!, where: PostLikeWhereUniqueInput!): PostLike
   updateGig(data: GigUpdateInput!, where: GigWhereUniqueInput!): Gig
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateMessage(data: MessageUpdateInput!, where: MessageWhereUniqueInput!): Message
   updateChannel(data: ChannelUpdateInput!, where: ChannelWhereUniqueInput!): Channel
   deletePost(where: PostWhereUniqueInput!): Post
   deletePostComment(where: PostCommentWhereUniqueInput!): PostComment
+  deletePostLike(where: PostLikeWhereUniqueInput!): PostLike
   deleteGig(where: GigWhereUniqueInput!): Gig
   deleteUser(where: UserWhereUniqueInput!): User
   deleteMessage(where: MessageWhereUniqueInput!): Message
   deleteChannel(where: ChannelWhereUniqueInput!): Channel
   upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
   upsertPostComment(where: PostCommentWhereUniqueInput!, create: PostCommentCreateInput!, update: PostCommentUpdateInput!): PostComment!
+  upsertPostLike(where: PostLikeWhereUniqueInput!, create: PostLikeCreateInput!, update: PostLikeUpdateInput!): PostLike!
   upsertGig(where: GigWhereUniqueInput!, create: GigCreateInput!, update: GigUpdateInput!): Gig!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertMessage(where: MessageWhereUniqueInput!, create: MessageCreateInput!, update: MessageUpdateInput!): Message!
   upsertChannel(where: ChannelWhereUniqueInput!, create: ChannelCreateInput!, update: ChannelUpdateInput!): Channel!
   updateManyPosts(data: PostUpdateInput!, where: PostWhereInput!): BatchPayload!
   updateManyPostComments(data: PostCommentUpdateInput!, where: PostCommentWhereInput!): BatchPayload!
+  updateManyPostLikes(data: PostLikeUpdateInput!, where: PostLikeWhereInput!): BatchPayload!
   updateManyGigs(data: GigUpdateInput!, where: GigWhereInput!): BatchPayload!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput!): BatchPayload!
   updateManyMessages(data: MessageUpdateInput!, where: MessageWhereInput!): BatchPayload!
   updateManyChannels(data: ChannelUpdateInput!, where: ChannelWhereInput!): BatchPayload!
   deleteManyPosts(where: PostWhereInput!): BatchPayload!
   deleteManyPostComments(where: PostCommentWhereInput!): BatchPayload!
+  deleteManyPostLikes(where: PostLikeWhereInput!): BatchPayload!
   deleteManyGigs(where: GigWhereInput!): BatchPayload!
   deleteManyUsers(where: UserWhereInput!): BatchPayload!
   deleteManyMessages(where: MessageWhereInput!): BatchPayload!
@@ -1499,10 +1517,16 @@ input PostCreateInput {
   pictureURL: String
   postedBy: UserCreateOneInput
   postComments: PostCommentCreateManyWithoutPostInput
+  postLikes: PostLikeCreateManyWithoutPostInput
 }
 
 input PostCreateOneWithoutPostCommentsInput {
   create: PostCreateWithoutPostCommentsInput
+  connect: PostWhereUniqueInput
+}
+
+input PostCreateOneWithoutPostLikesInput {
+  create: PostCreateWithoutPostLikesInput
   connect: PostWhereUniqueInput
 }
 
@@ -1511,6 +1535,15 @@ input PostCreateWithoutPostCommentsInput {
   text: String!
   pictureURL: String
   postedBy: UserCreateOneInput
+  postLikes: PostLikeCreateManyWithoutPostInput
+}
+
+input PostCreateWithoutPostLikesInput {
+  title: String!
+  text: String!
+  pictureURL: String
+  postedBy: UserCreateOneInput
+  postComments: PostCommentCreateManyWithoutPostInput
 }
 
 """
@@ -1525,6 +1558,229 @@ type PostEdge {
   A cursor for use in pagination.
   """
   cursor: String!
+}
+
+"""
+A connection to a list of items.
+"""
+type PostLikeConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [PostLikeEdge]!
+  aggregate: AggregatePostLike!
+}
+
+input PostLikeCreateInput {
+  post: PostCreateOneWithoutPostLikesInput!
+  user: UserCreateOneWithoutPostLikesInput!
+}
+
+input PostLikeCreateManyWithoutPostInput {
+  create: [PostLikeCreateWithoutPostInput!]
+  connect: [PostLikeWhereUniqueInput!]
+}
+
+input PostLikeCreateManyWithoutUserInput {
+  create: [PostLikeCreateWithoutUserInput!]
+  connect: [PostLikeWhereUniqueInput!]
+}
+
+input PostLikeCreateWithoutPostInput {
+  user: UserCreateOneWithoutPostLikesInput!
+}
+
+input PostLikeCreateWithoutUserInput {
+  post: PostCreateOneWithoutPostLikesInput!
+}
+
+"""
+An edge in a connection.
+"""
+type PostLikeEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: PostLike!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum PostLikeOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type PostLikePreviousValues {
+  id: ID!
+}
+
+type PostLikeSubscriptionPayload {
+  mutation: MutationType!
+  node: PostLike
+  updatedFields: [String!]
+  previousValues: PostLikePreviousValues
+}
+
+input PostLikeSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PostLikeSubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PostLikeSubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PostLikeWhereInput
+}
+
+input PostLikeUpdateInput {
+  post: PostUpdateOneWithoutPostLikesInput
+  user: UserUpdateOneWithoutPostLikesInput
+}
+
+input PostLikeUpdateManyWithoutPostInput {
+  create: [PostLikeCreateWithoutPostInput!]
+  connect: [PostLikeWhereUniqueInput!]
+  disconnect: [PostLikeWhereUniqueInput!]
+  delete: [PostLikeWhereUniqueInput!]
+  update: [PostLikeUpdateWithWhereUniqueWithoutPostInput!]
+  upsert: [PostLikeUpsertWithWhereUniqueWithoutPostInput!]
+}
+
+input PostLikeUpdateManyWithoutUserInput {
+  create: [PostLikeCreateWithoutUserInput!]
+  connect: [PostLikeWhereUniqueInput!]
+  disconnect: [PostLikeWhereUniqueInput!]
+  delete: [PostLikeWhereUniqueInput!]
+  update: [PostLikeUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [PostLikeUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input PostLikeUpdateWithoutPostDataInput {
+  user: UserUpdateOneWithoutPostLikesInput
+}
+
+input PostLikeUpdateWithoutUserDataInput {
+  post: PostUpdateOneWithoutPostLikesInput
+}
+
+input PostLikeUpdateWithWhereUniqueWithoutPostInput {
+  where: PostLikeWhereUniqueInput!
+  data: PostLikeUpdateWithoutPostDataInput!
+}
+
+input PostLikeUpdateWithWhereUniqueWithoutUserInput {
+  where: PostLikeWhereUniqueInput!
+  data: PostLikeUpdateWithoutUserDataInput!
+}
+
+input PostLikeUpsertWithWhereUniqueWithoutPostInput {
+  where: PostLikeWhereUniqueInput!
+  update: PostLikeUpdateWithoutPostDataInput!
+  create: PostLikeCreateWithoutPostInput!
+}
+
+input PostLikeUpsertWithWhereUniqueWithoutUserInput {
+  where: PostLikeWhereUniqueInput!
+  update: PostLikeUpdateWithoutUserDataInput!
+  create: PostLikeCreateWithoutUserInput!
+}
+
+input PostLikeWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PostLikeWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PostLikeWhereInput!]
+  id: ID
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  post: PostWhereInput
+  user: UserWhereInput
+}
+
+input PostLikeWhereUniqueInput {
+  id: ID
 }
 
 enum PostOrderByInput {
@@ -1592,6 +1848,7 @@ input PostUpdateInput {
   pictureURL: String
   postedBy: UserUpdateOneInput
   postComments: PostCommentUpdateManyWithoutPostInput
+  postLikes: PostLikeUpdateManyWithoutPostInput
 }
 
 input PostUpdateOneWithoutPostCommentsInput {
@@ -1602,16 +1859,38 @@ input PostUpdateOneWithoutPostCommentsInput {
   upsert: PostUpsertWithoutPostCommentsInput
 }
 
+input PostUpdateOneWithoutPostLikesInput {
+  create: PostCreateWithoutPostLikesInput
+  connect: PostWhereUniqueInput
+  delete: Boolean
+  update: PostUpdateWithoutPostLikesDataInput
+  upsert: PostUpsertWithoutPostLikesInput
+}
+
 input PostUpdateWithoutPostCommentsDataInput {
   title: String
   text: String
   pictureURL: String
   postedBy: UserUpdateOneInput
+  postLikes: PostLikeUpdateManyWithoutPostInput
+}
+
+input PostUpdateWithoutPostLikesDataInput {
+  title: String
+  text: String
+  pictureURL: String
+  postedBy: UserUpdateOneInput
+  postComments: PostCommentUpdateManyWithoutPostInput
 }
 
 input PostUpsertWithoutPostCommentsInput {
   update: PostUpdateWithoutPostCommentsDataInput!
   create: PostCreateWithoutPostCommentsInput!
+}
+
+input PostUpsertWithoutPostLikesInput {
+  update: PostUpdateWithoutPostLikesDataInput!
+  create: PostCreateWithoutPostLikesInput!
 }
 
 input PostWhereInput {
@@ -1897,6 +2176,9 @@ input PostWhereInput {
   postComments_every: PostCommentWhereInput
   postComments_some: PostCommentWhereInput
   postComments_none: PostCommentWhereInput
+  postLikes_every: PostLikeWhereInput
+  postLikes_some: PostLikeWhereInput
+  postLikes_none: PostLikeWhereInput
 }
 
 input PostWhereUniqueInput {
@@ -1906,18 +2188,21 @@ input PostWhereUniqueInput {
 type Query {
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
   postComments(where: PostCommentWhereInput, orderBy: PostCommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostComment]!
+  postLikes(where: PostLikeWhereInput, orderBy: PostLikeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostLike]!
   gigs(where: GigWhereInput, orderBy: GigOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Gig]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message]!
   channels(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Channel]!
   post(where: PostWhereUniqueInput!): Post
   postComment(where: PostCommentWhereUniqueInput!): PostComment
+  postLike(where: PostLikeWhereUniqueInput!): PostLike
   gig(where: GigWhereUniqueInput!): Gig
   user(where: UserWhereUniqueInput!): User
   message(where: MessageWhereUniqueInput!): Message
   channel(where: ChannelWhereUniqueInput!): Channel
   postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
   postCommentsConnection(where: PostCommentWhereInput, orderBy: PostCommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostCommentConnection!
+  postLikesConnection(where: PostLikeWhereInput, orderBy: PostLikeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostLikeConnection!
   gigsConnection(where: GigWhereInput, orderBy: GigOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): GigConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   messagesConnection(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MessageConnection!
@@ -1934,6 +2219,7 @@ type Query {
 type Subscription {
   post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
   postComment(where: PostCommentSubscriptionWhereInput): PostCommentSubscriptionPayload
+  postLike(where: PostLikeSubscriptionWhereInput): PostLikeSubscriptionPayload
   gig(where: GigSubscriptionWhereInput): GigSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   message(where: MessageSubscriptionWhereInput): MessageSubscriptionPayload
@@ -1965,6 +2251,7 @@ input UserCreateInput {
   follows: UserCreateManyWithoutFollowersInput
   channels: ChannelCreateManyWithoutUsersInput
   messages: MessageCreateManyWithoutFromInput
+  postLikes: PostLikeCreateManyWithoutUserInput
 }
 
 input UserCreateManyWithoutChannelsInput {
@@ -1992,6 +2279,11 @@ input UserCreateOneWithoutMessagesInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutPostLikesInput {
+  create: UserCreateWithoutPostLikesInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateWithoutChannelsInput {
   firstName: String!
   lastName: String!
@@ -2001,6 +2293,7 @@ input UserCreateWithoutChannelsInput {
   followers: UserCreateManyWithoutFollowsInput
   follows: UserCreateManyWithoutFollowersInput
   messages: MessageCreateManyWithoutFromInput
+  postLikes: PostLikeCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutFollowersInput {
@@ -2012,6 +2305,7 @@ input UserCreateWithoutFollowersInput {
   follows: UserCreateManyWithoutFollowersInput
   channels: ChannelCreateManyWithoutUsersInput
   messages: MessageCreateManyWithoutFromInput
+  postLikes: PostLikeCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutFollowsInput {
@@ -2023,6 +2317,7 @@ input UserCreateWithoutFollowsInput {
   followers: UserCreateManyWithoutFollowsInput
   channels: ChannelCreateManyWithoutUsersInput
   messages: MessageCreateManyWithoutFromInput
+  postLikes: PostLikeCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutMessagesInput {
@@ -2034,6 +2329,19 @@ input UserCreateWithoutMessagesInput {
   followers: UserCreateManyWithoutFollowsInput
   follows: UserCreateManyWithoutFollowersInput
   channels: ChannelCreateManyWithoutUsersInput
+  postLikes: PostLikeCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutPostLikesInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  avatarURL: String
+  followers: UserCreateManyWithoutFollowsInput
+  follows: UserCreateManyWithoutFollowersInput
+  channels: ChannelCreateManyWithoutUsersInput
+  messages: MessageCreateManyWithoutFromInput
 }
 
 """
@@ -2125,6 +2433,7 @@ input UserUpdateDataInput {
   follows: UserUpdateManyWithoutFollowersInput
   channels: ChannelUpdateManyWithoutUsersInput
   messages: MessageUpdateManyWithoutFromInput
+  postLikes: PostLikeUpdateManyWithoutUserInput
 }
 
 input UserUpdateInput {
@@ -2137,6 +2446,7 @@ input UserUpdateInput {
   follows: UserUpdateManyWithoutFollowersInput
   channels: ChannelUpdateManyWithoutUsersInput
   messages: MessageUpdateManyWithoutFromInput
+  postLikes: PostLikeUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyWithoutChannelsInput {
@@ -2183,6 +2493,14 @@ input UserUpdateOneWithoutMessagesInput {
   upsert: UserUpsertWithoutMessagesInput
 }
 
+input UserUpdateOneWithoutPostLikesInput {
+  create: UserCreateWithoutPostLikesInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateWithoutPostLikesDataInput
+  upsert: UserUpsertWithoutPostLikesInput
+}
+
 input UserUpdateWithoutChannelsDataInput {
   firstName: String
   lastName: String
@@ -2192,6 +2510,7 @@ input UserUpdateWithoutChannelsDataInput {
   followers: UserUpdateManyWithoutFollowsInput
   follows: UserUpdateManyWithoutFollowersInput
   messages: MessageUpdateManyWithoutFromInput
+  postLikes: PostLikeUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutFollowersDataInput {
@@ -2203,6 +2522,7 @@ input UserUpdateWithoutFollowersDataInput {
   follows: UserUpdateManyWithoutFollowersInput
   channels: ChannelUpdateManyWithoutUsersInput
   messages: MessageUpdateManyWithoutFromInput
+  postLikes: PostLikeUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutFollowsDataInput {
@@ -2214,6 +2534,7 @@ input UserUpdateWithoutFollowsDataInput {
   followers: UserUpdateManyWithoutFollowsInput
   channels: ChannelUpdateManyWithoutUsersInput
   messages: MessageUpdateManyWithoutFromInput
+  postLikes: PostLikeUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutMessagesDataInput {
@@ -2225,6 +2546,19 @@ input UserUpdateWithoutMessagesDataInput {
   followers: UserUpdateManyWithoutFollowsInput
   follows: UserUpdateManyWithoutFollowersInput
   channels: ChannelUpdateManyWithoutUsersInput
+  postLikes: PostLikeUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithoutPostLikesDataInput {
+  firstName: String
+  lastName: String
+  email: String
+  password: String
+  avatarURL: String
+  followers: UserUpdateManyWithoutFollowsInput
+  follows: UserUpdateManyWithoutFollowersInput
+  channels: ChannelUpdateManyWithoutUsersInput
+  messages: MessageUpdateManyWithoutFromInput
 }
 
 input UserUpdateWithWhereUniqueWithoutChannelsInput {
@@ -2250,6 +2584,11 @@ input UserUpsertNestedInput {
 input UserUpsertWithoutMessagesInput {
   update: UserUpdateWithoutMessagesDataInput!
   create: UserCreateWithoutMessagesInput!
+}
+
+input UserUpsertWithoutPostLikesInput {
+  update: UserUpdateWithoutPostLikesDataInput!
+  create: UserCreateWithoutPostLikesInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutChannelsInput {
@@ -2667,6 +3006,9 @@ input UserWhereInput {
   messages_every: MessageWhereInput
   messages_some: MessageWhereInput
   messages_none: MessageWhereInput
+  postLikes_every: PostLikeWhereInput
+  postLikes_some: PostLikeWhereInput
+  postLikes_none: PostLikeWhereInput
 }
 
 input UserWhereUniqueInput {

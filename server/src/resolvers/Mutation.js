@@ -73,6 +73,51 @@ async function deletePost(parent, { id }, context, info) {
   return context.db.mutation.deletePost({ where: { id: id} }, info)
 }
 
+async function likePost(parent, args, context, info ) {
+  const userId = getUserId(context)
+  const { id } = args
+
+  const postLikeExists = await context.db.exists.PostLike({
+    user: { id: userId },
+    post: { id: id },
+  })
+  
+  console.log("exists? ", postLikeExists)
+  // if unliked and postLike exists
+  // else unliked and postlike don't exists => Error
+  // else liked and postlike don't exists 
+  // else liked and postlike exists => Error
+  if (postLikeExists) {
+    throw new Error(`Already liked the post: ${id}`)
+  } 
+
+  return context.db.mutation.createPostLike({ 
+    data: {
+      post: { connect: { id: id }},
+      user: { connect: { id: userId }}, 
+    }
+  }, info)
+}
+
+async function unlikePost(parent, args, context, info ) {
+  const userId = getUserId(context)
+  const { id } = args
+
+  // const postLikeExists = await context.db.exists.PostLike({
+  //   user: { id: userId },
+  //   post: { id: id },
+  // })
+  
+  // if(!postLikeExists) {
+  //   throw new Error(`The post, ${id}, doesn't exists`)
+  // }
+
+  return context.db.mutation.deletePostLike({
+    where: { id: id }
+  }, info)
+  
+}
+
 function createPostComment(parent, args, context, info) {
   const userId = getUserId(context)
   const { id, text } = args
@@ -215,6 +260,8 @@ function deleteChannel(parent, { id }, ctx, info) {
 module.exports = {
   createPost,
   deletePost,
+  likePost,
+  unlikePost,
   createPostComment,
   deletePostComment,
   createGig,

@@ -34,6 +34,8 @@ type Query {
 type Mutation {
   createPost(title: String!, text: String, pictureURL: String): Post
   deletePost(id: ID!): Post
+  likePost(id: ID!): PostLike
+  unlikePost(id: ID!): PostLike
   createPostComment(id: ID!, text: String!): PostComment
   deletePostComment(id: ID!): PostComment
   createGig(title: String!, text: String!, type: String!): Gig

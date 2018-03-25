@@ -6,22 +6,20 @@ import List, {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
-} from 'material-ui/List';
+} from 'material-ui/List'
 import Avatar from 'material-ui/Avatar'
-
-import { AUTH_TOKEN } from '../../constants'
 
 class PostComment extends Component {
   render() {
-    const authToken = localStorage.getItem(AUTH_TOKEN)
     const { user } = this.props.postComment
     return (
     	<ListItem>
         <ListItemAvatar>
-          <Avatar aria-label="Recipe" 
+          <Avatar aria-label={`${user.firstName}-${user.lastName}`}
               className={this.props.avatar} 
-              src={user.avatar_url}
-              />
+              src={user.avatarURL || ''}>
+              {user.firstName.substring(0,1)}
+          </Avatar>
         </ListItemAvatar>
         <Link to={`/u/${user.id}`}><ListItemText
           primary={`${user.firstName} ${user.lastName}`}

@@ -8,6 +8,7 @@ import { withStyles } from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
 import Button from 'material-ui/Button'
 import Dropzone from 'react-dropzone'
+import { FormControl, FormHelperText } from 'material-ui/Form'
 
 import { POST_FEED_QUERY } from './PostList'
 import { POSTS_PER_PAGE, POSTS_ORDER_BY } from '../../constants'
@@ -23,7 +24,7 @@ const styles = theme => ({
     width: 200,
   },
   button: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing.unit * 2,
   },
 })
 
@@ -36,24 +37,33 @@ class CreatePost extends Component {
   }
 
   render() {
+    const { classes } = this.props
+
     return (
       <form className={this.props.container} noValidate autoComplete="off">
-        <TextField
-          id="title"
-          label="Title"
-          className={this.props.textField}
-          value={this.state.title}
-          onChange={e => this.setState({ title: e.target.value })}
-          margin="normal"
-        />
-        <TextField
-          id="post"
-          label="Post"
-          className={this.props.textField}
-          value={this.state.text}
-          onChange={e => this.setState({ text: e.target.value })}
-          margin="normal"
-        />
+        <FormControl fullWidth className={classes.margin}>
+          <TextField
+            id="title"
+            label="Title"
+            className={this.props.textField}
+            value={this.state.title}
+            onChange={e => this.setState({ title: e.target.value })}
+            margin="normal"
+          />
+        </FormControl>
+        <FormControl fullWidth className={classes.margin}>
+          <TextField
+            id='post'
+            label='Post'
+            className={this.props.textField}
+            multiline={true}
+            rows={5}
+            rowsMax={8}
+            value={this.state.text}
+            onChange={e => this.setState({ text: e.target.value })}
+            margin='normal'
+          />
+        </FormControl>
         <Dropzone onDrop={this._onDrop}>
           <p>
             Try dropping some files here, or click to select files to upload.

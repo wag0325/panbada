@@ -40,6 +40,7 @@ const styles = theme => ({
     color: theme.palette.text.secondary,
   },
   card: {
+    marginBottom: 7,
   },
   media: {
     height: 194,
@@ -76,7 +77,7 @@ class Post extends Component {
         <Card className={classes.card}>
           <CardHeader
             avatar={
-              <Avatar aria-label="Recipe" 
+              <Avatar aria-label={`${post.postedBy.firstName}-${post.postedBy.lastName}`} 
               className={this.props.avatar} 
               src={post.postedBy.avatarURL || ''}>
               {post.postedBy.firstName.substring(0,1)}
@@ -87,7 +88,7 @@ class Post extends Component {
                 <MoreVertIcon />
               </IconButton>
             }
-            title={post.postedBy ? post.postedBy.firstName : "Unknown"}
+            title={post.postedBy ? `${post.postedBy.firstName} ${post.postedBy.lastName}` : 'Unknown'}
             subheader={timeDifferenceForDate(post.createdAt)}
           />
           {post.pictureURL && <CardMedia
@@ -124,7 +125,7 @@ class Post extends Component {
           </CardActions>
           <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
             <CardContent>
-              {authToken && (<CreatePostComment postId={this.props.post.id} page={this.props.page}/>)}
+              {authToken && (<CreatePostComment id={this.props.post.id} page={this.props.page}/>)}
               <List dense={dense}>
                 {commentsToRender.map((postComment, index) => 
                   <PostComment key={postComment.id} index={index} postComment={postComment} />)}

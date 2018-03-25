@@ -12,10 +12,13 @@ import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
 import red from 'material-ui/colors/red';
 import FavoriteIcon from 'material-ui-icons/Favorite';
-import ShareIcon from 'material-ui-icons/Share';
-import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
-import MoreVertIcon from 'material-ui-icons/MoreVert';
-import List from 'material-ui/List';
+import FavoriteBorderIcon from 'material-ui-icons/FavoriteBorder'
+import BookmarkIcon from 'material-ui-icons/Bookmark'
+import BookmarkBorderIcon from 'material-ui-icons/BookmarkBorder'
+import ChatBubbleIcon from 'material-ui-icons/ChatBubble'
+import ChatBubbleOutlineIcon from 'material-ui-icons/ChatBubbleOutline'
+import MoreVertIcon from 'material-ui-icons/MoreVert'
+import List from 'material-ui/List'
 
 import { AUTH_TOKEN } from '../../constants'
 import { timeDifferenceForDate } from '../../utils'
@@ -107,10 +110,7 @@ class Post extends Component {
           </CardContent>
           <CardActions className={this.props.actions} disableActionSpacing>
             <IconButton aria-label="Add to favorites">
-              <FavoriteIcon />
-            </IconButton>
-            <IconButton aria-label="Share">
-              <ShareIcon />
+              <FavoriteBorderIcon />
             </IconButton>
             <IconButton
               className={classnames(this.props.expand, {
@@ -120,7 +120,10 @@ class Post extends Component {
               aria-expanded={this.state.expanded}
               aria-label="Show more"
             > 
-              <ExpandMoreIcon />
+              <ChatBubbleOutlineIcon />
+            </IconButton>
+            <IconButton aria-label="Share">
+              <BookmarkBorderIcon />
             </IconButton>
           </CardActions>
           <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>

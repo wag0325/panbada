@@ -17,6 +17,7 @@ import Header from './Header'
 import Login from './Login'
 import HomeContainer from './container/HomeContainer'
 import UsersContainer from './container/UsersContainer'
+import UserContainer from './container/UserContainer'
 
 class App extends Component {
   render() {
@@ -26,8 +27,9 @@ class App extends Component {
         <div className="">
           <Switch>
             <Route exact path='/' component={HomeContainer}/>
-            <Route exact path='/people' component={UsersContainer}/>
             <Route exact path='/login' component={Login}/>
+            <Route exact path='/people' component={UsersContainer}/>
+            <Route path='/u/:id' component={UserContainer}/>
           </Switch>
         </div>
       </div>

@@ -29,6 +29,7 @@ type Query {
   gig(gigId: ID!): Gig
   users(filter: String, skip: Int, first: Int): [User!]!
   user(id: ID!): User
+  me: User
   channels(filter: String, skip: Int, first: Int): [Channel!]!
 }
 

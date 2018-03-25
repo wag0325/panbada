@@ -1,3 +1,5 @@
+const { getUserId } = require('../utils')
+
 function postFeed(parent, args, ctx, info) {
   return ctx.db.query.posts({ where: {} }, info)
 }
@@ -16,7 +18,12 @@ function usersConnection(parent, args, ctx, info) {
   return ctx.db.query.usersConnection({ after, first, orderBy }, info)
 }
 
-function user(parent, { userId }, context, info) {
+function user(parent, { id }, context, info) {
+  return context.db.query.user({where: { id } }, info)
+}
+
+function me(parent, args, context, info) {
+  const userId = getUserId(context)
   return context.db.query.user({where: { id: userId } }, info)
 }
 
@@ -41,5 +48,6 @@ module.exports = {
 	users,
   usersConnection,
 	user,
+  me,
   channels,
 }

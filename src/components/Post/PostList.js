@@ -144,6 +144,12 @@ export const POST_FEED_QUERY = gql`
           title
           text
           pictureURL
+          postLikes {
+            id
+            user {
+              id
+            }
+          }
           postedBy {
             id
             firstName

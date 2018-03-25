@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo'
+import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 
 import { withStyles } from 'material-ui/styles'
@@ -20,7 +20,7 @@ import ChatBubbleOutlineIcon from 'material-ui-icons/ChatBubbleOutline'
 import MoreVertIcon from 'material-ui-icons/MoreVert'
 import List from 'material-ui/List'
 
-import { AUTH_TOKEN } from '../../constants'
+import { AUTH_TOKEN, ME_ID } from '../../constants'
 import { timeDifferenceForDate } from '../../utils'
 
 import PostComment from './PostComment'
@@ -64,17 +64,32 @@ const styles = theme => ({
   avatar: {
     backgroundColor: red[500],
   },
-});
+})
 
 class Post extends Component {
-  state = { expanded: false, dense: true }
+  state = { 
+    expanded: false, 
+    dense: true,
+    likePostId: null,
+  }
 
   render() {
-    const { classes } = this.props
-    const { dense } = this.state
     const authToken = localStorage.getItem(AUTH_TOKEN)
-    const post = this.props.post
+    const meId = localStorage.getItem(ME_ID)
+
+    const { classes, post } = this.props
+    const { dense } = this.state
     const commentsToRender = post.postComments
+    
+    // if (post || post.postLikes) {
+    //   post.postLikes.map(like => {
+    //     if (like.user.id === meId) { return }
+    //   })
+    // }
+    console.log("likepost render ", this.state.likePostId)
+
+    // display already liked posts
+    // this.setState({ likePostId: post.postLikes.})
     return (
       <div>
         <Card className={classes.card}>
@@ -109,9 +124,20 @@ class Post extends Component {
             </Typography>
           </CardContent>
           <CardActions className={this.props.actions} disableActionSpacing>
-            <IconButton aria-label="Add to favorites">
-              <FavoriteBorderIcon />
-            </IconButton>
+            { this.state.likedPostId ? (
+              <IconButton 
+                aria-label='Add to favorites'
+                onClick={this._unlikePost}
+              >
+                <FavoriteIcon />
+              </IconButton>) : (
+              <IconButton 
+               aria-label='Add to favorites'
+               onClick={this._likePost}
+              >
+                <FavoriteBorderIcon />
+              </IconButton>
+            )}
             <IconButton
               className={classnames(this.props.expand, {
                 [this.props.expandOpen]: this.state.expanded,
@@ -145,23 +171,42 @@ class Post extends Component {
   }
 
   _likePost = async () => {
-    const postId = this.props.post.id
-    await this.props.postLikeMutation({
+    const id = this.props.post.id
+    console.log("id ", id)
+    await this.props.likePostMutation({
       variables: {
-        postId
+        id
       },
-      update: (store, {data: {postLike}}) => {
-        this.props.updateStoreAfterPostLike(store, postLike, postId)
+      update: (store, {data: { likePost }}) => {
+        console.log("store ", store)
+        console.log("likePost ", likePost)
+        this.setState({likePostId: likePost.id})
+      },
+    })
+  }
+
+  _unlikePost = async () => {
+    const id = this.state.likePostId
+    console.log("id ", id)
+    await this.props.unlikePostMutation({
+      variables: {
+        id
+      },
+      update: (store, {data: { unlikePost }}) => {
+        console.log("store ", store)
+        console.log("likePost ", unlikePost)
+        this.setState({likePostId: ''})
       },
     })
   }
 }
 
-const POST_LIKE_MUTATION = gql`
-  mutation PostLikeMutation($postId: ID!) {
-    postLike(postId: $postId) {
+const LIKE_POST_MUTATION = gql`
+  mutation LikePostMutation($id: ID!) {
+    likePost(id: $id) {
       id
       post {
+        id
         postLikes {
           id
           user {
@@ -176,6 +221,15 @@ const POST_LIKE_MUTATION = gql`
   }
 `
 
-export default graphql(POST_LIKE_MUTATION, {
-  name: 'postLikeMutation',
-})(withStyles(styles)(Post))
+const UNLIKE_POST_MUTATION = gql`
+  mutation UnlikePostMutation($id: ID!) {
+    unlikePost(id: $id) {
+      id
+    }
+  }
+`
+
+export default withStyles(styles)(compose(
+  graphql(LIKE_POST_MUTATION, { name: 'likePostMutation' }),
+  graphql(UNLIKE_POST_MUTATION, { name: 'unlikePostMutation' }),
+)(Post))

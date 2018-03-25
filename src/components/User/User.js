@@ -56,7 +56,7 @@ class User extends Component {
           <Avatar aria-label={`${user.firstName}-${user.lastName}`}
               className={this.props.avatar} 
               src={user.avatar_url}
-              />
+          >{user.firstName.substring(0,1)}</Avatar>
         </ListItemAvatar>
         <Link to={`/u/${user.id}`}><ListItemText
           primary={`${user.firstName} ${user.lastName}`}
@@ -65,7 +65,7 @@ class User extends Component {
         <ListItemSecondaryAction>
           <IconButton aria-label="Delete">
           </IconButton>
-          <Button size="small" onClick={() => this._connectUser()}>Connect</Button>
+          <Button variant="raised" size="small" onClick={() => this._connectUser()}>Follow</Button>
         </ListItemSecondaryAction>
       </ListItem>
     )

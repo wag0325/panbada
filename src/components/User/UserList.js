@@ -4,9 +4,10 @@ import User from './User'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
-import { withStyles } from 'material-ui/styles';
-import { CircularProgress } from 'material-ui/Progress';
-import { LinearProgress } from 'material-ui/Progress';
+import { withStyles } from 'material-ui/styles'
+import { CircularProgress } from 'material-ui/Progress'
+import { LinearProgress } from 'material-ui/Progress'
+import Paper from 'material-ui/Paper'
 import List from 'material-ui/List'
 
 import { USERS_PER_PAGE, USERS_ORDER_BY } from '../../constants'
@@ -16,10 +17,12 @@ const styles = theme => ({
   progress: {
     margin: theme.spacing.unit * 2,
   },
-   root: {
-    flexGrow: 1,
-  },
-});
+  root: theme.mixins.gutters({
+    paddingTop: 16,
+    paddingBottom: 16,
+    marginTop: theme.spacing.unit * 3,
+  }),
+})
 
 class UserList extends Component {
   state = {
@@ -27,7 +30,8 @@ class UserList extends Component {
   };
 
   render() {
-    const { dense } = this.state;
+    const { dense } = this.state
+    const { classes } = this.props
 
     if (this.props.userFeedQuery && this.props.userFeedQuery.loading) {
       // return <CircularProgress className={this.props.progress} size={50} />
@@ -45,10 +49,12 @@ class UserList extends Component {
     const usersToRender = this.props.userFeedQuery.usersConnection.edges
     
     return (
-      <List dense={dense}>
-        {usersToRender.map((user, index) => 
-          <User key={user.node.id} index={index} user={user.node} />)}
-      </List>
+      <Paper className={classes.root} elevation={4}>
+        <List dense={dense}>
+          {usersToRender.map((user, index) => 
+            <User key={user.node.id} index={index} user={user.node} />)}
+        </List>
+      </Paper>
     )
   }
 }

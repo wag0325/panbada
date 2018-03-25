@@ -59,7 +59,7 @@ class HeaderM extends Component {
               panbada
             </Typography>
             <Link to="/"><Button color="inherit">Home</Button></Link>
-            <Link to="/connect"><Button color="inherit">Connect</Button></Link>
+            <Link to="/people"><Button color="inherit">People</Button></Link>
             <Link to="/gigs"><Button color="inherit">Gigs</Button></Link>
             {authToken && (<Link to="/create-post"><Button color="inherit">Submit</Button></Link>)}
             {authToken ? (

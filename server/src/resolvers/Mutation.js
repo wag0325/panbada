@@ -289,8 +289,9 @@ function deleteMessage(parent, { id }, ctx, info) {
   return ctx.db.mutation.deleteMessage({ where: { id } }, info)
 }
 
-function deleteChannel(parent, { id }, ctx, info) {
-  return ctx.db.mutation.deleteChannel({ where: { id } }, info)
+async function deleteChannel(parent, { id }, context, info) {
+  await context.db.mutation.deleteManyMessages({ where : { channel: { id } }})
+  return context.db.mutation.deleteChannel({ where: { id } }, info)
 }
 
 module.exports = {

@@ -45,24 +45,24 @@ type User {
   avatarURL: String
   followers: [User!]! @relation(name: "Following")
   follows: [User!]! @relation(name: "Following")
-  channels: [Channel!]! 
-  messages: [Message!]! 
+  channels: [Channel!]! @relation(name: "MyConversations")
+  messages: [Message!]! @relation(name: "SentMessage")
   postLikes: [PostLike!]! @relation(name: "LikedUser")
 }
 
 type Message {
   id: ID! @unique
-  channel: Channel!
+  channel: Channel! @relation(name: "MessagesInChannel")
   createdAt: DateTime!
   toUserId: String! 
-  from: User! 
+  from: User! @relation(name: "SentMessage")
   text: String!
 }
 
 type Channel {
   id: ID! @unique
-  users: [User!]! 
-  messages: [Message!]!
+  users: [User!]! @relation(name: "MyConversations")
+  messages: [Message!]! @relation(name: "MessagesInChannel")
 }
 
 

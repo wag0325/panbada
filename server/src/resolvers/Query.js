@@ -36,6 +36,10 @@ function users(parent, args, context, info) {
   return context.db.query.users({ first, skip, where }, info)
 }
 
+function channelsConnection(parent, args, ctx, info) {
+  const { first, after, orderBy } = args
+  return ctx.db.query.channelsConnection({ after, first, orderBy }, info)
+}
 
 function channels(parent, args, context, info) {
   return context.db.query.channels({ where: {} }, info)
@@ -50,4 +54,5 @@ module.exports = {
 	user,
   me,
   channels,
+  channelsConnection,
 }

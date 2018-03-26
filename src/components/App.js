@@ -19,6 +19,7 @@ import HomeContainer from './container/HomeContainer'
 import UsersContainer from './container/UsersContainer'
 import UserContainer from './container/UserContainer'
 import MySettingsContainer from './container/MySettingsContainer'
+import MessagingContainer from './container/MessagingContainer'
 
 class App extends Component {
   render() {
@@ -31,6 +32,7 @@ class App extends Component {
             <Route exact path='/login' component={Login}/>
             <Route exact path='/people' component={UsersContainer}/>
             <Route exact path='/mysettings' component={MySettingsContainer}/>
+            <Route exact path='/messaging' component={MessagingContainer}/>
             <Route path='/u/:id' component={UserContainer}/>
           </Switch>
         </div>

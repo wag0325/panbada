@@ -5,3 +5,5 @@ export const POSTS_PER_PAGE = 10
 export const POSTS_ORDER_BY = 'createdAt_DESC'
 export const USERS_PER_PAGE = 10
 export const USERS_ORDER_BY = 'lastName_ASC'
+export const CHANNELS_PER_PAGE = 10
+export const CHANNELS_ORDER_BY = 'createdAt_DESC'

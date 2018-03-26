@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
 import Grid from 'material-ui/Grid'
 
-import MyAccount from '../Me/MyAccount'
+import ChannelList from '../Message/ChannelList'
 
 const styles = theme => ({
   root: {
@@ -19,16 +19,18 @@ const styles = theme => ({
 })
 
 class UsersContainer extends Component {
+	state = {
+		modalOpen: false,
+	}
+
 	render() {
 		const { classes } = this.props
 
 		return(
 			<div>
 				<Grid container spacing={24}>
-					<Grid item xs={12} sm={3}>
-	        </Grid>
-	        <Grid item xs={12} sm={6}>
-	        	<MyAccount />
+	        <Grid item xs={12} sm={9}>
+	        	<ChannelList />
 	        </Grid>
 	        <Grid item xs={12} sm={3}>
 	        </Grid>

@@ -134,7 +134,7 @@ class User extends Component {
   }
 }
 
-const FOLLOW_MUTATION = gql`
+export const FOLLOW_MUTATION = gql`
   mutation FollowMutation($id: ID!) {
     follow(id: $id) {
       id
@@ -142,7 +142,7 @@ const FOLLOW_MUTATION = gql`
   }
 `
 
-const UNFOLLOW_MUTATION = gql`
+export const UNFOLLOW_MUTATION = gql`
   mutation UnfollowMutation($id: ID!) {
     unfollow(id: $id) {
       id

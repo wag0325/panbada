@@ -30,6 +30,9 @@ const styles = theme => ({
     marginLeft: -12,
     marginRight: 20,
   },
+  popper: {
+    zIndex:1
+  },
   popperClose: {
     pointerEvents: 'none',
   },
@@ -76,7 +79,7 @@ class HeaderM extends Component {
                 <Popper
                   placement="bottom-start"
                   eventsEnabled={open}
-                  className={classNames({ [classes.popperClose]: !open })}
+                  className={classNames(classes.popper, { [classes.popperClose]: !open })}
                 >
                   <ClickAwayListener onClickAway={this.handleClose}>
                     <Grow in={open} id="menu-list" style={{ transformOrigin: '0 0 0' }}>

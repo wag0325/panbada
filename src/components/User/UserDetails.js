@@ -12,6 +12,7 @@ import { LinearProgress } from 'material-ui/Progress'
 import Avatar from 'material-ui/Avatar'
 
 import { AUTH_TOKEN } from '../../constants'
+import { FOLLOW_MUTATION, UNFOLLOW_MUTATION, ME_QUERY} from './User'
 
 const styles = theme => ({
   card: {
@@ -77,10 +78,6 @@ class User extends Component {
       myProfile: false,
     }
   }
-  // state = {
-  //   following: false,
-  //   myProfile: false,
-  // }
 
   componentWillReceiveProps(nextProps){
     const { user } = nextProps.userQuery
@@ -144,7 +141,7 @@ class User extends Component {
               </Typography>
             </CardContent>
             <div className={classes.controls}>
-              {myProfile && <Button variant='raised' color='default' onClick={() => this._updateProfile()}>Update Profile</Button>}
+              {myProfile && <Button variant='raised' color='default' onClick={() => this._editProfile()}>Edit Profile</Button>}
               {!myProfile && following && <Button variant='raised' color='default' onClick={() => this._unfollowUser()}>Following</Button>}
               {!myProfile && !following && <Button variant='raised' color='primary' onClick={() => this._followUser()}>Follow</Button>}
             </div>
@@ -152,6 +149,30 @@ class User extends Component {
         </Card> 
       </div>
     )
+  }
+
+  _followUser = async () => {
+    const { id } = this.props.userQuery.user
+    await this.props.followMutation({
+      variables: {
+        id
+      },
+      update: (store, {data: {follow}}) => {
+        this.setState({ following: true })
+      },
+    })
+  }
+
+  _unfollowUser = async () => {
+    const { id } = this.props.userQuery.user
+    await this.props.unfollowMutation({
+      variables: {
+        id
+      },
+      update: (store, {data: {unfollow}}) => {
+        this.setState({ following: false })
+      },
+    })
   }
 }
 
@@ -173,17 +194,6 @@ export const USER_QUERY = gql`
   }
 `
 
-export const ME_QUERY = gql`
-  query MeQuery {
-    me {
-      id
-      follows {
-        id
-      }
-    }
-  }
-`
-
 export default withStyles(styles)(compose(
   graphql(USER_QUERY, { 
     name: 'userQuery',
@@ -191,5 +201,7 @@ export default withStyles(styles)(compose(
       variables: { id: props.userId }
     }),
   }),
+  graphql(FOLLOW_MUTATION, {name: 'followMutation',}),
+  graphql(UNFOLLOW_MUTATION, {name: 'unfollowMutation',}),
   graphql(ME_QUERY, {name: 'meQuery'}),
   )(User))

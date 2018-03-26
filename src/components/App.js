@@ -32,7 +32,7 @@ class App extends Component {
             <Route exact path='/login' component={Login}/>
             <Route exact path='/people' component={UsersContainer}/>
             <Route exact path='/mysettings' component={MySettingsContainer}/>
-            <Route exact path='/messaging' component={MessagingContainer}/>
+            <Route path='/messaging/thread/:id' component={MessagingContainer}/>
             <Route path='/u/:id' component={UserContainer}/>
           </Switch>
         </div>

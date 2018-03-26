@@ -4,6 +4,7 @@ import { withStyles } from 'material-ui/styles'
 import Grid from 'material-ui/Grid'
 
 import ChannelList from '../Message/ChannelList'
+import ChannelDetails from '../Message/ChannelDetails'
 
 const styles = theme => ({
   root: {
@@ -25,12 +26,16 @@ class UsersContainer extends Component {
 
 	render() {
 		const { classes } = this.props
+		const id = this.props.match.params.id
 
 		return(
 			<div>
 				<Grid container spacing={24}>
-	        <Grid item xs={12} sm={9}>
+	        <Grid item xs={12} sm={3}>
 	        	<ChannelList />
+	        </Grid>
+	        <Grid item xs={12} sm={6}>
+	        	<ChannelDetails id={id}/>
 	        </Grid>
 	        <Grid item xs={12} sm={3}>
 	        </Grid>

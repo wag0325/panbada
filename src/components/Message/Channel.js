@@ -18,7 +18,8 @@ import List, {
 import Avatar from 'material-ui/Avatar'
 import IconButton from 'material-ui/IconButton'
 
-import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
+import { timeDifferenceForDate } from '../../utils'
+import { AUTH_TOKEN, ME_ID, AVATAR_DEFAULT } from '../../constants'
 
 const styles = theme => ({
   card: {
@@ -40,30 +41,27 @@ const styles = theme => ({
   },
 })
 
-class User extends Component {
+class Channel extends Component {
   constructor(props) {
     super(props)
 
     // console.log("me", props.meQuery.me)
     this.state = {
-      secondary: false,
-      userId: props.user.id,
-      following: false,
     }
   }
 
   componentWillReceiveProps(nextProps){
-    const { user } = nextProps
-    const { me } = nextProps.meQuery 
+    // const { user } = nextProps
+    // const { me } = nextProps.meQuery 
   
-    if (me && user) {      
-      me.follows.map(follow => {
-        if (follow.id === user.id) {
-          this.setState({following: true})
-          return false
-        }
-      })
-    }
+    // if (me && user) {      
+    //   me.follows.map(follow => {
+    //     if (follow.id === user.id) {
+    //       this.setState({following: true})
+    //       return false
+    //     }
+    //   })
+    // }
   }
 
 
@@ -73,25 +71,31 @@ class User extends Component {
 
   render() {
     const authToken = localStorage.getItem(AUTH_TOKEN)
-    const { secondary, following } = this.state
-    const { user } = this.props
+    const meId = localStorage.getItem(ME_ID)
+    
+    console.log("props ", this.props)
+    // Only one recipient
+    const users = this.props.channel.users.filter(user => 
+        user.id !== meId )
+    const user = users[0]
+
+    const lastMessage = this.props.channel.messages[this.props.channel.messages.length-1]
+    
 
     return (
       <ListItem>
         <ListItemAvatar>
           <Avatar aria-label={`${user.firstName}-${user.lastName}`}
               className={this.props.avatar} 
-              src={user.avatar_url || AVATAR_DEFAULT}
-          />
+              src={user.avatarURL || AVATAR_DEFAULT}
+          />        
         </ListItemAvatar>
-        <Link to={`/u/${user.id}`}><ListItemText
+        <ListItemText
           primary={`${user.firstName} ${user.lastName}`}
-          secondary={secondary ? 'Secondary text' : null}
-        /></Link>
+          secondary={`${lastMessage.from.firstName}: ${lastMessage.text}`}
+        />
         <ListItemSecondaryAction>
-          <IconButton aria-label="Delete">
-          </IconButton>
-          {following ? (<Button variant="raised" size="small" onClick={() => this._unfollowUser()}>Following</Button>) : (<Button variant="raised" size="small" onClick={() => this._followUser()}>Follow</Button>)}
+          {timeDifferenceForDate(lastMessage.createdAt)}
         </ListItemSecondaryAction>
       </ListItem>
     )
@@ -162,8 +166,4 @@ export const ME_QUERY = gql`
 `
 
 
-export default withStyles(styles)(compose(
-  graphql(FOLLOW_MUTATION, {name: 'followMutation',}),
-  graphql(UNFOLLOW_MUTATION, {name: 'unfollowMutation',}),
-  graphql(ME_QUERY, {name: 'meQuery'}),
-)(User))
+export default withStyles(styles)(Channel)

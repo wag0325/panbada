@@ -81,7 +81,7 @@ class User extends Component {
         <ListItemAvatar>
           <Avatar aria-label={`${user.firstName}-${user.lastName}`}
               className={this.props.avatar} 
-              src={user.avatar_url || AVATAR_DEFAULT}
+              src={user.avatarURL || AVATAR_DEFAULT}
           />
         </ListItemAvatar>
         <Link to={`/u/${user.id}`}><ListItemText

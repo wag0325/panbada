@@ -48,10 +48,14 @@ function channelsConnection(parent, args, context, info) {
 }
 
 function messagesConnection(parent, args, context, info) {
-  const { first, after, orderBy, id } = args
+  const { first, after, orderBy, id, channelId } = args
   const userId = getUserId(context)
 
-  const where = { toUserId: { id } }
+  const where = { OR: [
+    { AND: [{ toUserId: id }, { from: { id: userId } }] },
+    { AND: [{ toUserId: userId }, { from: { id: id } }] },
+  ]}
+  
   return context.db.query.messagesConnection({ after, first, orderBy, where }, info)
 }
 

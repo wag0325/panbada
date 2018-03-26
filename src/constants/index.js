@@ -7,3 +7,5 @@ export const USERS_PER_PAGE = 10
 export const USERS_ORDER_BY = 'lastName_ASC'
 export const CHANNELS_PER_PAGE = 10
 export const CHANNELS_ORDER_BY = 'createdAt_DESC'
+export const MESSAGES_PER_PAGE = 10
+export const MESSAGES_ORDER_BY = 'createdAt_DESC'

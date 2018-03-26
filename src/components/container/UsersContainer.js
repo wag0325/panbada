@@ -30,13 +30,11 @@ class UsersContainer extends Component {
 			<div>
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={3}>
-						Hello
 	        </Grid>
 	        <Grid item xs={12} sm={6}>
 	        	<UserList />
 	        </Grid>
 	        <Grid item xs={12} sm={3}>
-	        	Hello
 	        </Grid>
 				</Grid>
 			</div>

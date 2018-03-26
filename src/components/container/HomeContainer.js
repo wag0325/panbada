@@ -33,13 +33,11 @@ class HomeContainer extends Component {
 			<div>
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={3}>
-						Hello
 	        </Grid>
 	        <Grid item xs={12} sm={6}>
 	        	<PostList />
 	        </Grid>
 	        <Grid item xs={12} sm={3}>
-	        	Hello
 	        </Grid>
 				</Grid>
 	      <PostModalContainer />

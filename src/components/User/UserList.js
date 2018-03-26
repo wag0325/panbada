@@ -10,7 +10,7 @@ import { LinearProgress } from 'material-ui/Progress'
 import Paper from 'material-ui/Paper'
 import List from 'material-ui/List'
 
-import { USERS_PER_PAGE, USERS_ORDER_BY } from '../../constants'
+import { ME_ID, USERS_PER_PAGE, USERS_ORDER_BY } from '../../constants'
 
 
 const styles = theme => ({
@@ -32,6 +32,7 @@ class UserList extends Component {
   render() {
     const { dense } = this.state
     const { classes } = this.props
+    const meId = localStorage.getItem(ME_ID)
 
     if (this.props.userFeedQuery && this.props.userFeedQuery.loading) {
       // return <CircularProgress className={this.props.progress} size={50} />

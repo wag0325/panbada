@@ -41,19 +41,39 @@ const styles = theme => ({
 })
 
 class User extends Component {
-  state = {
-    secondary: false,
-    followed: false,
-    userId: '',
+  constructor(props) {
+    super(props)
+
+    // console.log("me", props.meQuery.me)
+    this.state = {
+      secondary: false,
+      userId: props.user.id,
+      following: false,
+    }
   }
 
-  componentWillMount() {
-    this.setState({userId: this.props.user.id})
+  componentWillReceiveProps(nextProps){
+    const { user } = nextProps
+    const { me } = nextProps.meQuery 
+  
+    if (me && user) {      
+      me.follows.map(follow => {
+        if (follow.id === user.id) {
+          this.setState({following: true})
+          return false
+        }
+      })
+    }
   }
+
+
+  // componentWillMount() {
+  //   this.setState({userId: this.props.user.id})
+  // }
 
   render() {
     const authToken = localStorage.getItem(AUTH_TOKEN)
-    const { secondary, followed } = this.state
+    const { secondary, following } = this.state
     const { user } = this.props
 
     return (
@@ -71,7 +91,7 @@ class User extends Component {
         <ListItemSecondaryAction>
           <IconButton aria-label="Delete">
           </IconButton>
-          {followed ? (<Button variant="raised" size="small" onClick={() => this._unfollowUser()}>Unfollow</Button>) : (<Button variant="raised" size="small" onClick={() => this._followUser()}>Follow</Button>)}
+          {following ? (<Button variant="raised" size="small" onClick={() => this._unfollowUser()}>Following</Button>) : (<Button variant="raised" size="small" onClick={() => this._followUser()}>Follow</Button>)}
         </ListItemSecondaryAction>
       </ListItem>
     )
@@ -96,7 +116,7 @@ class User extends Component {
         id
       },
       update: (store, {data: {follow}}) => {
-        this.setState({ followed: true })
+        this.setState({ following: true })
       },
     })
   }
@@ -108,7 +128,7 @@ class User extends Component {
         id
       },
       update: (store, {data: {unfollow}}) => {
-        this.setState({ followed: false })
+        this.setState({ following: false })
       },
     })
   }
@@ -130,7 +150,20 @@ const UNFOLLOW_MUTATION = gql`
   }
 `
 
+export const ME_QUERY = gql`
+  query MeQuery {
+    me {
+      id
+      follows {
+        id
+      }
+    }
+  }
+`
+
+
 export default withStyles(styles)(compose(
   graphql(FOLLOW_MUTATION, {name: 'followMutation',}),
-  graphql(UNFOLLOW_MUTATION, {name: 'unfollowMutation',})
+  graphql(UNFOLLOW_MUTATION, {name: 'unfollowMutation',}),
+  graphql(ME_QUERY, {name: 'meQuery'}),
 )(User))

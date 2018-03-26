@@ -45,7 +45,7 @@ class MyAccount extends Component {
       <div className={classes.root}>
         <ExpansionPanel expanded={expanded === 'panel1'} onChange={this.handleChange('panel1')}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography className={classes.heading}>Personal Info</Typography>
+            <Typography className={classes.heading}>Edit Profile</Typography>
             <Typography className={classes.secondaryHeading}>Change first and last name, avatar, etc.</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 
-import { graphql, compose } from 'react-apollo'
+import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
 import classNames from 'classnames'
@@ -38,21 +38,10 @@ const styles = theme => ({
 
 })
 
-class UpdateMe extends Component {
+class ChangePassword extends Component {
   state = {
     currPassword: '',
     newPassword: '',
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.meQuery.me) {
-      const { me } = nextProps.meQuery
-      this.setState({ 
-        firstName: me.firstName, 
-        lastName: me.lastName,
-        avatar_url: me.avatar_url,
-      })
-    }
   }
 
   render() {
@@ -81,7 +70,7 @@ class UpdateMe extends Component {
               margin='normal'
             />
           </FormControl>
-          <Button variant='raised' color='primary' className={this.props.button} onClick={() => this._confirm()}>
+          <Button variant='raised' color='primary' className={this.props.button} onClick={() => this._changePassword()}>
               Update
           </Button>
         </form>
@@ -90,12 +79,12 @@ class UpdateMe extends Component {
   }
   
 
-  _confirm = () => {
+  _changePassword = () => {
     const { 
       currPassword, 
       newPassword } = this.state
-      
-    this.props.updateMeMutation({
+
+    this.props.changePasswordMutation({
       variables: {
         currPassword,
         newPassword,
@@ -104,11 +93,11 @@ class UpdateMe extends Component {
   }
 }
 
-const UPDATE_PASSWORD_MUTATION = gql`
-  mutation UpdatePasswordMutation(
-    $currPassword: String,
-    $newPassword: String) {
-    updatePassword(
+const CHANGE_PASSWORD_MUTATION = gql`
+  mutation ChangePasswordMutation(
+    $currPassword: String!,
+    $newPassword: String!) {
+    changePassword(
       currPassword: $currPassword,
       newPassword: $newPassword
       ) {
@@ -117,6 +106,6 @@ const UPDATE_PASSWORD_MUTATION = gql`
   }
 `
 
-export default withStyles(styles)(
-  graphql(UPDATE_PASSWORD_MUTATION, {name: 'updatePasswordMutation'})(UpdateMe)
-)
+export default withStyles(styles)(graphql(CHANGE_PASSWORD_MUTATION, { 
+  name: 'changePasswordMutation',
+})(ChangePassword))

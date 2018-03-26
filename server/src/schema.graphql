@@ -34,7 +34,8 @@ type Query {
   user(id: ID!): User
   me: User
   channels(filter: String, skip: Int, first: Int): [Channel!]!
-  channelsConnection(filter: String, after: String, first: Int, orderBy: ChannelOrderByInput): ChannelConnection
+  channelsConnection(filter: String, after: String, first: Int, orderBy: ChannelOrderByInput, id: String): ChannelConnection
+  messagesConnection(filter: String, after: String, first: Int, orderBy: MessageOrderByInput, id: String): MessageConnection
 }
 
 type Mutation {

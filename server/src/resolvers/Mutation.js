@@ -200,6 +200,32 @@ async function login(parent, args, context, info) {
   }
 }
 
+async function updateMe(parent, args, context, info) {
+  const { firstName, lastName, avatarURL, oldPassword, newPassword } = args
+  const userId = getUserId(context)
+  let password = ''  
+  const user = await context.db.query.user({ where: { id: userId } })
+  if (!user) {
+    throw new Error(`Could not find user with email: ${args.email}`)
+  }
+
+  if (oldPassword) {
+    const valid = await bcrypt.compare(oldPassword, user.password)
+    if (!valid) {
+      throw new Error('Invalid current password')
+    } else {
+      password = await bcrypt.hash(newPassword, 10)
+    }
+  }
+
+  return context.db.mutation.updateUser(
+    { data: { firstName, lastName, avatarURL, password },
+      where: { id: userId }
+    },
+    info,
+  )
+}
+
 function follow(parent, { id }, context, info) {
   const userId = getUserId(context)
 
@@ -278,6 +304,7 @@ module.exports = {
   deleteGig,
   signup,
   login,
+  updateMe,
   follow,
   unfollow,
   signS3,

@@ -46,6 +46,7 @@ type Mutation {
   login(email: String!, password: String!): AuthPayload
   follow(id: ID!): User
   unfollow(id: ID!): User
+  updateMe(oldPassword: String, newPassword: String, firstName:String, lastName: String, avatarURL: String): User
   signS3(filename: String!, filetype: String!): S3Payload!
   createMessage(id: ID!, text: String!): Message
   deleteChannel(id: ID!): Channel

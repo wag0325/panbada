@@ -8,6 +8,9 @@ type User {
   avatarURL: String
   followers: [User!]!
   follows: [User!]!
+  channels: [Channel!]!
+  messages: [Message!]!
+  postLikes: [PostLike!]!
  }
 
 type AuthPayload {
@@ -45,9 +48,10 @@ type Mutation {
   deleteGig(id: ID!): Gig
   signup(email: String!, password: String!, firstName: String!, lastName: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
+  changePassword(currPassword: String!, newPassword: String!): User
   follow(id: ID!): User
   unfollow(id: ID!): User
-  updateMe(oldPassword: String, newPassword: String, firstName:String, lastName: String, avatarURL: String): User
+  updateMe(firstName:String, lastName: String, avatarURL: String): User
   signS3(filename: String!, filetype: String!): S3Payload!
   createMessage(id: ID!, text: String!): Message
   deleteChannel(id: ID!): Channel

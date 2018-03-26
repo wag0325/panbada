@@ -18,7 +18,7 @@ import List, {
 import Avatar from 'material-ui/Avatar'
 import IconButton from 'material-ui/IconButton'
 
-import { AUTH_TOKEN } from '../../constants'
+import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
 
 const styles = theme => ({
   card: {
@@ -81,8 +81,8 @@ class User extends Component {
         <ListItemAvatar>
           <Avatar aria-label={`${user.firstName}-${user.lastName}`}
               className={this.props.avatar} 
-              src={user.avatar_url}
-          >{user.firstName.substring(0,1)}</Avatar>
+              src={user.avatar_url || AVATAR_DEFAULT}
+          />
         </ListItemAvatar>
         <Link to={`/u/${user.id}`}><ListItemText
           primary={`${user.firstName} ${user.lastName}`}

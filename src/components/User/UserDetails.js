@@ -11,7 +11,7 @@ import { CircularProgress } from 'material-ui/Progress'
 import { LinearProgress } from 'material-ui/Progress'
 import Avatar from 'material-ui/Avatar'
 
-import { AUTH_TOKEN } from '../../constants'
+import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
 import { FOLLOW_MUTATION, UNFOLLOW_MUTATION, ME_QUERY} from './User'
 
 const styles = theme => ({
@@ -127,7 +127,7 @@ class User extends Component {
         <Card className={classes.card}>
           <CardMedia
             className={classes.cover}
-            image="https://api.adorable.io/avatars/285/abott@adorable.png"
+            image={user.avatarURL || AVATAR_DEFAULT}
             title="Live from space album cover"
           />
           <div className={classes.details}>

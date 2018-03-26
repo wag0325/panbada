@@ -20,7 +20,7 @@ import ChatBubbleOutlineIcon from 'material-ui-icons/ChatBubbleOutline'
 import MoreVertIcon from 'material-ui-icons/MoreVert'
 import List from 'material-ui/List'
 
-import { AUTH_TOKEN, ME_ID } from '../../constants'
+import { AUTH_TOKEN, ME_ID, AVATAR_DEFAULT } from '../../constants'
 import { timeDifferenceForDate } from '../../utils'
 
 import PostComment from './PostComment'
@@ -97,9 +97,7 @@ class Post extends Component {
             avatar={
               <Avatar aria-label={`${post.postedBy.firstName}-${post.postedBy.lastName}`} 
               className={this.props.avatar} 
-              src={post.postedBy.avatarURL || ''}>
-              {post.postedBy.firstName.substring(0,1)}
-              </Avatar>
+              src={post.postedBy.avatarURL || AVATAR_DEFAULT} />
             }
             action={
               <IconButton>

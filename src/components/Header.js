@@ -86,7 +86,7 @@ class HeaderM extends Component {
                       <Paper>
                         <MenuList role="menu">
                           <Link to={`/u/${meId}`}><MenuItem onClick={this.handleClose}>Profile</MenuItem></Link>
-                          <Link to="/psettings"><MenuItem onClick={this.handleClose}>My account</MenuItem></Link>
+                          <Link to="/mysettings"><MenuItem onClick={this.handleClose}>My account</MenuItem></Link>
                           <MenuItem onClick={() => {
                             this.handleClose
                             localStorage.removeItem(AUTH_TOKEN)

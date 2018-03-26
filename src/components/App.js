@@ -18,6 +18,7 @@ import Login from './Login'
 import HomeContainer from './container/HomeContainer'
 import UsersContainer from './container/UsersContainer'
 import UserContainer from './container/UserContainer'
+import MySettingsContainer from './container/MySettingsContainer'
 
 class App extends Component {
   render() {
@@ -29,6 +30,7 @@ class App extends Component {
             <Route exact path='/' component={HomeContainer}/>
             <Route exact path='/login' component={Login}/>
             <Route exact path='/people' component={UsersContainer}/>
+            <Route exact path='/mysettings' component={MySettingsContainer}/>
             <Route path='/u/:id' component={UserContainer}/>
           </Switch>
         </div>

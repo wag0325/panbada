@@ -4,13 +4,22 @@ function postFeed(parent, args, ctx, info) {
   return ctx.db.query.posts({ where: {} }, info)
 }
 
-function postsConnection(parent, args, ctx, info) {
+function postsConnection(parent, args, context, info) {
   const { first, after, orderBy } = args
-  return ctx.db.query.postsConnection({ after, first, orderBy }, info)
+  return context.db.query.postsConnection({ after, first, orderBy }, info)
 }
 
-function post(parent, { id }, ctx, info) {
-  return ctx.db.query.post({ where: { id } }, info)
+function post(parent, { id }, context, info) {
+  return context.db.query.post({ where: { id } }, info)
+}
+
+function gigsConnection(parent, args, context, info) {
+  const { first, after, orderBy } = args
+  return context.db.query.gigsConnection({ after, first, orderBy }, info)
+}
+
+function gig(parent, { id }, context, info) {
+  return context.db.query.gig({ where: { id } }, info)
 }
 
 function usersConnection(parent, args, ctx, info) {
@@ -80,6 +89,8 @@ module.exports = {
 	postFeed,
   postsConnection,
 	post,
+  gigsConnection,
+  gig,
 	users,
   usersConnection,
 	user,

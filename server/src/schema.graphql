@@ -29,7 +29,8 @@ type Query {
   usersConnection(filter: String, after: String, first: Int, orderBy: UserOrderByInput): UserConnection
   post(id: ID!): Post
   gigFeed(filter: String, skip: Int, first: Int): [Gig!]!
-  gig(gigId: ID!): Gig
+  gig(id: ID!): Gig
+  gigsConnection(filter: String, after: String, first: Int, orderBy: GigOrderByInput): GigConnection
   users(filter: String, skip: Int, first: Int): [User!]!
   user(id: ID!): User
   me: User

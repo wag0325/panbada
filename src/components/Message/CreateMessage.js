@@ -7,6 +7,9 @@ import TextField from 'material-ui/TextField'
 import Button from 'material-ui/Button'
 import { FormControl, FormHelperText } from 'material-ui/Form'
 
+import { MESSAGE_FEED_QUERY } from './ChannelDetails'
+import { MESSAGES_PER_PAGE, MESSAGES_ORDER_BY } from '../../constants'
+
 const styles = theme => ({
   container: {
     display: 'flex',
@@ -66,6 +69,24 @@ class CreateMessage extends Component {
       variables: {
         text,
         id
+      },
+      update: (store, { data: { createMessage }}) => {
+        const after = null
+        const first = MESSAGES_PER_PAGE
+        const orderBy = MESSAGES_ORDER_BY
+
+        const data = store.readQuery({ query: MESSAGE_FEED_QUERY, variables: { first, after, orderBy, id } })
+        console.log("data ", data)
+        console.log("createPost ", createMessage)
+        
+        data.messagesConnection.edges.splice(0, 0, {node: createMessage} )
+
+        console.log("data ", data)
+        store.writeQuery({
+          query: MESSAGE_FEED_QUERY,
+          data,
+          variables: { first, after, orderBy, id },
+        })
       }
     })
   }
@@ -83,6 +104,7 @@ const CREATE_MESSAGE_MUTATION = gql`
       id
       createdAt
       toUserId
+      text
       from {
         id
         firstName

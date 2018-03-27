@@ -47,7 +47,8 @@ class ChannelList extends Component {
     if (this.props.messageFeedQuery && this.props.messageFeedQuery.error) {
       return <div>Error</div>
     }
-
+    
+    console.log("props ", this.props)
     const messagesToRender = this.props.messageFeedQuery.messagesConnection.edges
     console.log("channel details ", messagesToRender)
     return (

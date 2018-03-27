@@ -14,11 +14,14 @@ import List, {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
-} from 'material-ui/List';
+} from 'material-ui/List'
 import Avatar from 'material-ui/Avatar'
+import Menu, { MenuItem } from 'material-ui/Menu';
 import IconButton from 'material-ui/IconButton'
+import MoreHorizIcon from 'material-ui-icons/MoreHoriz'
 
 import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
+import SendMessageModal from '../Message/SendMessageModal'
 
 const styles = theme => ({
   card: {
@@ -49,6 +52,8 @@ class User extends Component {
       secondary: false,
       userId: props.user.id,
       following: false,
+      anchorEl: null,
+      openModal: false,
     }
   }
 
@@ -73,7 +78,7 @@ class User extends Component {
 
   render() {
     const authToken = localStorage.getItem(AUTH_TOKEN)
-    const { secondary, following } = this.state
+    const { secondary, following, anchorEl, openModal } = this.state
     const { user } = this.props
 
     return (
@@ -89,12 +94,40 @@ class User extends Component {
           secondary={secondary ? 'Secondary text' : null}
         /></Link>
         <ListItemSecondaryAction>
-          <IconButton aria-label="Delete">
-          </IconButton>
           {following ? (<Button variant="raised" size="small" onClick={() => this._unfollowUser()}>Following</Button>) : (<Button variant="raised" size="small" onClick={() => this._followUser()}>Follow</Button>)}
+          <IconButton
+            aria-label="More"
+            aria-owns={anchorEl ? 'long-menu' : null}
+            aria-haspopup="true"
+            onClick={this.handleClick}
+          >
+            <MoreHorizIcon />
+          </IconButton>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={this.handleClose}
+            >
+            <MenuItem onClick={this.handleClose, this._handleSendMessage}>Send Message</MenuItem>
+          </Menu>
         </ListItemSecondaryAction>
+        { openModal && (<SendMessageModal open={openModal} id={user.id} />)}
       </ListItem>
     )
+  }
+
+  handleClick = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
+  };
+  
+  _handleSendMessage = () => {
+    console.log("send message")
+    this.setState({ openModal: true })
   }
 
   _likePost = async () => {

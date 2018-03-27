@@ -10,9 +10,14 @@ import Typography from 'material-ui/Typography'
 import { CircularProgress } from 'material-ui/Progress'
 import { LinearProgress } from 'material-ui/Progress'
 import Avatar from 'material-ui/Avatar'
+import Menu, { MenuItem } from 'material-ui/Menu'
+import IconButton from 'material-ui/IconButton'
+import MoreHorizIcon from 'material-ui-icons/MoreHoriz'
 
 import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
 import { FOLLOW_MUTATION, UNFOLLOW_MUTATION, ME_QUERY} from './User'
+
+import SendMessageModal from '../Message/SendMessageModal'
 
 const styles = theme => ({
   card: {
@@ -76,6 +81,8 @@ class User extends Component {
     this.state = {
       following: false,
       myProfile: false,
+      anchorEl: null,
+      openModal: false,
     }
   }
 
@@ -101,7 +108,7 @@ class User extends Component {
   render() {
     const { classes } = this.props
     const user = this.props.userQuery.user
-    const { myProfile, following } = this.state
+    const { myProfile, following, openModal, anchorEl } = this.state
 
     console.log("state ", myProfile, following)
     if ((this.props.userQuery && this.props.userQuery.loading) ||
@@ -137,18 +144,48 @@ class User extends Component {
                 Actor | Producer
               </Typography>
               <Typography variant="subheading" color="textSecondary">
-                {user.followers.length} Followers {user.follows.length} Followers
+                {user.followers.length} Followers {user.follows.length} Following
               </Typography>
             </CardContent>
             <div className={classes.controls}>
               {myProfile && <Button variant='raised' color='default' onClick={() => this._editProfile()}>Edit Profile</Button>}
               {!myProfile && following && <Button variant='raised' color='default' onClick={() => this._unfollowUser()}>Following</Button>}
               {!myProfile && !following && <Button variant='raised' color='primary' onClick={() => this._followUser()}>Follow</Button>}
+              <IconButton
+                aria-label="More"
+                aria-owns={anchorEl ? 'long-menu' : null}
+                aria-haspopup="true"
+                onClick={this.handleClick}
+              >
+                <MoreHorizIcon />
+              </IconButton>
+              <Menu
+                id="simple-menu"
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={this.handleClose}
+                >
+                <MenuItem onClick={this.handleClose, this._handleSendMessage}>Send Message</MenuItem>
+              </Menu>
             </div>
           </div>
         </Card> 
+        { openModal && (<SendMessageModal open={openModal} id={user.id} />)}
       </div>
     )
+  }
+  
+  handleClick = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
+  };
+  
+  _handleSendMessage = () => {
+    console.log("send message")
+    this.setState({ openModal: true })
   }
 
   _followUser = async () => {

@@ -16,7 +16,7 @@ import List, {
   ListItemText,
 } from 'material-ui/List'
 import Avatar from 'material-ui/Avatar'
-import Menu, { MenuItem } from 'material-ui/Menu';
+import Menu, { MenuItem } from 'material-ui/Menu'
 import IconButton from 'material-ui/IconButton'
 import MoreHorizIcon from 'material-ui-icons/MoreHoriz'
 

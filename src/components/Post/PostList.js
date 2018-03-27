@@ -174,6 +174,7 @@ export const POST_FEED_QUERY = gql`
     }
   }
 `
+
 export default withStyles(styles)(graphql(POST_FEED_QUERY, { 
   name: 'postFeedQuery',
   options: ownProps => {

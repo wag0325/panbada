@@ -20,6 +20,7 @@ import UsersContainer from './container/UsersContainer'
 import UserContainer from './container/UserContainer'
 import MySettingsContainer from './container/MySettingsContainer'
 import MessagingContainer from './container/MessagingContainer'
+import GigsContainer from './container/GigsContainer'
 
 class App extends Component {
   render() {
@@ -30,10 +31,11 @@ class App extends Component {
           <Switch>
             <Route exact path='/' component={HomeContainer}/>
             <Route exact path='/login' component={Login}/>
-            <Route exact path='/people' component={UsersContainer}/>
+            <Route exact path='/gigs' component={GigsContainer}/>
             <Route exact path='/mysettings' component={MySettingsContainer}/>
             <Route exact path='/messaging' component={MessagingContainer}/>
             <Route path='/messaging/thread/:id' component={MessagingContainer}/>
+            <Route exact path='/people' component={UsersContainer}/>
             <Route path='/u/:id' component={UserContainer}/>
           </Switch>
         </div>

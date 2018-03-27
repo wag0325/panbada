@@ -5,10 +5,12 @@ import { Link } from 'react-router-dom'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
-import { withStyles } from 'material-ui/styles';
-import { CircularProgress } from 'material-ui/Progress';
-import { LinearProgress } from 'material-ui/Progress';
+import { withStyles } from 'material-ui/styles'
+import { CircularProgress } from 'material-ui/Progress'
+import { LinearProgress } from 'material-ui/Progress'
 import Button from 'material-ui/Button'
+
+import { GIGS_PER_PAGE, GIGS_ORDER_BY } from '../../constants'
 
 const styles = theme => ({
   progress: {
@@ -17,7 +19,7 @@ const styles = theme => ({
    root: {
     flexGrow: 1,
   },
-});
+})
 
 class GigList extends Component {
   render() {
@@ -34,7 +36,7 @@ class GigList extends Component {
       return <div>Error</div>
     }
 
-    const gigsToRender = this.props.gigFeedQuery.gigFeed
+    const gigsToRender = this.props.gigFeedQuery.gigsConnection.edges
     
     return (
       <div>
@@ -44,7 +46,7 @@ class GigList extends Component {
           </Button>
         </Link>
         <div>{gigsToRender.map((gig, index) => 
-          <Gig key={gig.id} index={index} gig={gig} />)}
+          <Gig key={gig.node.id} index={index} gig={gig.node} />)}
         </div>
       </div>
     )
@@ -52,18 +54,39 @@ class GigList extends Component {
 }
 
 export const GIG_FEED_QUERY = gql`
-  query GigFeedQuery {
-    gigFeed {
-      id
-      title
-      text
-      createdAt
-      postedBy {
-        firstName
-        lastName
-        id
+  query GigsConnectionQuery($first: Int, $after: String, $orderBy: GigOrderByInput) {
+    gigsConnection(first: $first, after: $after, orderBy: $orderBy,) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      edges {
+        node {
+          id
+          createdAt
+          type
+          title
+          text
+          postedBy {
+            id
+            firstName
+            lastName
+            avatarURL
+          }
+        }
+      }
+      aggregate {
+        count
       }
     }
   }
 `
-export default withStyles(styles)(graphql(GIG_FEED_QUERY, { name: 'gigFeedQuery'})(GigList))
+export default withStyles(styles)(graphql(GIG_FEED_QUERY, { 
+  name: 'gigFeedQuery',
+  options: ownProps => {
+    let after = ownProps.endCursor || null
+    return {
+      variables: { first: GIGS_PER_PAGE, after:after, orderBy: GIGS_ORDER_BY }
+    }
+  },
+})(GigList))

@@ -73,7 +73,7 @@ const styles = theme => ({
   },
 })
 
-class User extends Component {
+class UserDetails extends Component {
   constructor(props) {
     super(props)
 
@@ -245,4 +245,4 @@ export default withStyles(styles)(compose(
   graphql(FOLLOW_MUTATION, {name: 'followMutation',}),
   graphql(UNFOLLOW_MUTATION, {name: 'unfollowMutation',}),
   graphql(ME_QUERY, {name: 'meQuery'}),
-  )(User))
+  )(UserDetails))

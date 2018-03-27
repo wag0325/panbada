@@ -54,10 +54,10 @@ class SendMessageModal extends Component {
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'
       >
-        <DialogTitle id='alert-dialog-title'>{'Creat A New Post'}</DialogTitle>
+        <DialogTitle id='alert-dialog-title'>{'Send A Message'}</DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
-            Share your thoughts or cool photos with everyone.
+            Send a thoughtful message and connect. 
           </DialogContentText>
           <CreateMessage id={this.props.id}/>
         </DialogContent>

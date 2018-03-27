@@ -52,8 +52,11 @@ class UserList extends Component {
     return (
       <Paper className={classes.root} elevation={4}>
         <List dense={dense}>
-          {usersToRender.map((user, index) => 
-            <User key={user.node.id} index={index} user={user.node} />)}
+          {usersToRender.map((user, index) => {
+            if (user.node.id !== meId) {
+              return (<User key={user.node.id} index={index} user={user.node} />)}
+            return null
+            })}
         </List>
       </Paper>
     )

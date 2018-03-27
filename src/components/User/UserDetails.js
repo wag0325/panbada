@@ -151,22 +151,26 @@ class User extends Component {
               {myProfile && <Button variant='raised' color='default' onClick={() => this._editProfile()}>Edit Profile</Button>}
               {!myProfile && following && <Button variant='raised' color='default' onClick={() => this._unfollowUser()}>Following</Button>}
               {!myProfile && !following && <Button variant='raised' color='primary' onClick={() => this._followUser()}>Follow</Button>}
-              <IconButton
-                aria-label="More"
-                aria-owns={anchorEl ? 'long-menu' : null}
-                aria-haspopup="true"
-                onClick={this.handleClick}
-              >
-                <MoreHorizIcon />
-              </IconButton>
-              <Menu
-                id="simple-menu"
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={this.handleClose}
-                >
-                <MenuItem onClick={this.handleClose, this._handleSendMessage}>Send Message</MenuItem>
-              </Menu>
+              {!myProfile && (
+                <div>
+                  <IconButton
+                    aria-label='More'
+                    aria-owns={anchorEl ? 'long-menu' : null}
+                    aria-haspopup='true'
+                    onClick={this.handleClick}
+                  >
+                    <MoreHorizIcon />
+                  </IconButton>
+                  <Menu
+                    id='simple-menu'
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={this.handleClose}
+                    >
+                    <MenuItem onClick={this.handleClose, this._handleSendMessage}>Send Message</MenuItem>
+                  </Menu>
+                </div>
+                )}
             </div>
           </div>
         </Card> 

@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 function timeDifference(current, previous) {
 
   const milliSecondsPerMinute = 60 * 1000
@@ -41,4 +43,9 @@ export function timeDifferenceForDate(date) {
   const now = new Date().getTime()
   const updated = new Date(date).getTime()
   return timeDifference(now, updated)
+}
+
+export function displayTime(datetime) {
+  const dt = moment(datetime).format('h:mm a')
+  return dt
 }

@@ -63,6 +63,8 @@ type Channel {
   id: ID! @unique
   users: [User!]! @relation(name: "MyConversations")
   messages: [Message!]! @relation(name: "MessagesInChannel")
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 

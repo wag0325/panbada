@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken')
 const { APP_SECRET, getUserId } = require('../utils')
 
 const s3Bucket = process.env.S3_BUCKET
-const AWSAccessKeyId = process.env.S3_ACCESS_KEY_ID;
-const AWSSecretAccessKey = process.env.S3_SECRET_ACCESS_KEY;﻿
+const AWSAccessKeyId = process.env.S3_ACCESS_KEY_ID
+const AWSSecretAccessKey = process.env.S3_SECRET_ACCESS_KEY
 
 function signS3(parent, { filename, filetype }, context, info) {
   const userId = getUserId(context)
@@ -277,26 +277,26 @@ function unfollow(parent, { id }, context, info) {
 async function createMessage(parent, args, context, info) {
   // channel ID, user ID, toUser ID, text 
   const userId = getUserId(context)
-  const { id, text } = args 
-  var channel
+  const { id, text } = args
+  let channel
 
-  // check if there's already a message existing btw two users
-  const messages = await context.db.query.messages({ where: { toUserId: id } }, info)
-  console.log("messages ", messages)
+  const where = { OR: [
+    { AND: [{ toUserId: id }, { from: { id: userId } }] },
+    { AND: [{ toUserId: userId }, { from: { id: id } }] },
+  ]}
+  
+  const messages = await context.db.query.messages({ where }, info)
+
   if (messages.length > 0) {
-    console.log("yes, eists!")
     channel = messages[0].channel
-    console.log(messages[0].channel)
   } else {
-    console.log("No, doesn't exists")
     channel = await context.db.mutation.createChannel({
       data: {
         users: { connect: [{ id: id }, { id: userId }] },
       }
     }, info)
-    console.log(channel)
   }
-  
+
   return context.db.mutation.createMessage({ 
     data: { 
       toUserId: id,

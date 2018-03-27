@@ -47,6 +47,18 @@ function channelsConnection(parent, args, context, info) {
   return context.db.query.channelsConnection({ after, first, orderBy, where }, info)
 }
 
+function messages(parent, args, context, info) {
+  const { id } = args
+  const userId = getUserId(context)
+
+  const where = { OR: [
+    { AND: [{ toUserId: id }, { from: { id: userId } }] },
+    { AND: [{ toUserId: userId }, { from: { id: id } }] },
+  ]}
+  
+  return context.db.query.messages({ where }, info)
+}
+
 function messagesConnection(parent, args, context, info) {
   const { first, after, orderBy, id, channelId } = args
   const userId = getUserId(context)
@@ -74,5 +86,6 @@ module.exports = {
   me,
   channels,
   channelsConnection,
+  messages,
   messagesConnection,
 }

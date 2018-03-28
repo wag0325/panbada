@@ -32,12 +32,20 @@ class CreatePost extends Component {
   state = {
     title: '',
     text: '',
+    pictureFile: '',
     pictureURL: '',
+    picturePreviewURL: '',
     file: null,
   }
 
   render() {
     const { classes } = this.props
+    const { picturePreviewURL, } = this.state
+    let $picturePreview = null
+
+    if( picturePreviewURL ) {
+      $picturePreview = (<img src={picturePreviewURL} />)
+    }
 
     return (
       <form className={this.props.container} noValidate autoComplete="off">
@@ -64,11 +72,10 @@ class CreatePost extends Component {
             margin='normal'
           />
         </FormControl>
-        <Dropzone onDrop={this._onDrop}>
-          <p>
-            Try dropping some files here, or click to select files to upload.
-          </p>
-        </Dropzone>
+        <FormControl fullWidth className={classes.margin}>
+          <input type='file' onChange={this._handlePictureChange} />
+          {$picturePreview}
+        </FormControl>
         <Button variant="raised" color="primary" className={this.props.button} onClick={() => this._createPost()}>
           Post
         </Button>
@@ -76,6 +83,22 @@ class CreatePost extends Component {
     )
   }
   
+  _handlePictureChange = data => {
+    let reader = new FileReader()
+    let file = data.target.files[0]
+    
+    reader.onloadend = () => {
+      console.log("reader ", reader.result)
+
+      this.setState({
+        pictureFile: file, 
+        picturePreviewURL: reader.result
+      })
+    }
+
+    reader.readAsDataURL(file)
+  }
+
   _formatFilename = filename => {
     const date = moment().format("YYYYMMDD");
     const randomString = Math.random()
@@ -92,13 +115,16 @@ class CreatePost extends Component {
       headers: {
         "Content-Type": file.type
       }
-    };
-    await axios.put(signedRequest, file, options);
+    }
+    await axios.put(signedRequest, file, options)
   }
 
   _createPost = async () => {
     const { title, text, file, pictureURL } = this.state
     var pic_url = '';
+    
+    const fileData = new FormData()
+    console.log("file ", this.uploadInput.files[0])
 
     if ( file ) {
       const response = await this.props.s3SignMutation({

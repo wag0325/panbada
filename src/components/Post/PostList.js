@@ -21,15 +21,11 @@ const styles = theme => ({
   button: {
     margin: theme.spacing.unit,
   },
-  buttonWrapper: {
+  loadMoreWrapper: {
     margin: 5,
     textAlign: 'center',
   },
 })
-
-let postData = []
-let postArrEndCursor = ''
-let postArrStartCursor = ''
 
 class PostList extends Component {
   constructor(props) {
@@ -74,7 +70,7 @@ class PostList extends Component {
           <Post key={post.node.id} index={index} post={post.node} />
           )}
         {this.state.hasNextPage && 
-          <div className={classes.buttonWrapper}><Button variant="raised" className={classes.button} onClick={this._loadMoreRows}>
+          <div className={classes.loadMoreWrapper}><Button variant="raised" className={classes.button} onClick={this._loadMoreRows}>
             Load More
           </Button></div>
         }

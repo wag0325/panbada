@@ -9,6 +9,7 @@ import { CircularProgress } from 'material-ui/Progress'
 import { LinearProgress } from 'material-ui/Progress'
 import Paper from 'material-ui/Paper'
 import List from 'material-ui/List'
+import Button from 'material-ui/Button'
 
 import { ME_ID, USERS_PER_PAGE, USERS_ORDER_BY } from '../../constants'
 
@@ -22,17 +23,29 @@ const styles = theme => ({
     paddingBottom: 16,
     marginTop: theme.spacing.unit * 3,
   }),
+  loadMoreWrapper: {
+    margin: 5,
+    marginTop: 20,
+    textAlign: 'center',
+  },
 })
 
 class UserList extends Component {
   state = {
     dense: false,
-  };
+    hasNextPage: true,
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { hasNextPage } = nextProps.userFeedQuery.usersConnection.pageInfo
+    this.setState({hasNextPage: hasNextPage })
+  }
 
   render() {
-    const { dense } = this.state
+    const { dense, hasNextPage } = this.state
     const { classes } = this.props
     const meId = localStorage.getItem(ME_ID)
+    let $loadMoreButton = null 
 
     if (this.props.userFeedQuery && this.props.userFeedQuery.loading) {
       // return <CircularProgress className={this.props.progress} size={50} />
@@ -46,10 +59,19 @@ class UserList extends Component {
     if (this.props.userFeedQuery && this.props.userFeedQuery.error) {
       return <div>Error</div>
     }
+    
+    if(hasNextPage) {
+      $loadMoreButton = 
+        (<div className={classes.loadMoreWrapper}>
+          <Button variant='raised' className={classes.button} onClick={this._loadMoreRows}>
+            Load More
+          </Button></div>)
+    }
 
     const usersToRender = this.props.userFeedQuery.usersConnection.edges
     console.log("users ", usersToRender)
     return (
+      <div>
       <Paper className={classes.root} elevation={4}>
         <List dense={dense}>
           {usersToRender.map((user, index) => {
@@ -61,7 +83,39 @@ class UserList extends Component {
           {usersToRender.length === 0 && (<div>Sorry, no such user exists. Please try again.</div>)}
         </List>
       </Paper>
+      {$loadMoreButton}
+      </div>
     )
+  }
+
+  _loadMoreRows = () => {
+    const { usersConnection, fetchMore } = this.props.userFeedQuery
+    fetchMore({
+      variables: { after: usersConnection.pageInfo.endCursor },
+      updateQuery: (previousResult, { fetchMoreResult, queryVariables }) => {
+
+        if (!fetchMoreResult) {
+          return false
+        }
+
+        const prevPostFeed = previousResult.usersConnection.edges
+        const newPostFeed =
+          fetchMoreResult.usersConnection.edges
+
+        const newPostsData = {...fetchMoreResult.usersConnection, 
+          edges: [
+            ...prevPostFeed,
+            ...newPostFeed,
+          ]}
+
+        const newData = {
+          ...previousResult,
+          usersConnection: newPostsData
+        }
+        
+        return newData
+      },
+    })
   }
 }
 
@@ -92,8 +146,9 @@ export default withStyles(styles)(graphql(USER_FEED_QUERY, {
  name: 'userFeedQuery',
  options: ownProps => {
     let after = ownProps.endCursor || null
-    const filter = decodeURIComponent(ownProps.filter)
-    console.log("ownProps user ", ownProps)
+    console.log("filter ui ", decodeURIComponent(ownProps.filter))
+    let filter = decodeURIComponent(ownProps.filter) || null
+    if (!filter || filter === 'undefined') filter = null
     return {
       variables: { first: USERS_PER_PAGE, after:after, orderBy: USERS_ORDER_BY, filter: filter }
     }

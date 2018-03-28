@@ -33,11 +33,11 @@ class PostModalContainer extends Component {
   };
 
   handleClickOpen = () => {
-    this.setState({ open: true });
+    this.setState({ open: true })
   };
 
   handleClose = () => {
-    this.setState({ open: false });
+    this.setState({ open: false })
   };
 
   render() {

@@ -120,17 +120,15 @@ class CreatePost extends Component {
   }
 
   _createPost = async () => {
-    const { title, text, file, pictureURL } = this.state
-    var pic_url = '';
-    
-    const fileData = new FormData()
-    console.log("file ", this.uploadInput.files[0])
+    const { title, text, pictureFile, pictureURL } = this.state
+    var pic_url = ''
 
-    if ( file ) {
+    if ( pictureFile ) {
+      console.log("file name ", pictureFile.name)
       const response = await this.props.s3SignMutation({
         variables: {
-          filename: this._formatFilename(file.name+'.'+file.type),
-          filetype: file.type
+          filename: this._formatFilename(pictureFile.name+'.'+pictureFile.type),
+          filetype: pictureFile.type
         }
       })
 
@@ -139,7 +137,7 @@ class CreatePost extends Component {
       this.setState({ pictureURL: url })
       
       pic_url = url 
-      await this._uploadToS3(file, signedRequest)
+      await this._uploadToS3(pictureFile, signedRequest)
     }
     
     await this.props.postMutation({

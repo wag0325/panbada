@@ -1,5 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const aws = require('aws-sdk')
+
 const { APP_SECRET, getUserId } = require('../utils')
 
 const s3Bucket = process.env.S3_BUCKET

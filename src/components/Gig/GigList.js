@@ -40,7 +40,7 @@ class GigList extends Component {
     
     return (
       <div>
-        <Link to='/create-gig'>
+        <Link to='/gigs/new'>
           <Button variant="raised" color="primary" className={this.props.button}>
           Post a gig
           </Button>

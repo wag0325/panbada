@@ -24,7 +24,8 @@ const styles = theme => ({
     width: 200,
   },
   button: {
-    margin: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2,
   },
 })
 
@@ -76,7 +77,7 @@ class CreatePost extends Component {
           <input type='file' onChange={this._handlePictureChange} />
           {$picturePreview}
         </FormControl>
-        <Button variant="raised" color="primary" className={this.props.button} onClick={() => this._createPost()}>
+        <Button variant="raised" color="primary" className={classes.button} onClick={() => this._createPost()}>
           Post
         </Button>
       </form>
@@ -88,8 +89,6 @@ class CreatePost extends Component {
     let file = data.target.files[0]
     
     reader.onloadend = () => {
-      console.log("reader ", reader.result)
-
       this.setState({
         pictureFile: file, 
         picturePreviewURL: reader.result
@@ -100,20 +99,19 @@ class CreatePost extends Component {
   }
 
   _formatFilename = filename => {
-    const date = moment().format("YYYYMMDD");
+    const date = moment().format('YYYYMMDD')
     const randomString = Math.random()
       .toString(36)
       .substring(2, 7)
-    const cleanFileName = filename.toLowerCase().replace(/[^a-z0-9]/g, "-");
-    console.log(cleanFileName)
-    const newFilename = `images/${date}-${randomString}-${cleanFileName}`;
+    const cleanFileName = filename.toLowerCase().replace(/[^a-z0-9]/g, '-')
+    const newFilename = `images/${date}-${randomString}-${cleanFileName}`
     return newFilename.substring(0, 60);
   };
 
   _uploadToS3 = async (file, signedRequest) => {
     const options = {
       headers: {
-        "Content-Type": file.type
+        'Content-Type': file.type
       }
     }
     await axios.put(signedRequest, file, options)
@@ -124,7 +122,6 @@ class CreatePost extends Component {
     var pic_url = ''
 
     if ( pictureFile ) {
-      console.log("file name ", pictureFile.name)
       const response = await this.props.s3SignMutation({
         variables: {
           filename: this._formatFilename(pictureFile.name+'.'+pictureFile.type),
@@ -133,7 +130,7 @@ class CreatePost extends Component {
       })
 
       const { signedRequest, url } = response.data.signS3
-      // pictureURL = url
+      
       this.setState({ pictureURL: url })
       
       pic_url = url 
@@ -153,12 +150,8 @@ class CreatePost extends Component {
         const orderBy = POSTS_ORDER_BY
 
         const data = store.readQuery({ query: POST_FEED_QUERY, variables: { first, after, orderBy } })
-        console.log("data ", data)
-        console.log("createPost ", createPost)
-        
         data.postsConnection.edges.splice(0, 0, {node: createPost} )
-        
-        console.log("data ", data)
+              
         store.writeQuery({
           query: POST_FEED_QUERY,
           data,
@@ -168,30 +161,6 @@ class CreatePost extends Component {
     })
 
     this.props.onClose()
-    // this.props.history.push('/')
-  }
-  
-
-  _onDrop = async files => {
-    console.log("onDrop " + files[0])
-    this.setState({ file: files[0] })
-  }
-
-  _handleImageFile = (e) => {
-    const reader = new FileReader()
-    const file = e.target.files[0]
-      
-    reader.onload = (upload) => {
-      console.log("upload "+ upload.target.result)
-      console.log("file "+ file.name + " " + file.type)
-      this.setState({
-        image_uri: upload.target.result,
-        // filename: file.name,
-        // filetype: file.type
-      })
-    }
-
-    reader.readAsDataURL(file)
   }
 }
 

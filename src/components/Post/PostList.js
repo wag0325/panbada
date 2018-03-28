@@ -32,14 +32,22 @@ let postArrEndCursor = ''
 let postArrStartCursor = ''
 
 class PostList extends Component {
-  state = {
-    page: '', 
-    isLoading: false,
-    isError: false, 
-    hasMoreItems: true,
-    hasNextPage: true,
+  constructor(props) {
+    super(props)
+    
+    this.state = {
+      page: '', 
+      isLoading: false,
+      isError: false, 
+      hasMoreItems: true,
+      hasNextPage: true,
+    }
   }
   
+  componentWillReceiveProps(nextProps) {
+    const { hasNextPage } = nextProps.postFeedQuery.postsConnection.pageInfo
+    this.setState({hasNextPage: hasNextPage })
+  }
   // componentWillMount() {
   //   document.addEventListener('scroll', this._trackScrolling)
   // }
@@ -59,34 +67,11 @@ class PostList extends Component {
     
     const { classes } = this.props
     const { postsConnection } = this.props.postFeedQuery
-    console.log("postFeedQuery ", this.props.postFeedQuery)
-    console.log("postsConnection ", postsConnection)
-    if (postsConnection) {
-      const endCursor = postsConnection.pageInfo.endCursor
-      const startCursor = postsConnection.edges[0].node.id
-      if (this.props.postFeedQuery.postsConnection.pageInfo.hasNextPage === false
-          && this.state.hasNextPage === true) {
-        this.setState({ hasNextPage: false })  
-      }
-
-      if (endCursor !== postArrEndCursor ) {
-        postArrStartCursor = postsConnection.edges[0].node.id
-        this.props.postFeedQuery.postsConnection.edges.map((edge) => {
-          postData.push(edge.node)
-          postArrEndCursor = edge.node.id
-        })
-      }
-      
-      // Created a new post
-      if (startCursor !== postArrStartCursor) {
-        postArrStartCursor = postsConnection.edges[0].node.id
-        postData.splice(0, 0, postsConnection.edges[0].node)
-      }
-    }
+    const postsToRender = postsConnection.edges
 
     return (
-      <div id='post-feed-wrapper'>{postData.map((post, index) =>
-          <Post key={post.id} index={index} post={post} />
+      <div id='post-feed-wrapper'>{postsToRender.map((post, index) =>
+          <Post key={post.node.id} index={index} post={post.node} />
           )}
         {this.state.hasNextPage && 
           <div className={classes.buttonWrapper}><Button variant="raised" className={classes.button} onClick={this._loadMoreRows}>
@@ -106,25 +91,27 @@ class PostList extends Component {
     fetchMore({
       variables: { after: postsConnection.pageInfo.endCursor },
       updateQuery: (previousResult, { fetchMoreResult, queryVariables }) => {
+
         if (!fetchMoreResult) {
-          console.log("no more data from fetchmore")
           return false
         }
 
-        const prevResult = previousResult.postsConnection.edges
-        const newResult =
+        const prevPostFeed = previousResult.postsConnection.edges
+        const newPostFeed =
           fetchMoreResult.postsConnection.edges
-        const pageInfo =
-          fetchMoreResult.postsConnection.pageInfo
-        const aggregate = previousResult.postsConnection.aggregate.count
-        
-        return {
-          postsConnection: {
-            aggregate,
-            edges: newResult,
-            pageInfo,
-          }
+
+        const newPostsData = {...fetchMoreResult.postsConnection, 
+          edges: [
+            ...prevPostFeed,
+            ...newPostFeed,
+          ]}
+
+        const newData = {
+          ...previousResult,
+          postsConnection: newPostsData
         }
+        
+        return newData
       },
     })
   }

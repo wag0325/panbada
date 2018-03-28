@@ -23,6 +23,7 @@ import MessagingContainer from './container/MessagingContainer'
 import GigsContainer from './container/GigsContainer'
 import GigContainer from './container/GigContainer'
 import CreateGigContainer from './container/CreateGigContainer'
+import SearchContainer from './container/SearchContainer'
 
 class App extends Component {
   render() {
@@ -41,6 +42,7 @@ class App extends Component {
             <Route path='/messaging/thread/:id' component={MessagingContainer}/>
             <Route exact path='/people' component={UsersContainer}/>
             <Route path='/u/:id' component={UserContainer}/>
+            <Route path='/search/:filter' component={UsersContainer}/>
           </Switch>
         </div>
       </div>

@@ -48,15 +48,17 @@ class UserList extends Component {
     }
 
     const usersToRender = this.props.userFeedQuery.usersConnection.edges
-    
+    console.log("users ", usersToRender)
     return (
       <Paper className={classes.root} elevation={4}>
         <List dense={dense}>
           {usersToRender.map((user, index) => {
             if (user.node.id !== meId) {
-              return (<User key={user.node.id} index={index} user={user.node} />)}
+              return (<User key={user.node.id} index={index} user={user.node} />)
+            }
             return null
             })}
+          {usersToRender.length === 0 && (<div>Sorry, no such user exists. Please try again.</div>)}
         </List>
       </Paper>
     )
@@ -64,8 +66,8 @@ class UserList extends Component {
 }
 
 export const USER_FEED_QUERY = gql`
-  query UsersConnectionQuery($first: Int, $after: String, $orderBy: UserOrderByInput) {
-    usersConnection(first: $first, after: $after, orderBy: $orderBy,) {
+  query UsersConnectionQuery($first: Int, $after: String, $orderBy: UserOrderByInput, $filter: String,) {
+    usersConnection(first: $first, after: $after, orderBy: $orderBy, filter: $filter,) {
       pageInfo {
         endCursor
         hasNextPage
@@ -90,8 +92,10 @@ export default withStyles(styles)(graphql(USER_FEED_QUERY, {
  name: 'userFeedQuery',
  options: ownProps => {
     let after = ownProps.endCursor || null
+    const filter = decodeURIComponent(ownProps.filter)
+    console.log("ownProps user ", ownProps)
     return {
-      variables: { first: USERS_PER_PAGE, after:after, orderBy: USERS_ORDER_BY }
+      variables: { first: USERS_PER_PAGE, after:after, orderBy: USERS_ORDER_BY, filter: filter }
     }
   },
 })(UserList))

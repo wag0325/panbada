@@ -18,14 +18,13 @@ const styles = theme => ({
   },
 })
 
-class UsersContainer extends Component {
+class SearchContainer extends Component {
 	state = {
 		modalOpen: false,
 	}
 
 	render() {
 		const { classes } = this.props
-		const filter = this.props.match.params.filter
 
 		return(
 			<div>
@@ -33,7 +32,7 @@ class UsersContainer extends Component {
 					<Grid item xs={12} sm={3}>
 	        </Grid>
 	        <Grid item xs={12} sm={6}>
-	        	<UserList filter={filter} />
+	        	<UserList filter={this.props.filter} />
 	        </Grid>
 	        <Grid item xs={12} sm={3}>
 	        </Grid>
@@ -43,4 +42,4 @@ class UsersContainer extends Component {
 	}
 }
 
-export default withStyles(styles)(UsersContainer)
+export default withStyles(styles)(SearchContainer)

@@ -23,8 +23,20 @@ function gig(parent, { id }, context, info) {
 }
 
 function usersConnection(parent, args, ctx, info) {
-  const { first, after, orderBy } = args
-  return ctx.db.query.usersConnection({ after, first, orderBy }, info)
+  const { first, after, orderBy, filter } = args
+  
+  const filters = []
+  filter.split(' ').map(filter => 
+    filters.push({ firstName_contains: filter }, { lastName_contains: filter })
+  )
+  
+  console.log("filters ", filters)
+  
+  const where = filter
+    ? { OR: filters }
+    : {}
+    
+  return ctx.db.query.usersConnection({ after, first, orderBy, where }, info)
 }
 
 function user(parent, { id }, context, info) {

@@ -16,6 +16,8 @@ import Typography from 'material-ui/Typography'
 import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 
+import SearchForm from './Search/SearchForm'
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -61,6 +63,7 @@ class HeaderM extends Component {
             <Typography variant="title" color="inherit" className={this.props.flex}>
               panbada
             </Typography>
+            <SearchForm />
             <Link to="/"><Button color="inherit">Home</Button></Link>
             <Link to="/people"><Button color="inherit">People</Button></Link>
             <Link to="/gigs"><Button color="inherit">Gigs</Button></Link>

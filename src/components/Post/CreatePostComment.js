@@ -5,10 +5,10 @@ import gql from 'graphql-tag'
 import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
-import Button from 'material-ui/Button';
+import Button from 'material-ui/Button'
 
 import { POST_FEED_QUERY } from './PostList'
-import { POSTS_PER_PAGE } from '../../constants'
+import { POSTS_PER_PAGE, POSTS_ORDER_BY } from '../../constants'
 
 const styles = theme => ({
   container: {
@@ -54,14 +54,14 @@ const styles = theme => ({
 })
 
 class CreatePostComment extends Component {
-	state = {
-		id: '',
-		text: '',
-		isEntered: false, 
-	}
-	
-	componentDidMount() {
-    this.setState({ id: this.props.id })
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      id: props.id,
+      text: '',
+      isEntered: false,
+    }
   }
 
   render() {
@@ -70,7 +70,6 @@ class CreatePostComment extends Component {
     return (
       <div>
         <TextField
-          defaultValue="Add a comment..."
           type='text'
           value={this.state.text}
           onChange={(e) => this.setState({ text: e.target.value})}
@@ -91,32 +90,45 @@ class CreatePostComment extends Component {
 
   _createPostComment = async () => {
     const { id, text } = this.state
+    console.log("create ", id, text)
+
     await this.props.postCommentMutation({
       variables: {
       	id,
         text
       },
-      // update: (store, {data: {createPostComment}}) => {
-      //   const page = this.props.page
-      //   const first = POSTS_PER_PAGE 
-      //   const orderBy = 'createdAt_DESC'
+      update: (store, {data: {createPostComment}}) => {
+        const after = null
+        const first = POSTS_PER_PAGE 
+        const orderBy = POSTS_ORDER_BY
+        let postIndex = null 
 
-      // 	const data = store.readQuery({ query: POST_FEED_QUERY, variables: { first, orderBy } })
+      	const data = store.readQuery({ query: POST_FEED_QUERY, variables: { first, after, orderBy } })
         
-      //   const commentedPost = data.postsConnection.edges.find((post) => {
-      //     return post.node.id === postId
-      //   })
-
-      //   const postComments = commentedPost.postComments
-
-      //   postComments.push(createPostComment)
+        const commentedPost = data.postsConnection.edges.find((post, index) => {
+          if (post.node.id === id) postIndex = index
+          return post.node.id === id
+        })
         
-		    // store.writeQuery({
-		    //   query: POST_FEED_QUERY,
-		    //   data, 
-      //     variables: { first, orderBy } 
-      //   })
-      // },
+        console.log("index ", postIndex)
+        
+        console.log("createPostComment", createPostComment)
+        console.log("commentedPost ", commentedPost)
+      
+        commentedPost.node.postComments.push(createPostComment)
+        console.log("commentedPost ", commentedPost)
+        
+        console.log("data", data)
+        data.postsConnection.edges.splice(postIndex, 1, commentedPost )
+        // postComments.push(createPostComment)
+        console.log("data", data)
+        
+		    store.writeQuery({
+		      query: POST_FEED_QUERY,
+		      data, 
+          variables: { first, after, orderBy } 
+        })
+      },
     })
 
     this.setState({text: ''})
@@ -126,13 +138,13 @@ class CreatePostComment extends Component {
 const POST_COMMENT_MUTATION = gql`
   mutation PostCommentMutation($id: ID!, $text: String!) {
     createPostComment (id: $id, text: $text) {
-      createdAt
       id
       text
       user {
         id
         firstName
         lastName
+        avatarURL
       }
     }
   }

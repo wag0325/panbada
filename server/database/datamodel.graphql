@@ -8,6 +8,7 @@ type Post {
   pictureURL: String
   postComments: [PostComment!]! @relation(name: "PostComments")
   postLikes: [PostLike!]! @relation(name: "LikedPost")
+  postBookmarks: [PostBookmark!]! @relation(name: "BookmarkedPost")
 }
 
 type PostComment {
@@ -21,6 +22,12 @@ type PostLike {
   id: ID! @unique
   post: Post! @relation(name: "LikedPost")
   user: User! @relation(name: "LikedUser")
+}
+
+type PostBookmark {
+  id: ID! @unique
+  post: Post! @relation(name: "BookmarkedPost")
+  user: User! @relation(name: "UserBookmarkedPost")
 }
 
 type Gig {
@@ -49,6 +56,7 @@ type User {
   sentMessages: [Message!]! @relation(name: "SentMessage")
   receivedMessages: [Message!]! @relation(name: "ReceivedMessages")
   postLikes: [PostLike!]! @relation(name: "LikedUser")
+  postBookmarks: [PostBookmark!]! @relation(name: "UserBookmarkedPost")
 }
 
 type Message {

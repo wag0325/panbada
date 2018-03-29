@@ -84,11 +84,6 @@ async function likePost(parent, args, context, info ) {
     post: { id: id },
   })
   
-  console.log("exists? ", postLikeExists)
-  // if unliked and postLike exists
-  // else unliked and postlike don't exists => Error
-  // else liked and postlike don't exists 
-  // else liked and postlike exists => Error
   if (postLikeExists) {
     throw new Error(`Already liked the post: ${id}`)
   } 
@@ -105,16 +100,38 @@ async function unlikePost(parent, args, context, info ) {
   const userId = getUserId(context)
   const { id } = args
 
-  // const postLikeExists = await context.db.exists.PostLike({
-  //   user: { id: userId },
-  //   post: { id: id },
-  // })
-  
-  // if(!postLikeExists) {
-  //   throw new Error(`The post, ${id}, doesn't exists`)
-  // }
-
   return context.db.mutation.deletePostLike({
+    where: { id: id }
+  }, info)
+  
+}
+
+async function bookmarkPost(parent, args, context, info ) {
+  const userId = getUserId(context)
+  const { id } = args
+
+  const postBookmarkExists = await context.db.exists.PostBookmark({
+    user: { id: userId },
+    post: { id: id },
+  })
+  
+  if (postBookmarkExists) {
+    throw new Error(`Already liked the post: ${id}`)
+  } 
+
+  return context.db.mutation.createPostBookmark({ 
+    data: {
+      post: { connect: { id: id }},
+      user: { connect: { id: userId }}, 
+    }
+  }, info)
+}
+
+async function unbookmarkPost(parent, args, context, info ) {
+  const userId = getUserId(context)
+  const { id } = args
+
+  return context.db.mutation.deletePostBookmark({
     where: { id: id }
   }, info)
   
@@ -154,19 +171,6 @@ function deleteGig(parent, { id }, context, info) {
   const userId = getUserId(context)
 
   return context.db.mutation.deleteGig({ where: { id: id } }, info,)
-}
-
-function createMessage(parent, { id, text }, context, info ) {
-  const userId = getUserId(context)
-
-  return context.db.mutation.createMessage(
-    { data: {
-        from: { connect: { id: userId } },
-        to: { connect: { id: id } },
-      }
-    },
-    info
-  )
 }
 
 async function signup(parent, args, context, info) {
@@ -288,6 +292,9 @@ async function createMessage(parent, args, context, info) {
   ]}
   
   const messages = await context.db.query.messages({ where }, info)
+  
+  console.log("messages ", messages)
+  
 
   if (messages.length > 0) {
     channel = messages[0].channel
@@ -298,6 +305,8 @@ async function createMessage(parent, args, context, info) {
       }
     }, info)
   }
+
+  console.log("channel ", channel)
 
   return context.db.mutation.createMessage({ 
     data: { 
@@ -323,6 +332,8 @@ module.exports = {
   deletePost,
   likePost,
   unlikePost,
+  bookmarkPost,
+  unbookmarkPost,
   createPostComment,
   deletePostComment,
   createGig,

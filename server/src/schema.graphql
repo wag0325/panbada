@@ -11,6 +11,7 @@ type User {
   channels: [Channel!]!
   messages: [Message!]!
   postLikes: [PostLike!]!
+  postBookmarks: [PostBookmark!]!
  }
 
 type AuthPayload {
@@ -45,6 +46,8 @@ type Mutation {
   deletePost(id: ID!): Post
   likePost(id: ID!): PostLike
   unlikePost(id: ID!): PostLike
+  bookmarkPost(id: ID!): PostBookmark
+  unbookmarkPost(id: ID!): PostBookmark
   createPostComment(id: ID!, text: String!): PostComment
   deletePostComment(id: ID!): PostComment
   createGig(title: String!, text: String!, type: String!): Gig

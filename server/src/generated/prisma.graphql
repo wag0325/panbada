@@ -44,6 +44,13 @@ type Post implements Node {
   pictureURL: String
   postComments(where: PostCommentWhereInput, orderBy: PostCommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostComment!]
   postLikes(where: PostLikeWhereInput, orderBy: PostLikeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostLike!]
+  postBookmarks(where: PostBookmarkWhereInput, orderBy: PostBookmarkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostBookmark!]
+}
+
+type PostBookmark implements Node {
+  id: ID!
+  post(where: PostWhereInput): Post!
+  user(where: UserWhereInput): User!
 }
 
 type PostComment implements Node {
@@ -74,6 +81,7 @@ type User implements Node {
   sentMessages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
   receivedMessages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
   postLikes(where: PostLikeWhereInput, orderBy: PostLikeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostLike!]
+  postBookmarks(where: PostBookmarkWhereInput, orderBy: PostBookmarkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostBookmark!]
 }
 
 
@@ -94,6 +102,10 @@ type AggregateMessage {
 }
 
 type AggregatePost {
+  count: Int!
+}
+
+type AggregatePostBookmark {
   count: Int!
 }
 
@@ -1253,6 +1265,7 @@ type Mutation {
   createPost(data: PostCreateInput!): Post!
   createPostComment(data: PostCommentCreateInput!): PostComment!
   createPostLike(data: PostLikeCreateInput!): PostLike!
+  createPostBookmark(data: PostBookmarkCreateInput!): PostBookmark!
   createGig(data: GigCreateInput!): Gig!
   createUser(data: UserCreateInput!): User!
   createMessage(data: MessageCreateInput!): Message!
@@ -1260,6 +1273,7 @@ type Mutation {
   updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
   updatePostComment(data: PostCommentUpdateInput!, where: PostCommentWhereUniqueInput!): PostComment
   updatePostLike(data: PostLikeUpdateInput!, where: PostLikeWhereUniqueInput!): PostLike
+  updatePostBookmark(data: PostBookmarkUpdateInput!, where: PostBookmarkWhereUniqueInput!): PostBookmark
   updateGig(data: GigUpdateInput!, where: GigWhereUniqueInput!): Gig
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateMessage(data: MessageUpdateInput!, where: MessageWhereUniqueInput!): Message
@@ -1267,6 +1281,7 @@ type Mutation {
   deletePost(where: PostWhereUniqueInput!): Post
   deletePostComment(where: PostCommentWhereUniqueInput!): PostComment
   deletePostLike(where: PostLikeWhereUniqueInput!): PostLike
+  deletePostBookmark(where: PostBookmarkWhereUniqueInput!): PostBookmark
   deleteGig(where: GigWhereUniqueInput!): Gig
   deleteUser(where: UserWhereUniqueInput!): User
   deleteMessage(where: MessageWhereUniqueInput!): Message
@@ -1274,6 +1289,7 @@ type Mutation {
   upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
   upsertPostComment(where: PostCommentWhereUniqueInput!, create: PostCommentCreateInput!, update: PostCommentUpdateInput!): PostComment!
   upsertPostLike(where: PostLikeWhereUniqueInput!, create: PostLikeCreateInput!, update: PostLikeUpdateInput!): PostLike!
+  upsertPostBookmark(where: PostBookmarkWhereUniqueInput!, create: PostBookmarkCreateInput!, update: PostBookmarkUpdateInput!): PostBookmark!
   upsertGig(where: GigWhereUniqueInput!, create: GigCreateInput!, update: GigUpdateInput!): Gig!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertMessage(where: MessageWhereUniqueInput!, create: MessageCreateInput!, update: MessageUpdateInput!): Message!
@@ -1281,6 +1297,7 @@ type Mutation {
   updateManyPosts(data: PostUpdateInput!, where: PostWhereInput!): BatchPayload!
   updateManyPostComments(data: PostCommentUpdateInput!, where: PostCommentWhereInput!): BatchPayload!
   updateManyPostLikes(data: PostLikeUpdateInput!, where: PostLikeWhereInput!): BatchPayload!
+  updateManyPostBookmarks(data: PostBookmarkUpdateInput!, where: PostBookmarkWhereInput!): BatchPayload!
   updateManyGigs(data: GigUpdateInput!, where: GigWhereInput!): BatchPayload!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput!): BatchPayload!
   updateManyMessages(data: MessageUpdateInput!, where: MessageWhereInput!): BatchPayload!
@@ -1288,6 +1305,7 @@ type Mutation {
   deleteManyPosts(where: PostWhereInput!): BatchPayload!
   deleteManyPostComments(where: PostCommentWhereInput!): BatchPayload!
   deleteManyPostLikes(where: PostLikeWhereInput!): BatchPayload!
+  deleteManyPostBookmarks(where: PostBookmarkWhereInput!): BatchPayload!
   deleteManyGigs(where: GigWhereInput!): BatchPayload!
   deleteManyUsers(where: UserWhereInput!): BatchPayload!
   deleteManyMessages(where: MessageWhereInput!): BatchPayload!
@@ -1330,6 +1348,229 @@ type PageInfo {
   When paginating forwards, the cursor to continue.
   """
   endCursor: String
+}
+
+"""
+A connection to a list of items.
+"""
+type PostBookmarkConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [PostBookmarkEdge]!
+  aggregate: AggregatePostBookmark!
+}
+
+input PostBookmarkCreateInput {
+  post: PostCreateOneWithoutPostBookmarksInput!
+  user: UserCreateOneWithoutPostBookmarksInput!
+}
+
+input PostBookmarkCreateManyWithoutPostInput {
+  create: [PostBookmarkCreateWithoutPostInput!]
+  connect: [PostBookmarkWhereUniqueInput!]
+}
+
+input PostBookmarkCreateManyWithoutUserInput {
+  create: [PostBookmarkCreateWithoutUserInput!]
+  connect: [PostBookmarkWhereUniqueInput!]
+}
+
+input PostBookmarkCreateWithoutPostInput {
+  user: UserCreateOneWithoutPostBookmarksInput!
+}
+
+input PostBookmarkCreateWithoutUserInput {
+  post: PostCreateOneWithoutPostBookmarksInput!
+}
+
+"""
+An edge in a connection.
+"""
+type PostBookmarkEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: PostBookmark!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum PostBookmarkOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type PostBookmarkPreviousValues {
+  id: ID!
+}
+
+type PostBookmarkSubscriptionPayload {
+  mutation: MutationType!
+  node: PostBookmark
+  updatedFields: [String!]
+  previousValues: PostBookmarkPreviousValues
+}
+
+input PostBookmarkSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PostBookmarkSubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PostBookmarkSubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PostBookmarkWhereInput
+}
+
+input PostBookmarkUpdateInput {
+  post: PostUpdateOneWithoutPostBookmarksInput
+  user: UserUpdateOneWithoutPostBookmarksInput
+}
+
+input PostBookmarkUpdateManyWithoutPostInput {
+  create: [PostBookmarkCreateWithoutPostInput!]
+  connect: [PostBookmarkWhereUniqueInput!]
+  disconnect: [PostBookmarkWhereUniqueInput!]
+  delete: [PostBookmarkWhereUniqueInput!]
+  update: [PostBookmarkUpdateWithWhereUniqueWithoutPostInput!]
+  upsert: [PostBookmarkUpsertWithWhereUniqueWithoutPostInput!]
+}
+
+input PostBookmarkUpdateManyWithoutUserInput {
+  create: [PostBookmarkCreateWithoutUserInput!]
+  connect: [PostBookmarkWhereUniqueInput!]
+  disconnect: [PostBookmarkWhereUniqueInput!]
+  delete: [PostBookmarkWhereUniqueInput!]
+  update: [PostBookmarkUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [PostBookmarkUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input PostBookmarkUpdateWithoutPostDataInput {
+  user: UserUpdateOneWithoutPostBookmarksInput
+}
+
+input PostBookmarkUpdateWithoutUserDataInput {
+  post: PostUpdateOneWithoutPostBookmarksInput
+}
+
+input PostBookmarkUpdateWithWhereUniqueWithoutPostInput {
+  where: PostBookmarkWhereUniqueInput!
+  data: PostBookmarkUpdateWithoutPostDataInput!
+}
+
+input PostBookmarkUpdateWithWhereUniqueWithoutUserInput {
+  where: PostBookmarkWhereUniqueInput!
+  data: PostBookmarkUpdateWithoutUserDataInput!
+}
+
+input PostBookmarkUpsertWithWhereUniqueWithoutPostInput {
+  where: PostBookmarkWhereUniqueInput!
+  update: PostBookmarkUpdateWithoutPostDataInput!
+  create: PostBookmarkCreateWithoutPostInput!
+}
+
+input PostBookmarkUpsertWithWhereUniqueWithoutUserInput {
+  where: PostBookmarkWhereUniqueInput!
+  update: PostBookmarkUpdateWithoutUserDataInput!
+  create: PostBookmarkCreateWithoutUserInput!
+}
+
+input PostBookmarkWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PostBookmarkWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PostBookmarkWhereInput!]
+  id: ID
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  post: PostWhereInput
+  user: UserWhereInput
+}
+
+input PostBookmarkWhereUniqueInput {
+  id: ID
 }
 
 """
@@ -1604,6 +1845,12 @@ input PostCreateInput {
   postedBy: UserCreateOneInput
   postComments: PostCommentCreateManyWithoutPostInput
   postLikes: PostLikeCreateManyWithoutPostInput
+  postBookmarks: PostBookmarkCreateManyWithoutPostInput
+}
+
+input PostCreateOneWithoutPostBookmarksInput {
+  create: PostCreateWithoutPostBookmarksInput
+  connect: PostWhereUniqueInput
 }
 
 input PostCreateOneWithoutPostCommentsInput {
@@ -1616,12 +1863,22 @@ input PostCreateOneWithoutPostLikesInput {
   connect: PostWhereUniqueInput
 }
 
+input PostCreateWithoutPostBookmarksInput {
+  title: String!
+  text: String!
+  pictureURL: String
+  postedBy: UserCreateOneInput
+  postComments: PostCommentCreateManyWithoutPostInput
+  postLikes: PostLikeCreateManyWithoutPostInput
+}
+
 input PostCreateWithoutPostCommentsInput {
   title: String!
   text: String!
   pictureURL: String
   postedBy: UserCreateOneInput
   postLikes: PostLikeCreateManyWithoutPostInput
+  postBookmarks: PostBookmarkCreateManyWithoutPostInput
 }
 
 input PostCreateWithoutPostLikesInput {
@@ -1630,6 +1887,7 @@ input PostCreateWithoutPostLikesInput {
   pictureURL: String
   postedBy: UserCreateOneInput
   postComments: PostCommentCreateManyWithoutPostInput
+  postBookmarks: PostBookmarkCreateManyWithoutPostInput
 }
 
 """
@@ -1935,6 +2193,15 @@ input PostUpdateInput {
   postedBy: UserUpdateOneInput
   postComments: PostCommentUpdateManyWithoutPostInput
   postLikes: PostLikeUpdateManyWithoutPostInput
+  postBookmarks: PostBookmarkUpdateManyWithoutPostInput
+}
+
+input PostUpdateOneWithoutPostBookmarksInput {
+  create: PostCreateWithoutPostBookmarksInput
+  connect: PostWhereUniqueInput
+  delete: Boolean
+  update: PostUpdateWithoutPostBookmarksDataInput
+  upsert: PostUpsertWithoutPostBookmarksInput
 }
 
 input PostUpdateOneWithoutPostCommentsInput {
@@ -1953,12 +2220,22 @@ input PostUpdateOneWithoutPostLikesInput {
   upsert: PostUpsertWithoutPostLikesInput
 }
 
+input PostUpdateWithoutPostBookmarksDataInput {
+  title: String
+  text: String
+  pictureURL: String
+  postedBy: UserUpdateOneInput
+  postComments: PostCommentUpdateManyWithoutPostInput
+  postLikes: PostLikeUpdateManyWithoutPostInput
+}
+
 input PostUpdateWithoutPostCommentsDataInput {
   title: String
   text: String
   pictureURL: String
   postedBy: UserUpdateOneInput
   postLikes: PostLikeUpdateManyWithoutPostInput
+  postBookmarks: PostBookmarkUpdateManyWithoutPostInput
 }
 
 input PostUpdateWithoutPostLikesDataInput {
@@ -1967,6 +2244,12 @@ input PostUpdateWithoutPostLikesDataInput {
   pictureURL: String
   postedBy: UserUpdateOneInput
   postComments: PostCommentUpdateManyWithoutPostInput
+  postBookmarks: PostBookmarkUpdateManyWithoutPostInput
+}
+
+input PostUpsertWithoutPostBookmarksInput {
+  update: PostUpdateWithoutPostBookmarksDataInput!
+  create: PostCreateWithoutPostBookmarksInput!
 }
 
 input PostUpsertWithoutPostCommentsInput {
@@ -2265,6 +2548,9 @@ input PostWhereInput {
   postLikes_every: PostLikeWhereInput
   postLikes_some: PostLikeWhereInput
   postLikes_none: PostLikeWhereInput
+  postBookmarks_every: PostBookmarkWhereInput
+  postBookmarks_some: PostBookmarkWhereInput
+  postBookmarks_none: PostBookmarkWhereInput
 }
 
 input PostWhereUniqueInput {
@@ -2275,6 +2561,7 @@ type Query {
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
   postComments(where: PostCommentWhereInput, orderBy: PostCommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostComment]!
   postLikes(where: PostLikeWhereInput, orderBy: PostLikeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostLike]!
+  postBookmarks(where: PostBookmarkWhereInput, orderBy: PostBookmarkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostBookmark]!
   gigs(where: GigWhereInput, orderBy: GigOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Gig]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message]!
@@ -2282,6 +2569,7 @@ type Query {
   post(where: PostWhereUniqueInput!): Post
   postComment(where: PostCommentWhereUniqueInput!): PostComment
   postLike(where: PostLikeWhereUniqueInput!): PostLike
+  postBookmark(where: PostBookmarkWhereUniqueInput!): PostBookmark
   gig(where: GigWhereUniqueInput!): Gig
   user(where: UserWhereUniqueInput!): User
   message(where: MessageWhereUniqueInput!): Message
@@ -2289,6 +2577,7 @@ type Query {
   postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
   postCommentsConnection(where: PostCommentWhereInput, orderBy: PostCommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostCommentConnection!
   postLikesConnection(where: PostLikeWhereInput, orderBy: PostLikeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostLikeConnection!
+  postBookmarksConnection(where: PostBookmarkWhereInput, orderBy: PostBookmarkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostBookmarkConnection!
   gigsConnection(where: GigWhereInput, orderBy: GigOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): GigConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   messagesConnection(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MessageConnection!
@@ -2306,6 +2595,7 @@ type Subscription {
   post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
   postComment(where: PostCommentSubscriptionWhereInput): PostCommentSubscriptionPayload
   postLike(where: PostLikeSubscriptionWhereInput): PostLikeSubscriptionPayload
+  postBookmark(where: PostBookmarkSubscriptionWhereInput): PostBookmarkSubscriptionPayload
   gig(where: GigSubscriptionWhereInput): GigSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   message(where: MessageSubscriptionWhereInput): MessageSubscriptionPayload
@@ -2339,6 +2629,7 @@ input UserCreateInput {
   sentMessages: MessageCreateManyWithoutFromInput
   receivedMessages: MessageCreateManyWithoutToInput
   postLikes: PostLikeCreateManyWithoutUserInput
+  postBookmarks: PostBookmarkCreateManyWithoutUserInput
 }
 
 input UserCreateManyWithoutChannelsInput {
@@ -2358,6 +2649,11 @@ input UserCreateManyWithoutFollowsInput {
 
 input UserCreateOneInput {
   create: UserCreateInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutPostBookmarksInput {
+  create: UserCreateWithoutPostBookmarksInput
   connect: UserWhereUniqueInput
 }
 
@@ -2387,6 +2683,7 @@ input UserCreateWithoutChannelsInput {
   sentMessages: MessageCreateManyWithoutFromInput
   receivedMessages: MessageCreateManyWithoutToInput
   postLikes: PostLikeCreateManyWithoutUserInput
+  postBookmarks: PostBookmarkCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutFollowersInput {
@@ -2400,6 +2697,7 @@ input UserCreateWithoutFollowersInput {
   sentMessages: MessageCreateManyWithoutFromInput
   receivedMessages: MessageCreateManyWithoutToInput
   postLikes: PostLikeCreateManyWithoutUserInput
+  postBookmarks: PostBookmarkCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutFollowsInput {
@@ -2409,6 +2707,21 @@ input UserCreateWithoutFollowsInput {
   password: String!
   avatarURL: String
   followers: UserCreateManyWithoutFollowsInput
+  channels: ChannelCreateManyWithoutUsersInput
+  sentMessages: MessageCreateManyWithoutFromInput
+  receivedMessages: MessageCreateManyWithoutToInput
+  postLikes: PostLikeCreateManyWithoutUserInput
+  postBookmarks: PostBookmarkCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutPostBookmarksInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  avatarURL: String
+  followers: UserCreateManyWithoutFollowsInput
+  follows: UserCreateManyWithoutFollowersInput
   channels: ChannelCreateManyWithoutUsersInput
   sentMessages: MessageCreateManyWithoutFromInput
   receivedMessages: MessageCreateManyWithoutToInput
@@ -2426,6 +2739,7 @@ input UserCreateWithoutPostLikesInput {
   channels: ChannelCreateManyWithoutUsersInput
   sentMessages: MessageCreateManyWithoutFromInput
   receivedMessages: MessageCreateManyWithoutToInput
+  postBookmarks: PostBookmarkCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutReceivedMessagesInput {
@@ -2439,6 +2753,7 @@ input UserCreateWithoutReceivedMessagesInput {
   channels: ChannelCreateManyWithoutUsersInput
   sentMessages: MessageCreateManyWithoutFromInput
   postLikes: PostLikeCreateManyWithoutUserInput
+  postBookmarks: PostBookmarkCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutSentMessagesInput {
@@ -2452,6 +2767,7 @@ input UserCreateWithoutSentMessagesInput {
   channels: ChannelCreateManyWithoutUsersInput
   receivedMessages: MessageCreateManyWithoutToInput
   postLikes: PostLikeCreateManyWithoutUserInput
+  postBookmarks: PostBookmarkCreateManyWithoutUserInput
 }
 
 """
@@ -2545,6 +2861,7 @@ input UserUpdateDataInput {
   sentMessages: MessageUpdateManyWithoutFromInput
   receivedMessages: MessageUpdateManyWithoutToInput
   postLikes: PostLikeUpdateManyWithoutUserInput
+  postBookmarks: PostBookmarkUpdateManyWithoutUserInput
 }
 
 input UserUpdateInput {
@@ -2559,6 +2876,7 @@ input UserUpdateInput {
   sentMessages: MessageUpdateManyWithoutFromInput
   receivedMessages: MessageUpdateManyWithoutToInput
   postLikes: PostLikeUpdateManyWithoutUserInput
+  postBookmarks: PostBookmarkUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyWithoutChannelsInput {
@@ -2597,6 +2915,14 @@ input UserUpdateOneInput {
   upsert: UserUpsertNestedInput
 }
 
+input UserUpdateOneWithoutPostBookmarksInput {
+  create: UserCreateWithoutPostBookmarksInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateWithoutPostBookmarksDataInput
+  upsert: UserUpsertWithoutPostBookmarksInput
+}
+
 input UserUpdateOneWithoutPostLikesInput {
   create: UserCreateWithoutPostLikesInput
   connect: UserWhereUniqueInput
@@ -2632,6 +2958,7 @@ input UserUpdateWithoutChannelsDataInput {
   sentMessages: MessageUpdateManyWithoutFromInput
   receivedMessages: MessageUpdateManyWithoutToInput
   postLikes: PostLikeUpdateManyWithoutUserInput
+  postBookmarks: PostBookmarkUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutFollowersDataInput {
@@ -2645,6 +2972,7 @@ input UserUpdateWithoutFollowersDataInput {
   sentMessages: MessageUpdateManyWithoutFromInput
   receivedMessages: MessageUpdateManyWithoutToInput
   postLikes: PostLikeUpdateManyWithoutUserInput
+  postBookmarks: PostBookmarkUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutFollowsDataInput {
@@ -2654,6 +2982,21 @@ input UserUpdateWithoutFollowsDataInput {
   password: String
   avatarURL: String
   followers: UserUpdateManyWithoutFollowsInput
+  channels: ChannelUpdateManyWithoutUsersInput
+  sentMessages: MessageUpdateManyWithoutFromInput
+  receivedMessages: MessageUpdateManyWithoutToInput
+  postLikes: PostLikeUpdateManyWithoutUserInput
+  postBookmarks: PostBookmarkUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithoutPostBookmarksDataInput {
+  firstName: String
+  lastName: String
+  email: String
+  password: String
+  avatarURL: String
+  followers: UserUpdateManyWithoutFollowsInput
+  follows: UserUpdateManyWithoutFollowersInput
   channels: ChannelUpdateManyWithoutUsersInput
   sentMessages: MessageUpdateManyWithoutFromInput
   receivedMessages: MessageUpdateManyWithoutToInput
@@ -2671,6 +3014,7 @@ input UserUpdateWithoutPostLikesDataInput {
   channels: ChannelUpdateManyWithoutUsersInput
   sentMessages: MessageUpdateManyWithoutFromInput
   receivedMessages: MessageUpdateManyWithoutToInput
+  postBookmarks: PostBookmarkUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutReceivedMessagesDataInput {
@@ -2684,6 +3028,7 @@ input UserUpdateWithoutReceivedMessagesDataInput {
   channels: ChannelUpdateManyWithoutUsersInput
   sentMessages: MessageUpdateManyWithoutFromInput
   postLikes: PostLikeUpdateManyWithoutUserInput
+  postBookmarks: PostBookmarkUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutSentMessagesDataInput {
@@ -2697,6 +3042,7 @@ input UserUpdateWithoutSentMessagesDataInput {
   channels: ChannelUpdateManyWithoutUsersInput
   receivedMessages: MessageUpdateManyWithoutToInput
   postLikes: PostLikeUpdateManyWithoutUserInput
+  postBookmarks: PostBookmarkUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithWhereUniqueWithoutChannelsInput {
@@ -2717,6 +3063,11 @@ input UserUpdateWithWhereUniqueWithoutFollowsInput {
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutPostBookmarksInput {
+  update: UserUpdateWithoutPostBookmarksDataInput!
+  create: UserCreateWithoutPostBookmarksInput!
 }
 
 input UserUpsertWithoutPostLikesInput {
@@ -3155,6 +3506,9 @@ input UserWhereInput {
   postLikes_every: PostLikeWhereInput
   postLikes_some: PostLikeWhereInput
   postLikes_none: PostLikeWhereInput
+  postBookmarks_every: PostBookmarkWhereInput
+  postBookmarks_some: PostBookmarkWhereInput
+  postBookmarks_none: PostBookmarkWhereInput
 }
 
 input UserWhereUniqueInput {

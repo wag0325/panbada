@@ -74,19 +74,23 @@ class CreateMessage extends Component {
         const after = null
         const first = MESSAGES_PER_PAGE
         const orderBy = MESSAGES_ORDER_BY
-
+        
+        console.log("store ", store)
+        
         const data = store.readQuery({ query: MESSAGE_FEED_QUERY, variables: { first, after, orderBy, id } })
         console.log("data ", data)
         console.log("createPost ", createMessage)
         
-        data.messagesConnection.edges.splice(0, 0, {node: createMessage} )
-
-        console.log("data ", data)
-        store.writeQuery({
-          query: MESSAGE_FEED_QUERY,
-          data,
-          variables: { first, after, orderBy, id },
-        })
+        console.log("edges ", data.messagesConnection)
+        // if ( data.messagesConnection.edges ) {
+        // data.messagesConnection.edges.push({node: createMessage} )
+        // } else { console.log("no edges!")}
+        // console.log("data ", data)
+        // store.writeQuery({
+        //   query: MESSAGE_FEED_QUERY,
+        //   data,
+        //   variables: { first, after, orderBy, id },
+        // })
       }
     })
   }
@@ -103,8 +107,12 @@ const CREATE_MESSAGE_MUTATION = gql`
     createMessage(text: $text, id: $id) {
       id
       createdAt
-      toUserId
       text
+      to {
+        id
+        firstName
+        lastName
+      }
       from {
         id
         firstName

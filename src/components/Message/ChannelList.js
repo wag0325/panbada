@@ -33,7 +33,7 @@ class ChannelList extends Component {
     const { dense } = this.state
     const { classes } = this.props
     const meId = localStorage.getItem(ME_ID)
-    console.log("channel list ", this.props.channelFeedQuery)
+    
     if (this.props.channelFeedQuery && this.props.channelFeedQuery.loading) {
       // return <CircularProgress className={this.props.progress} size={50} />
       return (
@@ -47,6 +47,7 @@ class ChannelList extends Component {
       return <div>Error</div>
     }
 
+    console.log("channel list ", this.props.channelFeedQuery)
     const channelsToRender = this.props.channelFeedQuery.channelsConnection.edges
     
     return (
@@ -79,7 +80,13 @@ export const CHANNEL_FEED_QUERY = gql`
             createdAt
             id
             text
+            to {
+              id
+              firstName
+              lastName
+            }
             from {
+              id
               firstName
               lastName
             }

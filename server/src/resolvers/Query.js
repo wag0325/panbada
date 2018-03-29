@@ -73,8 +73,8 @@ function messages(parent, args, context, info) {
   const userId = getUserId(context)
 
   const where = { OR: [
-    { AND: [{ toUserId: id }, { from: { id: userId } }] },
-    { AND: [{ toUserId: userId }, { from: { id: id } }] },
+    { AND: [{ to: { id } }, { from: { id: userId } }] },
+    { AND: [{ to: { id: userId } }, { from: { id: id } }] },
   ]}
   
   return context.db.query.messages({ where }, info)
@@ -85,8 +85,8 @@ function messagesConnection(parent, args, context, info) {
   const userId = getUserId(context)
 
   const where = { OR: [
-    { AND: [{ toUserId: id }, { from: { id: userId } }] },
-    { AND: [{ toUserId: userId }, { from: { id: id } }] },
+    { AND: [{ to: { id } }, { from: { id: userId } }] },
+    { AND: [{ to: {id: userId } }, { from: { id: id } }] },
   ]}
   
   return context.db.query.messagesConnection({ after, first, orderBy, where }, info)

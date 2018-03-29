@@ -283,8 +283,8 @@ async function createMessage(parent, args, context, info) {
   let channel
 
   const where = { OR: [
-    { AND: [{ toUserId: id }, { from: { id: userId } }] },
-    { AND: [{ toUserId: userId }, { from: { id: id } }] },
+    { AND: [{ to: { id } }, { from: { id: userId } }] },
+    { AND: [{ to: {id: userId} }, { from: { id: id } }] },
   ]}
   
   const messages = await context.db.query.messages({ where }, info)
@@ -301,7 +301,7 @@ async function createMessage(parent, args, context, info) {
 
   return context.db.mutation.createMessage({ 
     data: { 
-      toUserId: id,
+      to: { connect: {id } },
       from: { connect: { id: userId } }, 
       text: text,
       channel: { connect: { id: channel.id } },

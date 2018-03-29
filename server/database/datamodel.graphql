@@ -46,7 +46,8 @@ type User {
   followers: [User!]! @relation(name: "Following")
   follows: [User!]! @relation(name: "Following")
   channels: [Channel!]! @relation(name: "MyConversations")
-  messages: [Message!]! @relation(name: "SentMessage")
+  sentMessages: [Message!]! @relation(name: "SentMessage")
+  receivedMessages: [Message!]! @relation(name: "ReceivedMessages")
   postLikes: [PostLike!]! @relation(name: "LikedUser")
 }
 
@@ -54,7 +55,8 @@ type Message {
   id: ID! @unique
   channel: Channel! @relation(name: "MessagesInChannel")
   createdAt: DateTime!
-  toUserId: String! 
+  readAt: DateTime
+  to: User! @relation(name: "ReceivedMessages")
   from: User! @relation(name: "SentMessage")
   text: String!
 }
@@ -66,5 +68,4 @@ type Channel {
   createdAt: DateTime!
   updatedAt: DateTime!
 }
-
 

@@ -66,30 +66,50 @@ const styles = theme => ({
   },
 })
 
+const authToken = localStorage.getItem(AUTH_TOKEN)
+const meId = localStorage.getItem(ME_ID)
+
 class Post extends Component {
-  state = { 
-    expanded: false, 
-    dense: true,
-    likePostId: null,
+  constructor(props) {
+    super(props)
+    let bookmarkPostId = null
+    let likePostId = null
+    
+    console.log("props ", props)
+    props.post.postBookmarks.filter(bookmark => {
+      if (bookmark.user.id === meId) {
+        bookmarkPostId = bookmark.id 
+      }
+      return null
+    })
+
+    props.post.postLikes.filter(like => {
+      if (like.user.id === meId) {
+        likePostId = like.id 
+      }
+      return null
+    })
+    
+    console.log("bookmarkPostId ", bookmarkPostId)
+
+    this.state = {
+      expanded: false, 
+      dense: true,
+      likePostId: likePostId,
+      postLikeNum: props.post.postLikes.length || 0,
+      bookmarkPostId: bookmarkPostId,
+    }
   }
 
   render() {
-    const authToken = localStorage.getItem(AUTH_TOKEN)
-    const meId = localStorage.getItem(ME_ID)
 
     const { classes, post } = this.props
-    const { dense } = this.state
-    const commentsToRender = post.postComments
+    const { dense, bookmarkPostId, likePostId, postLikeNum } = this.state
     
-    // if (post || post.postLikes) {
-    //   post.postLikes.map(like => {
-    //     if (like.user.id === meId) { return }
-    //   })
-    // }
-    console.log("likepost render ", this.state.likePostId)
+    console.log("post", this.props)
+    console.log("post", post)
+    const commentsToRender = post.postComments
 
-    // display already liked posts
-    // this.setState({ likePostId: post.postLikes.})
     return (
       <div>
         <Card className={classes.card}>
@@ -117,25 +137,17 @@ class Post extends Component {
              {post.text}
             </Typography>
             <Typography className={this.props.pos}>
-              {post.postLikes && post.postLikes.length} likes {' '}
+              {postLikeNum} likes {' '}
               {post.postComments && (<a onClick={this._handleExpandClick}>{this.props.post.postComments.length} comments</a>)}
             </Typography>
           </CardContent>
           <CardActions className={this.props.actions} disableActionSpacing>
-            { this.state.likedPostId ? (
-              <IconButton 
-                aria-label='Add to favorites'
-                onClick={this._unlikePost}
-              >
-                <FavoriteIcon />
-              </IconButton>) : (
-              <IconButton 
-               aria-label='Add to favorites'
-               onClick={this._likePost}
-              >
-                <FavoriteBorderIcon />
-              </IconButton>
-            )}
+            <IconButton 
+              aria-label='Add to favorites'
+              onClick={this._handleLike}
+            >
+              {likePostId ? <FavoriteIcon /> : <FavoriteBorderIcon /> }
+            </IconButton>
             <IconButton
               className={classnames(this.props.expand, {
                 [this.props.expandOpen]: this.state.expanded,
@@ -146,8 +158,10 @@ class Post extends Component {
             > 
               <ChatBubbleOutlineIcon />
             </IconButton>
-            <IconButton aria-label="Share">
-              <BookmarkBorderIcon />
+            <IconButton aria-label="save"
+              onClick={this._handleBookmark}
+            >
+              {bookmarkPostId ? <BookmarkIcon /> : <BookmarkBorderIcon /> } 
             </IconButton>
           </CardActions>
           <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
@@ -167,35 +181,60 @@ class Post extends Component {
   _handleExpandClick = () => {
     this.setState({ expanded: !this.state.expanded })
   }
-
-  _likePost = async () => {
+  
+  _handleBookmark = async () => {
     const id = this.props.post.id
-    console.log("id ", id)
-    await this.props.likePostMutation({
-      variables: {
-        id
-      },
-      update: (store, {data: { likePost }}) => {
-        console.log("store ", store)
-        console.log("likePost ", likePost)
-        this.setState({likePostId: likePost.id})
-      },
-    })
+    const { bookmarkPostId } = this.state
+
+    if (bookmarkPostId) {
+      console.log("bookmarkId ", bookmarkPostId)
+      await this.props.unbookmarkPostMutation({
+        variables: {
+          id: bookmarkPostId
+        }, 
+        update: (store, {data: { bookmarkPost }}) => {
+          console.log("store ", store)
+          console.log("bookmarkPost ", bookmarkPost)
+          this.setState({bookmarkPostId: null})
+        },
+      })
+    } else {
+      await this.props.bookmarkPostMutation({
+        variables: {
+          id
+        },
+        update: (store, {data: { bookmarkPost }}) => {
+          console.log("store ", store)
+          console.log("bookmarkPost ", bookmarkPost)
+          this.setState({bookmarkPostId: bookmarkPost.id})
+        },
+      })
+    }
   }
 
-  _unlikePost = async () => {
-    const id = this.state.likePostId
-    console.log("id ", id)
-    await this.props.unlikePostMutation({
-      variables: {
-        id
-      },
-      update: (store, {data: { unlikePost }}) => {
-        console.log("store ", store)
-        console.log("likePost ", unlikePost)
-        this.setState({likePostId: ''})
-      },
-    })
+  _handleLike = async () => {
+    const id = this.props.post.id
+    const { likePostId, postLikeNum } = this.state
+
+    if (likePostId) {
+      await this.props.unlikePostMutation({
+        variables: {
+          id: likePostId
+        }, 
+        update: (store, {data: { unlikePost }}) => {
+          this.setState({likePostId: null, postLikeNum: postLikeNum - 1})
+        },
+      })
+    } else {
+      await this.props.likePostMutation({
+        variables: {
+          id
+        },
+        update: (store, {data: { likePost }}) => {
+          this.setState({likePostId: likePost.id, postLikeNum: postLikeNum + 1})
+        },
+      })
+    }
   }
 }
 
@@ -227,7 +266,25 @@ const UNLIKE_POST_MUTATION = gql`
   }
 `
 
+const BOOKMARK_POST_MUTATION = gql`
+  mutation BookmarkPostMutation($id: ID!) {
+    bookmarkPost(id: $id) {
+      id
+    }
+  }
+`
+
+const UNBOOKMARK_POST_MUTATION = gql`
+  mutation UnbookmarkPostMutation($id: ID!) {
+    unbookmarkPost(id: $id) {
+      id
+    }
+  }
+`
+
 export default withStyles(styles)(compose(
   graphql(LIKE_POST_MUTATION, { name: 'likePostMutation' }),
   graphql(UNLIKE_POST_MUTATION, { name: 'unlikePostMutation' }),
+  graphql(BOOKMARK_POST_MUTATION, { name: 'bookmarkPostMutation' }),
+  graphql(UNBOOKMARK_POST_MUTATION, { name: 'unbookmarkPostMutation' }),
 )(Post))

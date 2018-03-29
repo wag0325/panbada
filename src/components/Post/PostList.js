@@ -135,6 +135,12 @@ export const POST_FEED_QUERY = gql`
               id
             }
           }
+          postBookmarks {
+            id
+            user {
+              id
+            }
+          }
           postedBy {
             id
             firstName

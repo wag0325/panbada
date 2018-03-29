@@ -42,14 +42,6 @@ const styles = theme => ({
 })
 
 class Channel extends Component {
-  constructor(props) {
-    super(props)
-
-    // console.log("me", props.meQuery.me)
-    this.state = {
-    }
-  }
-
   componentWillReceiveProps(nextProps){
     // const { user } = nextProps
     // const { me } = nextProps.meQuery 
@@ -73,7 +65,6 @@ class Channel extends Component {
     const authToken = localStorage.getItem(AUTH_TOKEN)
     const meId = localStorage.getItem(ME_ID)
     
-    console.log("props ", this.props)
     // Only one recipient
     const users = this.props.channel.users.filter(user => 
         user.id !== meId )

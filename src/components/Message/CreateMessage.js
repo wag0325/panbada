@@ -29,6 +29,7 @@ class CreateMessage extends Component {
   constructor(props) {
     super(props)
     
+    console.log("props createmessage ", props)
     this.state = {
       id: props.id,
       text: '',
@@ -37,6 +38,7 @@ class CreateMessage extends Component {
     
   render() {
     const { classes } = this.props
+    console.log("create id ", this.state.id)
 
     return (
       <form className={this.props.container} noValidate autoComplete="off">
@@ -69,28 +71,6 @@ class CreateMessage extends Component {
       variables: {
         text,
         id
-      },
-      update: (store, { data: { createMessage }}) => {
-        const after = null
-        const first = MESSAGES_PER_PAGE
-        const orderBy = MESSAGES_ORDER_BY
-        
-        console.log("store ", store)
-        
-        const data = store.readQuery({ query: MESSAGE_FEED_QUERY, variables: { first, after, orderBy, id } })
-        console.log("data ", data)
-        console.log("createPost ", createMessage)
-        
-        console.log("edges ", data.messagesConnection)
-        // if ( data.messagesConnection.edges ) {
-        // data.messagesConnection.edges.push({node: createMessage} )
-        // } else { console.log("no edges!")}
-        // console.log("data ", data)
-        // store.writeQuery({
-        //   query: MESSAGE_FEED_QUERY,
-        //   data,
-        //   variables: { first, after, orderBy, id },
-        // })
       }
     })
   }
@@ -106,21 +86,6 @@ const CREATE_MESSAGE_MUTATION = gql`
   mutation CreateMessageMutation($text: String!, $id: String!) {
     createMessage(text: $text, id: $id) {
       id
-      createdAt
-      text
-      to {
-        id
-        firstName
-        lastName
-      }
-      from {
-        id
-        firstName
-        lastName
-      }
-      channel {
-        id
-      }
     }
   }
 `

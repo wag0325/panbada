@@ -73,8 +73,6 @@ const meId = localStorage.getItem(ME_ID)
 class Channel extends Component {
   constructor(props) {
     super(props)
-
-    console.log("props constructor ", props)
     // console.log("me", props.meQuery.me)
     this.state = {
       me: meId === props.message.from.id ? true : false,
@@ -103,12 +101,9 @@ class Channel extends Component {
   render() {
     const authToken = localStorage.getItem(AUTH_TOKEN)
     
-    console.log("props ", this.props)
     // Only one recipient
     const { message, classes } = this.props
     const user = message.from
-
-    console.log("user ", user)
 
     return (      
       <div className={classes.messageRow}>

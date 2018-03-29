@@ -125,6 +125,11 @@ export const MESSAGE_FEED_QUERY = gql`
           createdAt
           id
           text
+          to {
+            id
+            firstName
+            lastName
+          }
           from {
             id
             firstName
@@ -142,7 +147,6 @@ export const MESSAGE_FEED_QUERY = gql`
 export default withStyles(styles)(graphql(MESSAGE_FEED_QUERY, {
  name: 'messageFeedQuery',
  options: ownProps => {
-    console.log("ownProps ", ownProps)
     let before = ownProps.startCursor || null
     return {
       variables: { last: MESSAGES_PER_PAGE, before:before, orderBy: MESSAGES_ORDER_BY, id: ownProps.id }

@@ -68,7 +68,6 @@ class ChannelList extends Component {
           </Button></div>)
     }
 
-    console.log("channel list ", this.props.channelFeedQuery)
     const channelsToRender = this.props.channelFeedQuery.channelsConnection.edges
     
     return (

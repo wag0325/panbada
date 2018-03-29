@@ -81,7 +81,7 @@ function messages(parent, args, context, info) {
 }
 
 function messagesConnection(parent, args, context, info) {
-  const { first, after, orderBy, id, channelId } = args
+  const { last, before, orderBy, id, channelId } = args
   const userId = getUserId(context)
 
   const where = { OR: [
@@ -89,7 +89,7 @@ function messagesConnection(parent, args, context, info) {
     { AND: [{ to: {id: userId } }, { from: { id: id } }] },
   ]}
   
-  return context.db.query.messagesConnection({ after, first, orderBy, where }, info)
+  return context.db.query.messagesConnection({ before, last, orderBy, where }, info)
 }
 
 

@@ -41,6 +41,7 @@ class PostList extends Component {
   }
   
   componentWillReceiveProps(nextProps) {
+    console.log("nextProps ", nextProps)
     const { hasNextPage } = nextProps.postFeedQuery.postsConnection.pageInfo
     this.setState({hasNextPage: hasNextPage })
   }
@@ -61,6 +62,7 @@ class PostList extends Component {
       return <div>Error</div>
     }
     
+    console.log("this.props", this.props)
     const { classes } = this.props
     const { postsConnection } = this.props.postFeedQuery
     const postsToRender = postsConnection.edges

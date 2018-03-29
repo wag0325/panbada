@@ -148,10 +148,16 @@ class CreatePost extends Component {
         const after = null
         const first = POSTS_PER_PAGE
         const orderBy = POSTS_ORDER_BY
-
+        
+        console.log("createPost ", createPost)
+        console.log("store ", store)
+        
         const data = store.readQuery({ query: POST_FEED_QUERY, variables: { first, after, orderBy } })
+        
         data.postsConnection.edges.splice(0, 0, {node: createPost} )
-              
+        
+        console.log("data ", data)
+
         store.writeQuery({
           query: POST_FEED_QUERY,
           data,
@@ -168,10 +174,16 @@ const POST_MUTATION = gql`
   mutation PostMutation($title: String!, $text: String!, $pictureURL: String) {
     createPost(title: $title, text: $text, pictureURL: $pictureURL) {
       id
+      createdAt
       title
       text
       pictureURL
-      createdAt
+      postLikes {
+        id
+        user {
+          id
+        }
+      }
       postedBy {
         id
         firstName

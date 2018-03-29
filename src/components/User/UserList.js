@@ -69,7 +69,7 @@ class UserList extends Component {
     }
 
     const usersToRender = this.props.userFeedQuery.usersConnection.edges
-    console.log("users ", usersToRender)
+    
     return (
       <div>
       <Paper className={classes.root} elevation={4}>
@@ -146,9 +146,9 @@ export default withStyles(styles)(graphql(USER_FEED_QUERY, {
  name: 'userFeedQuery',
  options: ownProps => {
     let after = ownProps.endCursor || null
-    console.log("filter ui ", decodeURIComponent(ownProps.filter))
     let filter = decodeURIComponent(ownProps.filter) || null
     if (!filter || filter === 'undefined') filter = null
+    
     return {
       variables: { first: USERS_PER_PAGE, after:after, orderBy: USERS_ORDER_BY, filter: filter }
     }

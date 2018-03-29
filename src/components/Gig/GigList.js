@@ -8,6 +8,8 @@ import gql from 'graphql-tag'
 import { withStyles } from 'material-ui/styles'
 import { CircularProgress } from 'material-ui/Progress'
 import { LinearProgress } from 'material-ui/Progress'
+import Paper from 'material-ui/Paper'
+import List from 'material-ui/List'
 import Button from 'material-ui/Button'
 
 import { GIGS_PER_PAGE, GIGS_ORDER_BY } from '../../constants'
@@ -19,10 +21,29 @@ const styles = theme => ({
    root: {
     flexGrow: 1,
   },
+  loadMoreWrapper: {
+    margin: 5,
+    marginTop: 20,
+    textAlign: 'center',
+  },
 })
 
 class GigList extends Component {
+  state = {
+    dense: false,
+    hasNextPage: true,
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { hasNextPage } = nextProps.gigFeedQuery.gigsConnection.pageInfo
+    this.setState({hasNextPage: hasNextPage })
+  }
+
   render() {
+    const { dense, hasNextPage } = this.state
+    const { classes } = this.props
+    let $loadMoreButton = null 
+
     if (this.props.gigFeedQuery && this.props.gigFeedQuery.loading) {
       // return <CircularProgress className={this.props.progress} size={50} />
       return (
@@ -35,6 +56,14 @@ class GigList extends Component {
     if (this.props.gigFeedQuery && this.props.gigFeedQuery.error) {
       return <div>Error</div>
     }
+    
+    if(hasNextPage) {
+      $loadMoreButton = 
+        (<div className={classes.loadMoreWrapper}>
+          <Button variant='raised' className={classes.button} onClick={this._loadMoreRows}>
+            Load More
+          </Button></div>)
+    }
 
     const gigsToRender = this.props.gigFeedQuery.gigsConnection.edges
     
@@ -45,9 +74,13 @@ class GigList extends Component {
           Post a gig
           </Button>
         </Link>
-        <div>{gigsToRender.map((gig, index) => 
-          <Gig key={gig.node.id} index={index} gig={gig.node} />)}
-        </div>
+        <Paper className={classes.root} elevation={4}>
+          <List dense={dense}>
+            {gigsToRender.map((gig, index) => 
+            <Gig key={gig.node.id} index={index} gig={gig.node} />)}
+          </List>
+        </Paper>
+        {$loadMoreButton}
       </div>
     )
   }

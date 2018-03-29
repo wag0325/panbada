@@ -24,16 +24,13 @@ function gig(parent, { id }, context, info) {
 
 function usersConnection(parent, args, ctx, info) {
   const { first, after, orderBy, filter } = args
-  
-  console.log("filter ", filter)
   const filters = []
+
   if (filter) {
     filter.split(' ').map(filter => {
     if (!filter) { return true }
     filters.push({ firstName_contains: filter }, { lastName_contains: filter })})
   }
-  
-  console.log("filters ", filters)
   
   const where = filter
     ? { OR: filters }

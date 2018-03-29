@@ -5,12 +5,12 @@ import gql from 'graphql-tag'
 import axios from 'axios'
 import moment from 'moment'
 
-import {browserHistory} from 'react-router'
 import { withStyles } from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
 import Button from 'material-ui/Button'
-import Dropzone from 'react-dropzone'
 import { FormControl, FormHelperText } from 'material-ui/Form'
+import Paper from 'material-ui/Paper'
+import Typography from 'material-ui/Typography'
 
 import { GIG_FEED_QUERY } from './GigList'
 
@@ -20,6 +20,10 @@ const styles = theme => ({
   container: {
     display: 'flex',
     flexWrap: 'wrap',
+  },
+  root: {
+    padding: 20,
+    marginTop: 20,
   },
   textField: {
     marginLeft: theme.spacing.unit,
@@ -42,44 +46,52 @@ class CreateGig extends Component {
     const { classes } = this.props
 
     return (
-      <form className={this.props.container} noValidate autoComplete="off">
-        <FormControl fullWidth className={classes.margin}>
-          <TextField
-            id="type"
-            label="Type"
-            className={this.props.textField}
-            value={this.state.type}
-            onChange={e => this.setState({ type: e.target.value })}
-            margin="normal"
-          />
-        </FormControl>
-        <FormControl fullWidth className={classes.margin}>
-          <TextField
-            id="title"
-            label="Title"
-            className={this.props.textField}
-            value={this.state.title}
-            onChange={e => this.setState({ title: e.target.value })}
-            margin="normal"
-          />
-        </FormControl>
-        <FormControl fullWidth className={classes.margin}>
-          <TextField
-            id="text"
-            label="Description"
-            multiline={true}
-            rows={5}
-            rowsMax={8}
-            className={this.props.textField}
-            value={this.state.text}
-            onChange={e => this.setState({ text: e.target.value })}
-            margin="normal"
-          />
-        </FormControl>
-        <Button variant="raised" color="primary" className={this.props.button} onClick={() => this._createGig()}>
-            Submit
-        </Button>
-      </form>
+      <Paper className={classes.root} elevation={4}>
+        <Typography variant='title' gutterBottom>
+         Post a Gig
+        </Typography>
+        <Typography component='p'>
+          Create an awesome gig to collaborate with others.
+        </Typography>
+        <form className={this.props.container} noValidate autoComplete="off">
+          <FormControl fullWidth className={classes.margin}>
+            <TextField
+              id="type"
+              label="Type"
+              className={this.props.textField}
+              value={this.state.type}
+              onChange={e => this.setState({ type: e.target.value })}
+              margin="normal"
+            />
+          </FormControl>
+          <FormControl fullWidth className={classes.margin}>
+            <TextField
+              id="title"
+              label="Title"
+              className={this.props.textField}
+              value={this.state.title}
+              onChange={e => this.setState({ title: e.target.value })}
+              margin="normal"
+            />
+          </FormControl>
+          <FormControl fullWidth className={classes.margin}>
+            <TextField
+              id="text"
+              label="Description"
+              multiline={true}
+              rows={5}
+              rowsMax={8}
+              className={this.props.textField}
+              value={this.state.text}
+              onChange={e => this.setState({ text: e.target.value })}
+              margin="normal"
+            />
+          </FormControl>
+          <Button variant="raised" color="primary" className={this.props.button} onClick={() => this._createGig()}>
+              Submit
+          </Button>
+        </form>
+      </Paper>
     )
   }
   

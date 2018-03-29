@@ -4,11 +4,18 @@ import gql from 'graphql-tag'
 import { Link } from 'react-router-dom'
 
 import { withStyles } from 'material-ui/styles'
-import Card, { CardActions, CardContent } from 'material-ui/Card'
+import List, {
+  ListItem,
+  ListItemAvatar,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+} from 'material-ui/List'
+import Avatar from 'material-ui/Avatar'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 
-import { AUTH_TOKEN } from '../../constants'
+import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
 import { timeDifferenceForDate } from '../../utils'
 
 const styles = theme => ({
@@ -29,30 +36,27 @@ const styles = theme => ({
     marginBottom: 12,
     color: theme.palette.text.secondary,
   },
-});
+})
 
 class Gig extends Component {
   render() {
     const authToken = localStorage.getItem(AUTH_TOKEN)
+    const { gig } = this.props
+    const user = gig.postedBy
+
     return (
-      <div>
-        <Card className={this.props.card}>
-          <CardContent>
-            <Typography variant="headline" component="h2">
-              <Link to={`/g/${this.props.gig.id}`}>{this.props.gig.title}</Link>
-            </Typography>
-            <Typography className={this.props.pos}>
-            by{' '}
-            {this.props.gig.postedBy
-              ? this.props.gig.postedBy.firstName
-              : 'Unknown'}{' '}
-            {timeDifferenceForDate(this.props.gig.createdAt)}
-            </Typography>
-          </CardContent>
-          <CardActions>
-          </CardActions>
-        </Card>
-      </div>
+      <ListItem>
+        <ListItemAvatar>
+          <Avatar aria-label={`${user.firstName}-${user.lastName}`}
+              className={this.props.avatar} 
+              src={user.avatarURL || AVATAR_DEFAULT}
+          />
+        </ListItemAvatar>
+        <Link to={`/g/${gig.id}`}><ListItemText
+          primary={this.props.gig.title}
+          secondary={timeDifferenceForDate(this.props.gig.createdAt)}
+        /></Link>
+      </ListItem>
     )
   }
 

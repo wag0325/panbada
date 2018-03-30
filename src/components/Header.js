@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { withRouter } from 'react-router'
-import { AUTH_TOKEN, ME_ID } from '../constants'
+import { graphql } from 'react-apollo'
+import gql from 'graphql-tag'
 
 import classNames from 'classnames'
 import { withStyles } from 'material-ui/styles'
@@ -17,7 +18,10 @@ import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 
 import SearchForm from './Search/SearchForm'
+import { AUTH_TOKEN } from '../constants'
 
+// Notifications
+// ME Query => GET Notifications, 
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -41,20 +45,37 @@ const styles = theme => ({
 })
 
 class HeaderM extends Component {
-  state = {
-    open: false,
-  };
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      open: false,
+      meId: null, 
+      lastMessageId: null,
+    }
+  }
   
+  componentWillReceiveProps(nextProps) {
+    let userId = null 
+    const { me } = nextProps.meQuery
+    me.channels[me.channels.length-1].users.map(function(user){
+      if (user.id != me.id) { 
+        userId = user.id
+      }
+    })
+    this.setState({meId: me.id, lastMessageId: userId}) 
+  }
+
   componentWillUnmount() {
     clearTimeout(this.timeout)
   }
 
   render() {
     const authToken = localStorage.getItem(AUTH_TOKEN)
-    const meId = localStorage.getItem(ME_ID)
-    console.log("meId", meId)
+
     const { classes } = this.props
-    const { open } = this.state
+    const { open, lastMessageId, meId } = this.state
+    const { me } = this.props.meQuery
 
     return (
       <div className={this.props.root}>
@@ -67,7 +88,7 @@ class HeaderM extends Component {
             <Link to="/"><Button color="inherit">Home</Button></Link>
             <Link to="/people"><Button color="inherit">People</Button></Link>
             <Link to="/gigs"><Button color="inherit">Gigs</Button></Link>
-            {authToken && (<Link to="/create-post"><Button color="inherit">Submit</Button></Link>)}
+            <Link to={`/messaging/thread/${lastMessageId}`}><Button color="inherit">Messaging</Button></Link>
             {authToken ? (
               <Manager>
                 <Target>
@@ -126,4 +147,19 @@ class HeaderM extends Component {
   };
 }
 
-export default withStyles(styles)(withRouter(HeaderM))
+export const ME_QUERY = gql`
+  query MeQuery {
+    me {
+      id
+      channels {
+        id
+        updatedAt
+        users {
+          id
+        }
+      }
+    }
+  }
+`
+
+export default withStyles(styles)(graphql(ME_QUERY, {name: 'meQuery'})(withRouter(HeaderM)))

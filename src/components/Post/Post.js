@@ -121,7 +121,6 @@ class Post extends Component {
             }
             action={
               <IconButton>
-                <MoreVertIcon />
               </IconButton>
             }
             title={post.postedBy ? `${post.postedBy.firstName} ${post.postedBy.lastName}` : 'Unknown'}

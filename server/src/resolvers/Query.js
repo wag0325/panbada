@@ -5,8 +5,14 @@ function postFeed(parent, args, ctx, info) {
 }
 
 function postsConnection(parent, args, context, info) {
-  const { first, after, orderBy } = args
-  return context.db.query.postsConnection({ after, first, orderBy }, info)
+  const { first, after, orderBy, filter } = args
+  
+  // filter only by postedBy user ID
+  const where = filter
+    ? { postedBy: { id: filter }}
+    : {}
+
+  return context.db.query.postsConnection({ after, first, orderBy, where }, info)
 }
 
 function post(parent, { id }, context, info) {

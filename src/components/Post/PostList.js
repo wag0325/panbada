@@ -170,8 +170,9 @@ export default withStyles(styles)(graphql(POST_FEED_QUERY, {
   name: 'postFeedQuery',
   options: ownProps => {
     let after = ownProps.endCursor || null
+    let postById = ownProps.postById || null
     return {
-      variables: { first: POSTS_PER_PAGE, after:after, orderBy: POSTS_ORDER_BY }
+      variables: { first: POSTS_PER_PAGE, after:after, orderBy: POSTS_ORDER_BY, filter: postById }
     }
   },
 })(PostList))

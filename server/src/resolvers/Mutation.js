@@ -286,34 +286,40 @@ async function createMessage(parent, args, context, info) {
   const { id, text } = args
   let channel
 
-  const where = { OR: [
-    { AND: [{ to: { id } }, { from: { id: userId } }] },
-    { AND: [{ to: {id: userId} }, { from: { id: id } }] },
-  ]}
+  // const where = { OR: [
+  //   { AND: [{ to: { id } }, { from: { id: userId } }] },
+  //   { AND: [{ to: {id: userId} }, { from: { id: id } }] },
+  // ]}
   
-  const messages = await context.db.query.messages({ where }, info)
+  // const messages = await context.db.query.messages({ where }, info)
   
-  console.log("messages ", messages)
+  // const where = { AND: [
+  //   { AND: [{ users_some: { id } }, { from: { id: userId } }] },
+  //   { AND: [{ to: {id: userId} }, { from: { id: id } }] },
+  // ]}
   
+  const where = { users_every: { id_in: [id, userId] }}
+  // console.log("messages ", messages)
+  const channels = await context.db.query.channels({ where }, info)
 
-  if (messages.length > 0) {
-    channel = messages[0].channel
-  } else {
-    channel = await context.db.mutation.createChannel({
-      data: {
-        users: { connect: [{ id: id }, { id: userId }] },
-      }
-    }, info)
-  }
+  // if (messages.length > 0) {
+  //   channel = messages[0].channel
+  // } else {
+  //   channel = await context.db.mutation.createChannel({
+  //     data: {
+  //       users: { connect: [{ id: id }, { id: userId }] },
+  //     }
+  //   }, info)
+  // }
 
-  console.log("channel ", channel)
+  console.log("channel ", channels)
 
   return context.db.mutation.createMessage({ 
     data: { 
       to: { connect: {id } },
       from: { connect: { id: userId } }, 
       text: text,
-      channel: { connect: { id: channel.id } },
+      channel: { connect: { id: channels[0].id } },
     } 
   }, info)
 }

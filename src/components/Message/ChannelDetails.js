@@ -38,6 +38,7 @@ class ChannelList extends Component {
   }
   
   componentWillReceiveProps(nextProps) {
+    console.log("nextProps", nextProps)
     const { hasPreviousPage } = nextProps.messageFeedQuery.messagesConnection.pageInfo
     this.setState({hasPreviousPage: hasPreviousPage })
   }

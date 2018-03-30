@@ -65,27 +65,65 @@ class CreateMessage extends Component {
   _createMessage = async () => {
     const { text, id } = this.state
     
-    console.log("id ", id)
+    console.log("id ", id, text)
 
     await this.props.createMessageMutation({
       variables: {
         text,
         id
+      }, 
+      update: (store, { data: { createMessage }}) => {
+        const before = null
+        const last = MESSAGES_PER_PAGE
+        const orderBy = MESSAGES_ORDER_BY
+        
+        console.log("createPost ", createMessage)
+        
+        const data = store.readQuery({ query: MESSAGE_FEED_QUERY, variables: { before, last, orderBy, id } })
+        
+        console.log("data ", data)
+        
+        const dt = {
+          ...data, 
+          messagesConnection: {
+            ...data.messagesConnection,
+            edges: [
+              ...data.messagesConnection.edges,
+              {node: createMessage, __typename: 'MessageEdge'}
+            ]
+          }
+        }
+
+        const messagesConnection = data.messagesConnection
+        messagesConnection.edges = [...messagesConnection.edges, {node: createMessage, __typename: 'MessageEdge'}]
+      
+
+        store.writeQuery({
+          query: MESSAGE_FEED_QUERY,
+          data,
+          variables: { before, last, orderBy, id },
+        })
       }
     })
-  }
-  
-
-  _onDrop = async files => {
-    console.log("onDrop " + files[0])
-    this.setState({ file: files[0] })
   }
 }
 
 const CREATE_MESSAGE_MUTATION = gql`
   mutation CreateMessageMutation($text: String!, $id: String!) {
     createMessage(text: $text, id: $id) {
+      createdAt
       id
+      text
+      to {
+        id
+        firstName
+        lastName
+      }
+      from {
+        id
+        firstName
+        lastName
+      }
     }
   }
 `

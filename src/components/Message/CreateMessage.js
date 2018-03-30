@@ -64,8 +64,6 @@ class CreateMessage extends Component {
 
   _createMessage = async () => {
     const { text, id } = this.state
-    
-    console.log("id ", id, text)
 
     await this.props.createMessageMutation({
       variables: {
@@ -77,26 +75,10 @@ class CreateMessage extends Component {
         const last = MESSAGES_PER_PAGE
         const orderBy = MESSAGES_ORDER_BY
         
-        console.log("createPost ", createMessage)
-        
         const data = store.readQuery({ query: MESSAGE_FEED_QUERY, variables: { before, last, orderBy, id } })
-        
-        console.log("data ", data)
-        
-        const dt = {
-          ...data, 
-          messagesConnection: {
-            ...data.messagesConnection,
-            edges: [
-              ...data.messagesConnection.edges,
-              {node: createMessage, __typename: 'MessageEdge'}
-            ]
-          }
-        }
 
         const messagesConnection = data.messagesConnection
         messagesConnection.edges = [...messagesConnection.edges, {node: createMessage, __typename: 'MessageEdge'}]
-      
 
         store.writeQuery({
           query: MESSAGE_FEED_QUERY,
@@ -105,6 +87,8 @@ class CreateMessage extends Component {
         })
       }
     })
+
+    this.setState({text: ''})
   }
 }
 

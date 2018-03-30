@@ -38,7 +38,6 @@ class ChannelList extends Component {
   }
   
   componentWillReceiveProps(nextProps) {
-    console.log("nextProps", nextProps)
     const { hasPreviousPage } = nextProps.messageFeedQuery.messagesConnection.pageInfo
     this.setState({hasPreviousPage: hasPreviousPage })
   }
@@ -70,9 +69,8 @@ class ChannelList extends Component {
           </Button></div>)
     }
 
-    console.log("props ", this.props)
     const messagesToRender = this.props.messageFeedQuery.messagesConnection.edges
-    console.log("channel details ", messagesToRender)
+    
     return (
       <Paper className={classes.root} elevation={4}>
         {$loadMoreButton}

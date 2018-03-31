@@ -119,9 +119,10 @@ class CreatePost extends Component {
 
   _createPost = async () => {
     const { title, text, pictureFile, pictureURL } = this.state
-    var pic_url = ''
+    const maxSize = 1024 * 1024 // 1MB
+    let pic_url = ''
 
-    if ( pictureFile ) {
+    if ( pictureFile && pictureFile.size < maxSize) {
       const response = await this.props.s3SignMutation({
         variables: {
           filename: this._formatFilename(pictureFile.name+'.'+pictureFile.type),

@@ -12,7 +12,7 @@ import List from 'material-ui/List'
 import Button from 'material-ui/Button'
 
 import { ME_ID, USERS_PER_PAGE, USERS_ORDER_BY } from '../../constants'
-
+import { UserFragments } from '../../constants/gqlFragments'
 
 const styles = theme => ({
   progress: {
@@ -129,11 +129,7 @@ export const USER_FEED_QUERY = gql`
       }
       edges {
         node {
-          id
-          email
-          firstName
-          lastName
-          avatarURL
+          ...BasicUserInfo
         }
       }
       aggregate {
@@ -141,6 +137,7 @@ export const USER_FEED_QUERY = gql`
       }
     }
   }
+  ${UserFragments.basicInfo}
 `
 
 export default withStyles(styles)(graphql(USER_FEED_QUERY, {

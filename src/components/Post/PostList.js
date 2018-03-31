@@ -9,6 +9,7 @@ import { CircularProgress } from 'material-ui/Progress'
 import { LinearProgress } from 'material-ui/Progress'
 import Button from 'material-ui/Button'
 
+import { PostFragments, UserFragments } from '../../constants/gqlFragments'
 import { POSTS_PER_PAGE, POSTS_ORDER_BY } from '../../constants'
 
 const styles = theme => ({
@@ -124,39 +125,18 @@ export const POST_FEED_QUERY = gql`
       }
       edges {
         node {
-          id
-          createdAt
-          title
-          text
-          pictureURL
+          ...PostBasic
           postLikes {
-            id
-            user {
-              id
-            }
+            ...PostLike
           }
           postBookmarks {
-            id
-            user {
-              id
-            }
+            ...PostBookmark
           }
           postedBy {
-            id
-            firstName
-            lastName
-            avatarURL
+            ...Avatar
           }
           postComments {
-            id
-            createdAt
-            text
-            user {
-              id
-              firstName
-              lastName
-              avatarURL
-            }
+            ...PostComment
           }
         }
       }
@@ -165,6 +145,11 @@ export const POST_FEED_QUERY = gql`
       }
     }
   }
+  ${PostFragments.postBasic}
+  ${PostFragments.postComment}
+  ${PostFragments.postLike}
+  ${PostFragments.postBookmark}
+  ${UserFragments.avatar}
 `
 
 export default withStyles(styles)(graphql(POST_FEED_QUERY, { 

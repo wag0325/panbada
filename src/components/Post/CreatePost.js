@@ -10,6 +10,7 @@ import Button from 'material-ui/Button'
 import Dropzone from 'react-dropzone'
 import { FormControl, FormHelperText } from 'material-ui/Form'
 
+import { PostFragments, UserFragments } from '../../constants/gqlFragments'
 import { POST_FEED_QUERY } from './PostList'
 import { POSTS_PER_PAGE, POSTS_ORDER_BY } from '../../constants'
 
@@ -180,35 +181,26 @@ class CreatePost extends Component {
 const POST_MUTATION = gql`
   mutation PostMutation($title: String!, $text: String!, $pictureURL: String) {
     createPost(title: $title, text: $text, pictureURL: $pictureURL) {
-      id
-      createdAt
-      title
-      text
-      pictureURL
+      ...PostBasic
       postLikes {
-        id
-        user {
-          id
-        }
+        ...PostLike
+      }
+      postBookmarks {
+        ...PostBookmark
       }
       postedBy {
-        id
-        firstName
-        lastName
-        avatarURL
+        ...Avatar
       }
       postComments {
-        id
-        text
-        user {
-          id
-          firstName
-          lastName
-          avatarURL
-        }
+        ...PostComment
       }
     }
   }
+  ${PostFragments.postBasic}
+  ${PostFragments.postComment}
+  ${PostFragments.postLike}
+  ${PostFragments.postBookmark}
+  ${UserFragments.avatar}
 `
 
 const S3_SIGN_MUTATION = gql`

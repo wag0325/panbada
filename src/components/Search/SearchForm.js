@@ -24,6 +24,7 @@ class SearchForm extends Component {
       <div>
         <Input
           type='text'
+          placeholder='Search'
           onChange={(e) => this.setState({ filter: e.target.value })}
           endAdornment={
                 <InputAdornment position="end">

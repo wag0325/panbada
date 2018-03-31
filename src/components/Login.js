@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
+import { withRouter } from 'react-router'
 
 import { withStyles } from 'material-ui/styles'
 import Button from 'material-ui/Button'
@@ -144,6 +145,7 @@ class Login extends Component {
       const { token, user } = result.data.signup
       this._saveUserData(token, user)
     }
+    
     this.props.history.push(`/`)
   }
 
@@ -175,7 +177,7 @@ const LOGIN_MUTATION = gql`
   }
 `
 
-export default withStyles(styles)(compose(
+export default withRouter(withStyles(styles)(compose(
   graphql(SIGNUP_MUTATION, { name: 'signupMutation' }),
   graphql(LOGIN_MUTATION, { name: 'loginMutation' }),
-)(Login))
+)(Login)))

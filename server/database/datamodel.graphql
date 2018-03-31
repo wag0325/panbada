@@ -16,6 +16,7 @@ type PostComment {
   post: Post! @relation(name: "PostComments")
   user: User!
   text: String!
+  createdAt: DateTime!
 }
 
 type PostLike {

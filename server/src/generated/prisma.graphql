@@ -58,6 +58,7 @@ type PostComment implements Node {
   post(where: PostWhereInput): Post!
   user(where: UserWhereInput): User!
   text: String!
+  createdAt: DateTime!
 }
 
 type PostLike implements Node {
@@ -1623,15 +1624,16 @@ enum PostCommentOrderByInput {
   id_DESC
   text_ASC
   text_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type PostCommentPreviousValues {
   id: ID!
   text: String!
+  createdAt: DateTime!
 }
 
 type PostCommentSubscriptionPayload {
@@ -1815,6 +1817,35 @@ input PostCommentWhereInput {
   All values not ending with the given string.
   """
   text_not_ends_with: String
+  createdAt: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
   post: PostWhereInput
   user: UserWhereInput
 }

@@ -149,6 +149,7 @@ export const POST_FEED_QUERY = gql`
           }
           postComments {
             id
+            createdAt
             text
             user {
               id

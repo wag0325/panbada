@@ -61,9 +61,6 @@ const styles = theme => ({
   expandOpen: {
     transform: 'rotate(180deg)',
   },
-  avatar: {
-    backgroundColor: red[500],
-  },
 })
 
 const meId = localStorage.getItem(ME_ID)

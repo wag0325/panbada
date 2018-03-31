@@ -146,6 +146,7 @@ const POST_COMMENT_MUTATION = gql`
   mutation PostCommentMutation($id: ID!, $text: String!) {
     createPostComment (id: $id, text: $text) {
       id
+      createdAt
       text
       user {
         id

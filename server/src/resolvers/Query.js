@@ -51,6 +51,11 @@ function user(parent, { id }, context, info) {
 
 function me(parent, args, context, info) {
   const userId = getUserId(context)
+  
+  if (!userId) {
+    throw new Error(`No user ${userId}`)
+  }
+
   return context.db.query.user({where: { id: userId } }, info)
 }
 

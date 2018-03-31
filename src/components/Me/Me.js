@@ -163,7 +163,7 @@ const ME_QUERY = gql`
     me {
       firstName
       lastName
-      avatar_url
+      avatarURL
     }
   }
 `

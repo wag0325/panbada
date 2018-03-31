@@ -26,7 +26,7 @@ const styles = theme => ({
   },
 })
 
-class MyAccount extends Component {
+class MySettings extends Component {
   state = {
     expanded: null,
   }
@@ -82,4 +82,4 @@ class MyAccount extends Component {
   }
 }
 
-export default withStyles(styles)(MyAccount)
+export default withStyles(styles)(MySettings)

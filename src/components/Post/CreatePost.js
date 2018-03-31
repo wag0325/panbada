@@ -168,6 +168,12 @@ class CreatePost extends Component {
 
     this.props.onClose()
   }
+
+  // _handleTextChange = data => {
+  //   console.log("data", data.target.value)
+  //   LinkPreview.getPreview(data.target.value).then(data => console.debug(data))
+  //   this.setState({ text: data.target.value })
+  // }
 }
 
 const POST_MUTATION = gql`

@@ -14,8 +14,12 @@ import ClickAwayListener from 'material-ui/utils/ClickAwayListener'
 import AppBar from 'material-ui/AppBar'
 import Toolbar from 'material-ui/Toolbar'
 import Typography from 'material-ui/Typography'
+import Tooltip from 'material-ui/Tooltip'
+
 import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
+import AccountCircle from 'material-ui-icons/AccountCircle'
+import Chat from 'material-ui-icons/Chat'
 
 import { AUTH_TOKEN } from '../../constants'
 
@@ -82,16 +86,23 @@ class UserSpecificMenu extends Component {
 
     return (
       <div className={classes.loggedInMenu}>
-        <Link to={`/messaging/thread/${lastMessageId}`}>Messaging</Link>
+        <Link to={`/messaging/thread/${lastMessageId}`}>
+          <Tooltip id="tooltip-icon" title="Messaging">
+            <IconButton aria-label="Messaging">
+              <Chat />
+            </IconButton>
+          </Tooltip>
+        </Link>
         <Manager>
           <Target>
-            <Button
+            <IconButton
               aria-owns={open ? 'menu-list' : null}
               aria-haspopup="true"
               onClick={this.handleClick}
+              color="inherit"
             >
-              Me
-            </Button>
+              <AccountCircle />
+            </IconButton>
           </Target>
           <Popper
             placement="bottom-start"

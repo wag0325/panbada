@@ -45,6 +45,7 @@ class UserList extends Component {
     const { dense, hasNextPage } = this.state
     const { classes } = this.props
     const meId = localStorage.getItem(ME_ID)
+    console.log("meId", meId)
     let $loadMoreButton = null 
 
     if (this.props.userFeedQuery && this.props.userFeedQuery.loading) {

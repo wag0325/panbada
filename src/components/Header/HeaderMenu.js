@@ -45,6 +45,7 @@ const styles = theme => ({
   }, 
   menuItemLink: {
     textDecorationLine: 'none',
+    fontWeight: 'bold',
   },
   paper: {
     marginRight: theme.spacing.unit * 2,
@@ -99,14 +100,14 @@ class HeaderMenu extends Component {
 	      	</Tooltip>
         </Link></div>
         <div className={classes.menuItem}><Link className={classes.menuItemLink} to="/gigs">
-					<Tooltip id="tooltip-icon" title="Gig">
-		        <IconButton aria-label="Gig">
+					<Tooltip id="tooltip-icon" title="Gigs">
+		        <IconButton aria-label="Gigs">
 		          <LocalActivity />
 		        </IconButton>
 	      	</Tooltip>
         </Link></div>
         {authToken ? (<UserSpecificMenu />) :
-        (<div className={classes.menuItem}><Link className={classes.menuItemLink} to="/login" className="no-underline">SIGN IN</Link></div>)}
+        (<div className={classes.menuItem}><Link className={classes.menuItemLink} to="/login">SIGN IN</Link></div>)}
       </div>
     )
   }

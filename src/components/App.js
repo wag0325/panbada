@@ -14,7 +14,7 @@ import { HttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
 import Header from './Header/Header'
-import Login from './Login'
+import LoginContainer from './container/LoginContainer'
 import HomeContainer from './container/HomeContainer'
 import UsersContainer from './container/UsersContainer'
 import UserContainer from './container/UserContainer'
@@ -34,7 +34,7 @@ class App extends Component {
         <div className="">
           <Switch>
             <Route exact path='/' component={HomeContainer}/>
-            <Route exact path='/login' component={Login}/>
+            <Route exact path='/login' component={LoginContainer}/>
             <Route exact path='/gigs' component={GigsContainer}/>
             <Route exact path='/gigs/new' component={CreateGigContainer}/>
             <Route path='/g/:id' component={GigContainer}/>

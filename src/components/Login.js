@@ -29,11 +29,9 @@ const styles = theme => ({
     display: 'flex',
     flexWrap: 'wrap',
   },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: 200,
-  },
+  actions: {
+    marginTop: 20,
+  }
 })
 
 class Login extends Component {
@@ -47,11 +45,14 @@ class Login extends Component {
   }
 
   render() {
+    const { classes } = this.props
+    
     return (
       <div>
         <h4 className="mv3">{this.state.login ? 'Login' : 'Sign Up'}</h4>
         <form className={this.props.container} noValidate autoComplete="off">
           {!this.state.login && (
+            <FormControl fullWidth className={classes.formControl}>
             <TextField
               id="firstName"
               label="First Name"
@@ -59,8 +60,11 @@ class Login extends Component {
               value={this.state.firstName}
               onChange={e => this.setState({ firstName: e.target.value })}
               margin="normal"
-            />)}
+            />
+            </FormControl>
+            )}
           {!this.state.login && (
+            <FormControl fullWidth className={classes.formControl}>
             <TextField
               id="lastName"
               label="Last Name"
@@ -69,7 +73,9 @@ class Login extends Component {
               onChange={e => this.setState({ lastName: e.target.value })}
               margin="normal"
             />
+            </FormControl>
             )}
+          <FormControl fullWidth className={classes.formControl}>
           <TextField
             id="email"
             label="Email"
@@ -78,7 +84,8 @@ class Login extends Component {
             onChange={e => this.setState({ email: e.target.value })}
             margin="normal"
           />
-          <FormControl className={classNames(this.props.margin, this.props.textField)}>
+          </FormControl>
+          <FormControl fullWidth className={classes.formControl}>
             <InputLabel htmlFor="password">Password</InputLabel>
             <Input
               id="adornment-password"
@@ -97,14 +104,16 @@ class Login extends Component {
               }
             />
           </FormControl>
-          <Button variant="raised" color="primary" className={this.props.button} onClick={() => this._confirm()}>
-            {this.state.login ? 'login' : 'create account'}
-          </Button>
-          <Button className={this.props.button} onClick={() => this.setState({ login: !this.state.login })}>
-            {this.state.login
-              ? 'need to create an account?'
-              : 'already have an account?'}
-          </Button>
+          <div className={classes.actions}>
+            <Button variant="raised" color="primary" className={this.props.button} onClick={() => this._confirm()}>
+              {this.state.login ? 'login' : 'create account'}
+            </Button>
+            <Button className={this.props.button} onClick={() => this.setState({ login: !this.state.login })}>
+              {this.state.login
+                ? 'need to create an account?'
+                : 'already have an account?'}
+            </Button>
+          </div>
         </form>
       </div>
     )

@@ -3,9 +3,13 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
 import PropTypes from 'prop-types'
+import Input, { InputLabel, InputAdornment } from 'material-ui/Input'
+import { FormControl, FormHelperText } from 'material-ui/Form'
 import { withStyles } from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
 import Button from 'material-ui/Button'
+import IconButton from 'material-ui/IconButton'
+import Send from 'material-ui-icons/Send'
 
 import { POST_FEED_QUERY } from './PostList'
 import { POSTS_PER_PAGE, POSTS_ORDER_BY } from '../../constants'
@@ -69,21 +73,24 @@ class CreatePostComment extends Component {
 
     return (
       <div>
-        <TextField
-          type='text'
-          value={this.state.text}
-          onChange={(e) => this.setState({ text: e.target.value})}
-          InputProps={{
-            disableUnderline: true,
-            classes: {
-              root: classes.textFieldRoot,
-              input: classes.textFieldInput,
-            },
-          }}
-        />
-        <Button variant="raised" color="default" className={classes.button} onClick={() => this._createPostComment()}>
-          Post
-        </Button>
+        <FormControl fullWidth className={classes.formControl}>
+            <Input
+              id="adornment-password"
+              type='text'
+              placeholder='Add a comment...'
+              value={this.state.text}
+              onChange={(e) => this.setState({ text: e.target.value})}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => this._createPostComment()}
+                  >
+                    <Send />
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+        </FormControl>
       </div>
     )
   }

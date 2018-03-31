@@ -3,6 +3,10 @@ import { withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
 import {withRouter} from 'react-router-dom'
 
+import Input, { InputLabel, InputAdornment } from 'material-ui/Input'
+import IconButton from 'material-ui/IconButton'
+import Search from 'material-ui-icons/Search'
+
 import User from '../User/User'
 import SearchContainer from '../container/SearchContainer'
 
@@ -18,15 +22,19 @@ class SearchForm extends Component {
 
     return (
       <div>
-        <input
+        <Input
           type='text'
           onChange={(e) => this.setState({ filter: e.target.value })}
+          endAdornment={
+                <InputAdornment position="end">
+                  <IconButton 
+                    onClick={() => this._executeSearch()}
+                    aria-label="Search">
+                    <Search />
+                  </IconButton>
+                </InputAdornment>
+              }
         />
-        <button
-          onClick={() => this._executeSearch()}
-        >
-          OK
-        </button>
       </div>
     )
   }

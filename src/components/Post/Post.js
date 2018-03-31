@@ -66,7 +66,6 @@ const styles = theme => ({
   },
 })
 
-const authToken = localStorage.getItem(AUTH_TOKEN)
 const meId = localStorage.getItem(ME_ID)
 
 class Post extends Component {
@@ -75,7 +74,7 @@ class Post extends Component {
     let bookmarkPostId = null
     let likePostId = null
     
-    console.log("props ", props)
+    console.log("meId post", meId)
     props.post.postBookmarks.filter(bookmark => {
       if (bookmark.user.id === meId) {
         bookmarkPostId = bookmark.id 
@@ -102,6 +101,7 @@ class Post extends Component {
   }
 
   render() {
+    const authToken = localStorage.getItem(AUTH_TOKEN)
 
     const { classes, post } = this.props
     const { dense, bookmarkPostId, likePostId, postLikeNum } = this.state

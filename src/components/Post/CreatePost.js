@@ -13,6 +13,7 @@ import { FormControl, FormHelperText } from 'material-ui/Form'
 import { PostFragments, UserFragments } from '../../constants/gqlFragments'
 import { POST_FEED_QUERY } from './PostList'
 import { POSTS_PER_PAGE, POSTS_ORDER_BY } from '../../constants'
+import { formatFilename, uploadToS3 } from '../../utils/handleFile'
 
 const styles = theme => ({
   container: {
@@ -99,25 +100,6 @@ class CreatePost extends Component {
     reader.readAsDataURL(file)
   }
 
-  _formatFilename = filename => {
-    const date = moment().format('YYYYMMDD')
-    const randomString = Math.random()
-      .toString(36)
-      .substring(2, 7)
-    const cleanFileName = filename.toLowerCase().replace(/[^a-z0-9]/g, '-')
-    const newFilename = `images/${date}-${randomString}-${cleanFileName}`
-    return newFilename.substring(0, 60);
-  };
-
-  _uploadToS3 = async (file, signedRequest) => {
-    const options = {
-      headers: {
-        'Content-Type': file.type
-      }
-    }
-    await axios.put(signedRequest, file, options)
-  }
-
   _createPost = async () => {
     const { title, text, pictureFile, pictureURL } = this.state
     const maxSize = 1024 * 1024 // 1MB
@@ -126,7 +108,7 @@ class CreatePost extends Component {
     if ( pictureFile && pictureFile.size < maxSize) {
       const response = await this.props.s3SignMutation({
         variables: {
-          filename: this._formatFilename(pictureFile.name+'.'+pictureFile.type),
+          filename: formatFilename(pictureFile.name+'.'+pictureFile.type),
           filetype: pictureFile.type
         }
       })
@@ -136,7 +118,7 @@ class CreatePost extends Component {
       this.setState({ pictureURL: url })
       
       pic_url = url 
-      await this._uploadToS3(pictureFile, signedRequest)
+      await uploadToS3(pictureFile, signedRequest)
     }
     
     await this.props.postMutation({

@@ -13,6 +13,7 @@ import List from 'material-ui/List'
 import Button from 'material-ui/Button'
 
 import { GIGS_PER_PAGE, GIGS_ORDER_BY } from '../../constants'
+import { GigFragments, UserFragments } from '../../constants/gqlFragments'
 
 const styles = theme => ({
   progress: {
@@ -95,16 +96,9 @@ export const GIG_FEED_QUERY = gql`
       }
       edges {
         node {
-          id
-          createdAt
-          type
-          title
-          text
+          ...GigBasic
           postedBy {
-            id
-            firstName
-            lastName
-            avatarURL
+            ...Avatar
           }
         }
       }
@@ -113,6 +107,8 @@ export const GIG_FEED_QUERY = gql`
       }
     }
   }
+  ${GigFragments.gigBasic}
+  ${UserFragments.avatar}
 `
 export default withStyles(styles)(graphql(GIG_FEED_QUERY, { 
   name: 'gigFeedQuery',

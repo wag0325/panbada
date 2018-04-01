@@ -13,8 +13,8 @@ import Paper from 'material-ui/Paper'
 import Typography from 'material-ui/Typography'
 
 import { GIG_FEED_QUERY } from './GigList'
-
 import { GIGS_PER_PAGE, GIGS_ORDER_BY } from '../../constants'
+import { GigFragments, UserFragments } from '../../constants/gqlFragments'
 
 const styles = theme => ({
   container: {
@@ -170,19 +170,14 @@ class CreateGig extends Component {
 const CREATE_GIG_MUTATION = gql`
   mutation CreateGigMutation($type: String!, $title: String!, $text: String!) {
     createGig(type:$type, title: $title, text: $text) {
-      id
-      createdAt
-      type
-      title
-      text
+      ...GigBasic
       postedBy {
-        id
-        firstName
-        lastName
-        avatarURL
+        ...Avatar
       }
     }
   }
+  ${GigFragments.gigBasic}
+  ${UserFragments.avatar}
 `
 
 const S3_SIGN_MUTATION = gql`

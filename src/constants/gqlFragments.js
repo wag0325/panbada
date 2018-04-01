@@ -60,3 +60,16 @@ export const PostFragments = {
 		}
 	`,
 }
+
+export const GigFragments = {
+  gigBasic: gql`
+	  fragment GigBasic on Gig {
+	    id
+      createdAt
+      type
+      title
+      text
+      location
+	  }
+	`,
+}

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import * as ReactDOM from 'react-dom'
 
 import { withStyles } from 'material-ui/styles'
 import { CircularProgress } from 'material-ui/Progress'
@@ -41,11 +42,23 @@ const styles = theme => ({
 })
 
 class ChannelList extends Component {
-  state = {
-    dense: false,
-    hasPreviousPage: true,
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      dense: false,
+      hasPreviousPage: true,
+    }
   }
   
+  componentDidUpdate() {
+    const { messageList } = this.refs
+
+    if (messageList.scrollTop > 30) {
+      this._scrollToBottom() 
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     const { hasPreviousPage } = nextProps.messageFeedQuery.messagesConnection.pageInfo
     this.setState({hasPreviousPage: hasPreviousPage })
@@ -82,18 +95,29 @@ class ChannelList extends Component {
     
     return (
       <div className={classes.root}>
-        <Paper className={classes.conversation} elevation={2}>
+        <button onClick={this._scrollToBottom}/>
+          <div className={classes.conversation} ref='messageList'>
           {$loadMoreButton}
             {messagesToRender.map((message, index) => 
               <Message key={message.node.id} index={index} message={message.node} />)}
-        </Paper>
-        <Paper className={classes.create} elevation={2}><CreateMessage id={this.props.id} /></Paper>
+          </div>
+          <CreateMessage id={this.props.id} />
       </div>
     )
+  }
+  
+  _scrollToBottom = () => {    
+    const { messageList } = this.refs
+    const scrollHeight = messageList.scrollHeight
+    const height = messageList.clientHeight
+    const maxScrollTop = scrollHeight - height
+    
+    ReactDOM.findDOMNode(messageList).scrollTop = maxScrollTop > 0 ? maxScrollTop : 0
   }
 
   _loadMoreRows = () => {
     const { messagesConnection, fetchMore } = this.props.messageFeedQuery
+
     fetchMore({
       variables: { before: messagesConnection.pageInfo.startCursor },
       updateQuery: (previousResult, { fetchMoreResult, queryVariables }) => {

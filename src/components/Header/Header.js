@@ -34,6 +34,15 @@ const styles = theme => ({
     alignSelf: 'flex-end',
     alignItems: 'center',
   },
+  logoWrapper: {
+  },
+  logo: {
+    display: 'inline-block',
+  },
+  logoDescription: {
+    fontSize: 10,
+    display: 'inline-block',
+  },
   menuItem: {
     padding: 10,
   }, 
@@ -82,9 +91,14 @@ class Header extends Component {
       <div className={classes.root}>
         <AppBar position="static" color='default'>
           <Toolbar className={classes.headerInner}>
-            <Typography variant="title" color="inherit" className={this.props.flex}>
+            <Link className={classes.logoWrapper} to="/">
+            <Typography variant="title" color="inherit" className={classes.logo}>
               panbada
             </Typography>
+            <Typography variant="subheading" color="inherit" className={classes.logoDescription}>
+              beta
+            </Typography>
+            </Link>
             <SearchForm />
             <HeaderMenu />            
           </Toolbar>

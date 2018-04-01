@@ -33,12 +33,21 @@ const styles = theme => ({
     flexBasis: '80%',
     overflow: 'auto',
     padding: 20,
+    paddingTop: 0,
+    backgroundColor: '#fff',
+    boxShadow: '1px 1px rgba(0, 0, 0, 0.2)'
   },
   loadMoreWrapper: {
     margin: 5,
     marginTop: 20,
     textAlign: 'center',
   },
+  loadMoreButton: {
+    padding: 5,
+    paddingTop: 3,
+    paddingBottom: 3,
+    fontSize: 11,
+  }
 })
 
 class ChannelList extends Component {
@@ -48,18 +57,26 @@ class ChannelList extends Component {
     this.state = {
       dense: false,
       hasPreviousPage: true,
+      loadMore: false,
     }
   }
   
-  componentDidUpdate() {
+  componentWillUpdate() {
     const { messageList } = this.refs
+    const { loadMore } = this.state
+  }
 
-    if (messageList.scrollTop > 30) {
-      this._scrollToBottom() 
+  componentDidUpdate() {
+    console.log("state  ", this.state)
+    const { messageList } = this.refs
+    const { loadMore } = this.state
+    if (!loadMore) {
+      this._scrollToBottom()
     }
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log("nextProps ", nextProps)
     const { hasPreviousPage } = nextProps.messageFeedQuery.messagesConnection.pageInfo
     this.setState({hasPreviousPage: hasPreviousPage })
   }
@@ -69,6 +86,8 @@ class ChannelList extends Component {
     const { classes } = this.props
     const meId = localStorage.getItem(ME_ID)
     let $loadMoreButton = null 
+
+    console.log("props ", this.props)
 
     if (this.props.messageFeedQuery && this.props.messageFeedQuery.loading) {
       // return <CircularProgress className={this.props.progress} size={50} />
@@ -86,7 +105,7 @@ class ChannelList extends Component {
     if(hasPreviousPage) {
       $loadMoreButton = 
         (<div className={classes.loadMoreWrapper}>
-          <Button variant='raised' className={classes.button} onClick={this._loadMoreRows}>
+          <Button variant='raised' className={classes.loadMoreButton} onClick={this._loadMoreRows}>
             Load More
           </Button></div>)
     }
@@ -95,17 +114,34 @@ class ChannelList extends Component {
     
     return (
       <div className={classes.root}>
-        <button onClick={this._scrollToBottom}/>
-          <div className={classes.conversation} ref='messageList'>
-          {$loadMoreButton}
+          <div className={classes.conversation} ref='messageList' onScroll={this._onScroll}>
+            {$loadMoreButton}
             {messagesToRender.map((message, index) => 
               <Message key={message.node.id} index={index} message={message.node} />)}
           </div>
-          <CreateMessage id={this.props.id} />
+          <Paper className={classes.create}>
+          <CreateMessage id={this.props.id} updateAfterCreate={this._handleCreate}/>
+          </Paper>
       </div>
     )
   }
   
+  _handleCreate = () => {
+    const { loadMore } = this.state
+    this.setState({loadMore: false})
+  }
+
+  _onScroll = () => {
+    const { messageList } = this.refs
+    const { loadMore } = this.state
+    console.log("scroll ", messageList.scrollTop)
+
+    if (messageList.scrollTop === 0) { 
+      this.setState({loadMore: true})
+      this._loadMoreRows()
+    }
+  }
+
   _scrollToBottom = () => {    
     const { messageList } = this.refs
     const scrollHeight = messageList.scrollHeight
@@ -138,7 +174,7 @@ class ChannelList extends Component {
 
         const newData = {
           ...previousResult,
-          messagesConnection: newPostsData
+          messagesConnection: newPostsData,
         }
         
         return newData

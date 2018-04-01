@@ -16,14 +16,16 @@ import { ME_ID, MESSAGES_PER_PAGE, MESSAGES_ORDER_BY } from '../../constants'
 
 
 const styles = theme => ({
-  progress: {
-    margin: theme.spacing.unit * 2,
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
   },
-  root: theme.mixins.gutters({
-    paddingTop: 16,
-    paddingBottom: 16,
-    marginTop: theme.spacing.unit * 3,
-  }),
+  create: {
+    flexBasis: '30%'
+  },
+  conversation: {
+    flexBasis: '70%'
+  },
   loadMoreWrapper: {
     margin: 5,
     marginTop: 20,
@@ -72,12 +74,14 @@ class ChannelList extends Component {
     const messagesToRender = this.props.messageFeedQuery.messagesConnection.edges
     
     return (
-      <Paper className={classes.root} elevation={4}>
+      <div className={classes.root}>
+        <div className={classes.conversation}>
         {$loadMoreButton}
           {messagesToRender.map((message, index) => 
             <Message key={message.node.id} index={index} message={message.node} />)}
-        <CreateMessage id={this.props.id} />
-      </Paper>
+        </div>
+        <div className={classes.create}><CreateMessage id={this.props.id} /></div>
+      </div>
     )
   }
 

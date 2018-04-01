@@ -38,10 +38,12 @@ const styles = theme => ({
   },
   logo: {
     display: 'inline-block',
+    color: '#212121'
   },
   logoDescription: {
     fontSize: 10,
     display: 'inline-block',
+    color: theme.palette.primary.main
   },
   menuItem: {
     padding: 10,

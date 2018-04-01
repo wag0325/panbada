@@ -159,10 +159,10 @@ function deletePostComment(parent, { id }, context, info) {
   return context.db.mutation.deletePostComment({ where: { id: id } }, info,)
 }
 
-function createGig(parent, { title, text, type }, context, info) {
+function createGig(parent, args, context, info) {
   const userId = getUserId(context)
   return context.db.mutation.createGig(
-    { data: { title, text, type, postedBy: { connect: { id: userId } } } },
+    { data: { ...args, postedBy: { connect: { id: userId } } } },
     info,
   )
 }
@@ -175,8 +175,9 @@ function deleteGig(parent, { id }, context, info) {
 
 async function signup(parent, args, context, info) {
   const password = await bcrypt.hash(args.password, 10)
+  const level = 'MEMBER'
   const user = await context.db.mutation.createUser({
-    data: { ...args, password },
+    data: { ...args, password, level },
   })
 
   const token = jwt.sign({ userId: user.id }, APP_SECRET)

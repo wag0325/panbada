@@ -2,6 +2,7 @@
 
 type User {
   id: ID!
+  level: USER_LEVEL!
   firstName: String!
   lastName: String!
   email: String!
@@ -50,7 +51,7 @@ type Mutation {
   unbookmarkPost(id: ID!): PostBookmark
   createPostComment(id: ID!, text: String!): PostComment
   deletePostComment(id: ID!): PostComment
-  createGig(title: String!, text: String!, type: String!): Gig
+  createGig(title: String!, text: String!, type: String!, location: String): Gig
   deleteGig(id: ID!): Gig
   signup(email: String!, password: String!, firstName: String!, lastName: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload

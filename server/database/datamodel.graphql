@@ -38,12 +38,14 @@ type Gig {
   updatedAt: DateTime!
   title: String!
   text: String!
+  location: String
   url: String
   postedBy: User
 }
 
 type User {
   id: ID! @unique
+  level: USER_LEVEL!
   firstName: String!
   lastName: String!
   email: String! @unique
@@ -78,3 +80,11 @@ type Channel {
   updatedAt: DateTime!
 }
 
+enum USER_LEVEL {
+  MEMBER
+  ADMIN
+}
+
+enum NOTIFICATION_TYPE {
+  MESSAGES
+}

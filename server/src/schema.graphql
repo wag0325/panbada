@@ -51,7 +51,7 @@ type Mutation {
   unbookmarkPost(id: ID!): PostBookmark
   createPostComment(id: ID!, text: String!): PostComment
   deletePostComment(id: ID!): PostComment
-  createGig(title: String!, text: String!, type: String!, location: String): Gig
+  createGig(title: String!, text: String!, type: GIG_TYPE!, location: String): Gig
   deleteGig(id: ID!): Gig
   signup(email: String!, password: String!, firstName: String!, lastName: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload

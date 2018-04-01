@@ -8,6 +8,9 @@ import moment from 'moment'
 import { withStyles } from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
 import Button from 'material-ui/Button'
+import Select from 'material-ui/Select'
+import Input, { InputLabel } from 'material-ui/Input'
+import { MenuItem } from 'material-ui/Menu'
 import { FormControl, FormHelperText } from 'material-ui/Form'
 import Paper from 'material-ui/Paper'
 import Typography from 'material-ui/Typography'
@@ -45,7 +48,18 @@ class CreateGig extends Component {
 
   render() {
     const { classes } = this.props
+    const gigTypes = [
+      {name: 'Creative', value: 'CREATIVE'}, 
+      {name: 'Crew', value: 'CREW'}, 
+      {name: 'Event', value: 'EVENT'}, 
+      {name: 'Labor', value: 'LABOR'}, 
+      {name: 'Talent', value: 'TALENT'}, 
+      {name: 'Technical', value: 'TECHNICAL'}, 
+      {name: 'Writing', value: 'WRITING'}, 
+      {name: 'Other', value: 'OTHER'}, 
+    ]
 
+    console.log("state ", this.state)
     return (
       <Paper className={classes.root} elevation={4}>
         <Typography variant='title' gutterBottom>
@@ -56,14 +70,19 @@ class CreateGig extends Component {
         </Typography>
         <form className={this.props.container} noValidate autoComplete="off">
           <FormControl fullWidth className={classes.margin}>
-            <TextField
-              id="type"
-              label="Type"
-              className={this.props.textField}
+            <InputLabel htmlFor="gig-type">Type</InputLabel>
+            <Select
               value={this.state.type}
               onChange={e => this.setState({ type: e.target.value })}
-              margin="normal"
-            />
+              inputProps={{
+                name: 'type',
+                id: 'gig-type',
+              }}
+            >
+            {gigTypes.map((type, index) => 
+              <MenuItem value={type.value} key={index}>{type.name}</MenuItem>
+            )}
+            </Select>
           </FormControl>
           <FormControl fullWidth className={classes.margin}>
             <TextField
@@ -182,7 +201,7 @@ class CreateGig extends Component {
 }
 
 const CREATE_GIG_MUTATION = gql`
-  mutation CreateGigMutation($type: String!, $title: String!, $text: String!, $location: String) {
+  mutation CreateGigMutation($type: GIG_TYPE!, $title: String!, $text: String!, $location: String) {
     createGig(type:$type, title: $title, text: $text, location: $location) {
       ...GigBasic
       postedBy {

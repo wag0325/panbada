@@ -33,7 +33,7 @@ type PostBookmark {
 
 type Gig {
   id: ID! @unique
-  type: String!
+  type: GIG_TYPE!
   createdAt: DateTime!
   updatedAt: DateTime!
   title: String!
@@ -83,6 +83,17 @@ type Channel {
 enum USER_LEVEL {
   MEMBER
   ADMIN
+}
+
+enum GIG_TYPE {
+  CREATIVE
+  CREW
+  EVENT
+  LABOR
+  TALENT
+  TECHNICAL
+  WRITING
+  OTHER
 }
 
 enum NOTIFICATION_TYPE {

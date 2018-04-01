@@ -15,7 +15,7 @@ type Channel implements Node {
 
 type Gig implements Node {
   id: ID!
-  type: String!
+  type: GIG_TYPE!
   createdAt: DateTime!
   updatedAt: DateTime!
   title: String!
@@ -413,6 +413,17 @@ input ChannelWhereUniqueInput {
 
 scalar DateTime
 
+enum GIG_TYPE {
+  CREATIVE
+  CREW
+  EVENT
+  LABOR
+  TALENT
+  TECHNICAL
+  WRITING
+  OTHER
+}
+
 """
 A connection to a list of items.
 """
@@ -429,7 +440,7 @@ type GigConnection {
 }
 
 input GigCreateInput {
-  type: String!
+  type: GIG_TYPE!
   title: String!
   text: String!
   location: String
@@ -472,7 +483,7 @@ enum GigOrderByInput {
 
 type GigPreviousValues {
   id: ID!
-  type: String!
+  type: GIG_TYPE!
   createdAt: DateTime!
   updatedAt: DateTime!
   title: String!
@@ -517,7 +528,7 @@ input GigSubscriptionWhereInput {
 }
 
 input GigUpdateInput {
-  type: String
+  type: GIG_TYPE
   title: String
   text: String
   location: String
@@ -587,59 +598,19 @@ input GigWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
-  type: String
+  type: GIG_TYPE
   """
   All values that are not equal to given value.
   """
-  type_not: String
+  type_not: GIG_TYPE
   """
   All values that are contained in given list.
   """
-  type_in: [String!]
+  type_in: [GIG_TYPE!]
   """
   All values that are not contained in given list.
   """
-  type_not_in: [String!]
-  """
-  All values less than the given value.
-  """
-  type_lt: String
-  """
-  All values less than or equal the given value.
-  """
-  type_lte: String
-  """
-  All values greater than the given value.
-  """
-  type_gt: String
-  """
-  All values greater than or equal the given value.
-  """
-  type_gte: String
-  """
-  All values containing the given string.
-  """
-  type_contains: String
-  """
-  All values not containing the given string.
-  """
-  type_not_contains: String
-  """
-  All values starting with the given string.
-  """
-  type_starts_with: String
-  """
-  All values not starting with the given string.
-  """
-  type_not_starts_with: String
-  """
-  All values ending with the given string.
-  """
-  type_ends_with: String
-  """
-  All values not ending with the given string.
-  """
-  type_not_ends_with: String
+  type_not_in: [GIG_TYPE!]
   createdAt: DateTime
   """
   All values that are not equal to given value.

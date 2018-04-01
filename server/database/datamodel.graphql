@@ -45,7 +45,7 @@ type Gig {
 
 type User {
   id: ID! @unique
-  level: USER_LEVEL!
+  level: USER_LEVEL
   firstName: String!
   lastName: String!
   email: String! @unique

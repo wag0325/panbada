@@ -45,7 +45,7 @@ class CreateMessage extends Component {
         <FormControl fullWidth className={classes.margin}>
           <TextField
             id='message'
-            label='Message'
+            placeholder='Write a message...'
             className={this.props.textField}
             multiline={true}
             rows={5}

@@ -8,8 +8,11 @@ import ChannelDetails from '../Message/ChannelDetails'
 
 const styles = theme => ({
   root: {
-    flexGrow: 1,
-    position: 'relative',
+    position: 'absolute',
+    top: 80,
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
   button: {
     margin: theme.spacing.unit,
@@ -30,7 +33,7 @@ class UsersContainer extends Component {
 
 		return(
 			<div>
-				<Grid container spacing={24}>
+				<Grid container spacing={24} className={classes.root}>
 	        <Grid item xs={12} sm={3}>
 	        	<ChannelList />
 	        </Grid>

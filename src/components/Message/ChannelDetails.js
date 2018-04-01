@@ -19,12 +19,19 @@ const styles = theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
+    height: '100%',
   },
   create: {
-    flexBasis: '30%'
+    flexBasis: '20%',
+    paddingTop: 10,
+    paddingRight: 20,
+    paddingBottom: 10,
+    paddingLeft: 20,
   },
   conversation: {
-    flexBasis: '70%'
+    flexBasis: '80%',
+    overflow: 'auto',
+    padding: 20,
   },
   loadMoreWrapper: {
     margin: 5,
@@ -75,12 +82,12 @@ class ChannelList extends Component {
     
     return (
       <div className={classes.root}>
-        <div className={classes.conversation}>
-        {$loadMoreButton}
-          {messagesToRender.map((message, index) => 
-            <Message key={message.node.id} index={index} message={message.node} />)}
-        </div>
-        <div className={classes.create}><CreateMessage id={this.props.id} /></div>
+        <Paper className={classes.conversation} elevation={2}>
+          {$loadMoreButton}
+            {messagesToRender.map((message, index) => 
+              <Message key={message.node.id} index={index} message={message.node} />)}
+        </Paper>
+        <Paper className={classes.create} elevation={2}><CreateMessage id={this.props.id} /></Paper>
       </div>
     )
   }

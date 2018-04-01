@@ -48,6 +48,14 @@ const styles = theme => ({
     marginLeft: 10,
     marginBottom: 10,
   },
+  messageWrapperMe: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginLeft: 10,
+    marginBottom: 10,
+    textAlign: 'right',
+  },
   displayName: {
     fontSize:13,
     color: theme.palette.text.secondary,
@@ -56,15 +64,28 @@ const styles = theme => ({
     fontSize:12,
     color: theme.palette.text.secondary,
   },
-  message: {
+  avatar: {
+    float: 'left',
+    width: 25,
+    height: 25, 
+    marginRight: 10,
+  },
+  content: {
+    display: 'inline-block',
+    maxWidth: '80%',
+  },
+  text: {
     fontSize: 14,
     paddingTop: 5,
-    paddingLeft: 5,
+    paddingLeft: 10,
     paddingBottom: 5,
+    paddingRight: 10,
     marginBottom: 5,
     marginTop: 3,
     borderRadius: 4,
     border: '1px solid #d6d7da',
+    display: 'inline-block',
+    textAlign: 'left',
   },
 })
 
@@ -103,20 +124,19 @@ class Channel extends Component {
     
     // Only one recipient
     const { message, classes } = this.props
+    const { me } = this.state
     const user = message.from
 
     return (      
       <div className={classes.messageRow}>
-        <div className={classes.messageWrapper}>
-          <div className={classes.avatarWrapper}>
-            <Avatar aria-label={`${user.firstName}-${user.lastName}`}
-                className={this.props.avatar} 
-                src={user.avatarURL || AVATAR_DEFAULT}
-            />
-          </div>
+        <div className={me ? classes.messageWrapperMe : classes.messageWrapper}>
+          {!me && (<Avatar aria-label={`${user.firstName}-${user.lastName}`}
+              className={classes.avatar} 
+              src={user.avatarURL || AVATAR_DEFAULT}
+          />) }
           <div className={classes.content}>
-            <div className={classes.displayName}>{`${user.firstName} ${user.lastName}`}</div>
-            <div className={classes.message}>{`${message.text}`}</div>
+            {!me && (<div className={classes.displayName}>{`${user.firstName} ${user.lastName}`}</div>) }
+            <div className={classes.text}>{`${message.text}`}</div>
             <div className={classes.time}>{displayTime(message.createdAt)}</div>
           </div>
         </div> 

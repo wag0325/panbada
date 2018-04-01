@@ -16,6 +16,7 @@ import IconButton from 'material-ui/IconButton'
 import MoreHorizIcon from 'material-ui-icons/MoreHoriz'
 
 import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
+import { GigFragments, UserFragments } from '../../constants/gqlFragments'
 
 import SendMessageModal from '../Message/SendMessageModal'
 
@@ -142,7 +143,7 @@ class GigDetails extends Component {
             <CardContent className={classes.content}>
               <Typography variant="headline">{gig.title}</Typography>
               <Typography variant="subheading" color="textSecondary">
-                {gig.type} | {user.firstName} {user.lastName}
+                {gig.type} | {gig.location} | {user.firstName} {user.lastName}
               </Typography>
             </CardContent>
             <CardActions>
@@ -212,20 +213,14 @@ class GigDetails extends Component {
 export const GIG_QUERY = gql`
   query GigQuery($id: String!) {
     gig(id: $id) {
-      id
-      type
-      title
-      text
-      createdAt
+      ...GigBasic
       postedBy {
-        id
-        firstName
-        lastName
-        avatarURL
-        email
+        ...Avatar
       }
     }
   }
+  ${GigFragments.gigBasic}
+  ${UserFragments.avatar}
 `
 
 export default withStyles(styles)(compose(

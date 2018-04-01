@@ -39,6 +39,7 @@ class CreateGig extends Component {
   state = {
     type: '',
     title: '',
+    location: '',
     text: '',  
   }
 
@@ -71,6 +72,16 @@ class CreateGig extends Component {
               className={this.props.textField}
               value={this.state.title}
               onChange={e => this.setState({ title: e.target.value })}
+              margin="normal"
+            />
+          </FormControl>
+          <FormControl fullWidth className={classes.margin}>
+            <TextField
+              id="location"
+              label="Location"
+              className={this.props.textField}
+              value={this.state.location}
+              onChange={e => this.setState({ location: e.target.value })}
               margin="normal"
             />
           </FormControl>
@@ -116,12 +127,15 @@ class CreateGig extends Component {
   }
 
   _createGig = async () => {
-    const { title, text, type } = this.state
+    const { title, text, type, location, } = this.state
+    console.log("location ", location)
+
     await this.props.createGigMutation({
       variables: {
         type,
         title,
-        text
+        text,
+        location,
       },
       update: (store, { data: { createGig }}) => {
         const after = null
@@ -168,8 +182,8 @@ class CreateGig extends Component {
 }
 
 const CREATE_GIG_MUTATION = gql`
-  mutation CreateGigMutation($type: String!, $title: String!, $text: String!) {
-    createGig(type:$type, title: $title, text: $text) {
+  mutation CreateGigMutation($type: String!, $title: String!, $text: String!, $location: String) {
+    createGig(type:$type, title: $title, text: $text, location: $location) {
       ...GigBasic
       postedBy {
         ...Avatar

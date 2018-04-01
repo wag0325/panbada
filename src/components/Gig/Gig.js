@@ -53,8 +53,8 @@ class Gig extends Component {
           />
         </ListItemAvatar>
         <Link to={`/g/${gig.id}`}><ListItemText
-          primary={this.props.gig.title}
-          secondary={timeDifferenceForDate(this.props.gig.createdAt)}
+          primary={gig.title}
+          secondary={gig.location}
         /></Link>
       </ListItem>
     )

@@ -44,18 +44,26 @@ class MyActivity extends Component {
 
   render() {
     const { classes, theme } = this.props
-    const { value } = this.state;
-    const meId = 'cjf754au801dy08253i51c8fz'
+    const { value } = this.state
+
+    if (this.props.meQuery && this.props.meQuery.loading) {
+      return <div>Loading</div>
+    }
+
+    if (this.props.meQuery && this.props.meQuery.error) {
+      return <div>Error</div>
+    }
     
     console.log("me ", this.props.meQuery)
+    const { me } = this.props.meQuery
     return (
       <div className={classes.root}>
-        <AppBar position="static" color="default">
+        <AppBar position='static' color='default'>
           <Tabs
             value={this.state.value}
             onChange={this.handleChange}
-            indicatorColor="primary"
-            textColor="primary"
+            indicatorColor='primary'
+            textColor='primary'
             fullWidth
           >
             <Tab label="My Posts" />
@@ -65,7 +73,7 @@ class MyActivity extends Component {
             <Tab label="Saved Gigs" />
           </Tabs>
         </AppBar>
-        {value === 0 && <TabContainer><PostList postById={meId} /></TabContainer>}
+        {value === 0 && <TabContainer><PostList postById={me.id} /></TabContainer>}
         {value === 1 && <TabContainer></TabContainer>}
         {value === 2 && <TabContainer></TabContainer>}
         {value === 3 && <TabContainer></TabContainer>}
@@ -83,11 +91,10 @@ MyActivity.propTypes = {
 const ME_QUERY = gql`
   query MeQuery {
     me {
+      id
       firstName
       lastName
       avatarURL
-      postLikes
-      postBookmarks
     }
   }
 `

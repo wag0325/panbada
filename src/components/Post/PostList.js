@@ -6,7 +6,6 @@ import gql from 'graphql-tag'
 
 import { withStyles } from 'material-ui/styles'
 import { CircularProgress } from 'material-ui/Progress'
-import { LinearProgress } from 'material-ui/Progress'
 import Button from 'material-ui/Button'
 
 import { PostFragments, UserFragments } from '../../constants/gqlFragments'
@@ -38,11 +37,11 @@ class PostList extends Component {
       isError: false, 
       hasMoreItems: true,
       hasNextPage: true,
+      filter: props.postById || null,
     }
   }
   
   componentWillReceiveProps(nextProps) {
-    console.log("nextProps ", nextProps)
     const { hasNextPage } = nextProps.postFeedQuery.postsConnection.pageInfo
     this.setState({hasNextPage: hasNextPage })
   }
@@ -63,7 +62,6 @@ class PostList extends Component {
       return <div>Error</div>
     }
     
-    console.log("this.props", this.props)
     const { classes } = this.props
     const { postsConnection } = this.props.postFeedQuery
     const postsToRender = postsConnection.edges
@@ -73,7 +71,7 @@ class PostList extends Component {
           <Post key={post.node.id} index={index} post={post.node} />
           )}
         {this.state.hasNextPage && 
-          <div className={classes.loadMoreWrapper}><Button variant="raised" className={classes.button} onClick={this._loadMoreRows}>
+          <div className={classes.loadMoreWrapper}><Button variant='raised' className={classes.button} onClick={this._loadMoreRows}>
             Load More
           </Button></div>
         }
@@ -82,23 +80,26 @@ class PostList extends Component {
   }
   
   _trackScrolling = () => {
-    const windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
-    const body = document.body;
-    const html = document.documentElement;
+    const windowHeight = 'innerHeight' in window ? window.innerHeight : document.documentElement.offsetHeight
+    const body = document.body
+    const html = document.documentElement
     const docHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight,  html.scrollHeight, html.offsetHeight);
-    const windowBottom = windowHeight + window.pageYOffset;
+    const windowBottom = windowHeight + window.pageYOffset
+    
     if (windowBottom >= docHeight) {
-      console.log("reached bottom", windowHeight, window.pageYOffset, windowBottom, docHeight)
       this._loadMoreRows()
-    } else {
-      console.log("not yet", windowHeight, window.pageYOffset, windowBottom, docHeight)
     }
   }
 
   _loadMoreRows = () => {
     const { postsConnection, fetchMore } = this.props.postFeedQuery
+    const { postById } = this.state
+
     fetchMore({
-      variables: { after: postsConnection.pageInfo.endCursor },
+      variables: {  first: POSTS_PER_PAGE, 
+                    after: postsConnection.pageInfo.endCursor,
+                    orderBy: POSTS_ORDER_BY, 
+                    filter: postById, },
       updateQuery: (previousResult, { fetchMoreResult, queryVariables }) => {
 
         if (!fetchMoreResult) {
@@ -127,8 +128,8 @@ class PostList extends Component {
 }
 
 export const POST_FEED_QUERY = gql`
-  query PostsConnectionQuery($first: Int, $after: String, $orderBy: PostOrderByInput) {
-    postsConnection(first: $first, after: $after, orderBy: $orderBy,) {
+  query PostsConnectionQuery($first: Int, $after: String, $orderBy: PostOrderByInput, $filter: String,) {
+    postsConnection(first: $first, after: $after, orderBy: $orderBy, filter: $filter,) {
       pageInfo {
         endCursor
         hasNextPage
@@ -167,6 +168,7 @@ export default withStyles(styles)(graphql(POST_FEED_QUERY, {
   options: ownProps => {
     let after = ownProps.endCursor || null
     let postById = ownProps.postById || null
+    
     return {
       variables: { first: POSTS_PER_PAGE, after:after, orderBy: POSTS_ORDER_BY, filter: postById }
     }

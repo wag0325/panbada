@@ -6,6 +6,7 @@ import Snackbar from 'material-ui/Snackbar'
 import IconButton from 'material-ui/IconButton'
 import CloseIcon from 'material-ui-icons/Close'
 
+// requires message, type ['success', 'error', 'alert', 'info']
 const styles = theme => ({
   close: {
     width: theme.spacing.unit * 4,
@@ -52,7 +53,7 @@ class FeedbackMessage extends Component {
         SnackbarContentProps={{
           'aria-describedby': 'message-id',
         }}
-        message={`<span id="message-id">${message}</span>`}
+        message={`${message}`}
         />
     )
   }

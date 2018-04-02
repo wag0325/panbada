@@ -29,7 +29,12 @@ const httpLinkWithAuthToken = middlewareAuthLink.concat(httpLink)
 
 const client = new ApolloClient({
   link: httpLinkWithAuthToken,
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
+  defaultOptions: {
+    watchQuery: {
+      errorPolicy: 'all'
+    }
+  }
 })
 
 ReactDOM.render(

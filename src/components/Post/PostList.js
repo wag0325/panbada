@@ -46,13 +46,13 @@ class PostList extends Component {
     const { hasNextPage } = nextProps.postFeedQuery.postsConnection.pageInfo
     this.setState({hasNextPage: hasNextPage })
   }
-  // componentWillMount() {
-  //   document.addEventListener('scroll', this._trackScrolling)
-  // }
+  componentWillMount() {
+    document.addEventListener('scroll', this._trackScrolling)
+  }
   
-  // componentWillUnmount() {
-  //   document.removeEventListener('scroll', this._trackScrolling)
-  // }
+  componentWillUnmount() {
+    document.removeEventListener('scroll', this._trackScrolling)
+  }
 
   render() {
     if (this.props.postFeedQuery && this.props.postFeedQuery.loading) {
@@ -82,7 +82,17 @@ class PostList extends Component {
   }
   
   _trackScrolling = () => {
-    const postFeedDiv = document.getElementById('post-feed-wrapper').offsetHeight
+    const windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
+    const body = document.body;
+    const html = document.documentElement;
+    const docHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight,  html.scrollHeight, html.offsetHeight);
+    const windowBottom = windowHeight + window.pageYOffset;
+    if (windowBottom >= docHeight) {
+      console.log("reached bottom", windowHeight, window.pageYOffset, windowBottom, docHeight)
+      this._loadMoreRows()
+    } else {
+      console.log("not yet", windowHeight, window.pageYOffset, windowBottom, docHeight)
+    }
   }
 
   _loadMoreRows = () => {

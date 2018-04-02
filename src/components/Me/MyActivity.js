@@ -54,8 +54,8 @@ class MyActivity extends Component {
       return <div>Error</div>
     }
     
-    console.log("me ", this.props.meQuery)
     const { me } = this.props.meQuery
+    
     return (
       <div className={classes.root}>
         <AppBar position='static' color='default'>
@@ -66,18 +66,10 @@ class MyActivity extends Component {
             textColor='primary'
             fullWidth
           >
-            <Tab label="My Posts" />
-            <Tab label="Saved Posts" />
-            <Tab label="Liked Posts" />
-            <Tab label="My Gigs" />
-            <Tab label="Saved Gigs" />
+            <Tab label='My Posts'/>
           </Tabs>
         </AppBar>
         {value === 0 && <TabContainer><PostList postById={me.id} /></TabContainer>}
-        {value === 1 && <TabContainer></TabContainer>}
-        {value === 2 && <TabContainer></TabContainer>}
-        {value === 3 && <TabContainer></TabContainer>}
-        {value === 4 && <TabContainer></TabContainer>}
       </div>
     )
   }

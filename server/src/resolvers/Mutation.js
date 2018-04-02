@@ -180,9 +180,9 @@ async function signup(parent, args, context, info) {
   // validation
   // 1) throw multiple errors
   // 2) validate email address 
-  const user = await context.db.query.user({ where: { email: args.email } })
-  if (user) {
-    throw new Error(`Already existing account with this email, ${args.email}`)
+  const existingUser = await context.db.query.user({ where: { email: args.email } })
+  if (existingUser) {
+    throw new Error(`Already existing account with this email: ${args.email}`)
   }
 
   if (!firstName || firstName.length < 2 ) {

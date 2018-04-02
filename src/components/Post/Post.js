@@ -159,7 +159,7 @@ class Post extends Component {
             </IconButton>
             <IconButton aria-label="save"
               onClick={this._handleBookmark}
-              classNames={classes.bookmark}
+              className={classes.bookmark}
             >
               {bookmarkPostId ? <BookmarkIcon /> : <BookmarkBorderIcon /> } 
             </IconButton>

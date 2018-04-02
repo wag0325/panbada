@@ -55,6 +55,7 @@ type Mutation {
   deleteGig(id: ID!): Gig
   signup(email: String!, password: String!, firstName: String!, lastName: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
+  deleteUser(email: String!): User
   changePassword(currPassword: String!, newPassword: String!): User
   follow(id: ID!): User
   unfollow(id: ID!): User

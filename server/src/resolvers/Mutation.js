@@ -174,8 +174,24 @@ function deleteGig(parent, { id }, context, info) {
 }
 
 async function signup(parent, args, context, info) {
-  const password = await bcrypt.hash(args.password, 10)
+  const { firstName, lastName, email } = args
   const level = 'MEMBER'
+  
+  // validation
+  // 1) throw multiple errors
+  // 2) validate email address 
+  
+  if (!firstName || firstName.length < 2 ) {
+    throw new Error(`Invalid first name. It has to be greater than two or greater characters: ${firstName}`)
+  } else if (!lastName || lastName.length < 2 ) {
+    throw new Error(`Invalid last name. It has to be greater than two or greater characters: ${lastName}`)
+  } else if (!email) {
+    throw new Error(`Invalid email address: ${email}`)
+  } else if (!args.password || args.password.length < 5 || args.password.length > 20) {
+    throw new Error(`Invalid password. Password has to be greater than 5 and less than 20 characters.`)
+  }
+
+  const password = await bcrypt.hash(args.password, 10)
   const user = await context.db.mutation.createUser({
     data: { ...args, password, level },
   })
@@ -205,6 +221,12 @@ async function login(parent, args, context, info) {
     token,
     user,
   }
+}
+
+function deleteUser(parent, args, context, info ) {
+  // if admin 
+  // email or ID?
+  return context.db.mutation.deleteUser({ where: { email: args.email } })
 }
 
 async function changePassword(parent, args, context, info) {
@@ -347,6 +369,7 @@ module.exports = {
   deleteGig,
   signup,
   login,
+  deleteUser,
   changePassword,
   updateMe,
   follow,

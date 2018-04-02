@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import { Link } from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
 
 import { withStyles } from 'material-ui/styles'
 import Card, { CardActions, CardContent } from 'material-ui/Card'
@@ -22,6 +23,14 @@ import { timeDifferenceForDate } from '../../utils'
 import { AUTH_TOKEN, ME_ID, AVATAR_DEFAULT } from '../../constants'
 
 const styles = theme => ({
+  root: {
+    padding: 0,
+  }, 
+  rootActive: {
+    padding: 0,
+    borderLeft: '5px solid',
+    borderColor: theme.palette.primary.main,
+  },
   card: {
     minWidth: 275,
   },
@@ -39,9 +48,16 @@ const styles = theme => ({
     marginBottom: 12,
     color: theme.palette.text.secondary,
   },
+  datetime: {
+    fontSize: 13,
+    color: theme.palette.text.secondary,
+  },
 })
 
 class Channel extends Component {
+  state = {
+    id: '',
+  }
   componentWillReceiveProps(nextProps){
     // const { user } = nextProps
     // const { me } = nextProps.meQuery 
@@ -62,19 +78,29 @@ class Channel extends Component {
   // }
 
   render() {
+    const { classes, channel, currChannel } = this.props
     const authToken = localStorage.getItem(AUTH_TOKEN)
     const meId = localStorage.getItem(ME_ID)
+    let activeChannel = false
     
     // Only one recipient
-    const users = this.props.channel.users.filter(user => 
+    const users = channel.users.filter(user => 
         user.id !== meId )
     const user = users[0]
 
-    const lastMessage = this.props.channel.messages[this.props.channel.messages.length-1]
+    if (!this.state.id) {
+      this.setState({id: user.id})
+    }
+
+    const lastMessage = channel.messages[this.props.channel.messages.length-1]
     
+    if (user.id === currChannel) {
+      console.log("it's current channcle")
+      activeChannel = true 
+    }
 
     return (
-      <ListItem>
+      <ListItem className={activeChannel ? classes.rootActive : classes.root } onClick={this._clickChannel}>
         <ListItemAvatar>
           <Avatar aria-label={`${user.firstName}-${user.lastName}`}
               className={this.props.avatar} 
@@ -86,10 +112,16 @@ class Channel extends Component {
           secondary={`${lastMessage.from.firstName}: ${lastMessage.text}`}
         />
         <ListItemSecondaryAction>
-          {timeDifferenceForDate(lastMessage.createdAt)}
+          <div className={classes.datetime}>{timeDifferenceForDate(lastMessage.createdAt)}</div>
         </ListItemSecondaryAction>
       </ListItem>
     )
+  }
+  
+  _clickChannel = () => {
+    const { id } = this.state
+    console.log("clicked", id)
+    if (id) this.props.history.push(`/messaging/thread/${id}`)
   }
 
   _likePost = async () => {
@@ -157,4 +189,4 @@ export const ME_QUERY = gql`
 `
 
 
-export default withStyles(styles)(Channel)
+export default withStyles(styles)(withRouter(Channel))

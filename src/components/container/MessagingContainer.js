@@ -35,7 +35,7 @@ class UsersContainer extends Component {
 			<div>
 				<Grid container spacing={24} className={classes.root}>
 	        <Grid item xs={12} sm={3}>
-	        	<ChannelList />
+	        	<ChannelList currChannel={id}/>
 	        </Grid>
 	        <Grid item xs={12} sm={6}>
 	        	<ChannelDetails id={id}/>

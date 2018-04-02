@@ -302,16 +302,16 @@ async function createMessage(parent, args, context, info) {
   const where = { users_every: { id_in: [id, userId] }}
   // console.log("messages ", messages)
   const channels = await context.db.query.channels({ where }, info)
-
-  // if (messages.length > 0) {
-  //   channel = messages[0].channel
-  // } else {
-  //   channel = await context.db.mutation.createChannel({
-  //     data: {
-  //       users: { connect: [{ id: id }, { id: userId }] },
-  //     }
-  //   }, info)
-  // }
+  
+  console.log("channel ", channels)
+  
+  if (channels.length === 0) {
+    channels = await context.db.mutation.createChannel({
+      data: {
+        users: { connect: [{ id: id }, { id: userId }] },
+      }
+    }, info)
+  }
 
   console.log("channel ", channels)
 

@@ -64,9 +64,6 @@ class CreateMessage extends Component {
 
   _createMessage = async () => {
     const { text, id } = this.state
-    console.log("props ", this.props)
-    this.props.updateAfterCreate(this.state.loadMore)
-    this.setState({loadMore: false})
 
     await this.props.createMessageMutation({
       variables: {

@@ -46,7 +46,7 @@ const styles = theme => ({
     marginBottom: 7,
   },
   media: {
-    height: 194,
+    height: 300,
   },
   actions: {
     display: 'flex',
@@ -60,6 +60,9 @@ const styles = theme => ({
   },
   expandOpen: {
     transform: 'rotate(180deg)',
+  },
+  bookmark: {
+    marginLeft: 'auto',
   },
 })
 
@@ -156,6 +159,7 @@ class Post extends Component {
             </IconButton>
             <IconButton aria-label="save"
               onClick={this._handleBookmark}
+              classNames={classes.bookmark}
             >
               {bookmarkPostId ? <BookmarkIcon /> : <BookmarkBorderIcon /> } 
             </IconButton>

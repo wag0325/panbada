@@ -60,17 +60,11 @@ class ChannelList extends Component {
       loadMore: false,
     }
   }
-  
-  componentWillUpdate() {
-    const { messageList } = this.refs
-    const { loadMore } = this.state
-  }
 
-  componentDidUpdate() {
-    console.log("state  ", this.state)
-    const { messageList } = this.refs
+  componentDidUpdate() {    
     const { loadMore } = this.state
-    if (!loadMore) {
+    if (!loadMore && this.props.messageFeedQuery && !this.props.messageFeedQuery.loading 
+      && !this.props.messageFeedQuery.error) {
       this._scrollToBottom()
     }
   }

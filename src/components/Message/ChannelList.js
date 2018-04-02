@@ -18,11 +18,10 @@ const styles = theme => ({
   progress: {
     margin: theme.spacing.unit * 2,
   },
-  root: theme.mixins.gutters({
-    paddingTop: 16,
-    paddingBottom: 16,
-    marginTop: theme.spacing.unit * 3,
-  }),
+  root: {
+    padding: 5,
+    margin: 0,
+  },
   loadMoreWrapper: {
     margin: 5,
     marginTop: 20,
@@ -74,7 +73,7 @@ class ChannelList extends Component {
       <Paper className={classes.root} elevation={4}>
         <List dense={dense}>
           {channelsToRender.map((channel, index) => 
-            <Channel key={channel.node.id} index={index} channel={channel.node} />)}
+            <Channel key={channel.node.id} index={index} channel={channel.node} currChannel={this.props.currChannel}/>)}
         </List>
         {$loadMoreButton}
       </Paper>

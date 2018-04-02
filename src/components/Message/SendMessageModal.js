@@ -59,7 +59,7 @@ class SendMessageModal extends Component {
           <DialogContentText id='alert-dialog-description'>
             Send a thoughtful message and connect. 
           </DialogContentText>
-          <CreateMessage id={this.props.id}/>
+          <CreateMessage id={this.props.id} afterSubmit={this.handleClose}/>
         </DialogContent>
       </Dialog>
       

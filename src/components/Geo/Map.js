@@ -28,12 +28,27 @@ class Map extends Component {
       },
     }
   }
+
   componentDidMount() {
+    if (this.props.centerAroundCurrentLocation) {
+        if (navigator && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const coords = pos.coords
+                this.setState({
+                    currentLocation: {
+                        lat: coords.latitude,
+                        lng: coords.longitude
+                    }
+                })
+            })
+        }
+    }
     this._loadMap()
   }
 
-  componentDidUpdate(prevProps, pervState) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevProps.google !== this.props.google) this._loadMap()
+    if (prevState.currentLocation !== this.state.currentLocation) this._recenterMap()
   }
   
   render() {
@@ -67,12 +82,26 @@ class Map extends Component {
       this.map = new maps.Map(this.mapElement, mapConfig)
     }
   }
+
+  _recenterMap = () => {
+    const map = this.map
+    const curr = this.state.currentLocation
+
+    const google = this.props.google
+    const maps = google.maps
+
+    if (map) {
+        let center = new maps.LatLng(curr.lat, curr.lng)
+        map.panTo(center)
+    }
+  }
 }
 
 Map.propTypes = {
   google: PropTypes.object,
   zoom: PropTypes.number,
-  initialCenter: PropTypes.object
+  initialCenter: PropTypes.object,
+  centerAroundCurrentLocation: PropTypes.bool,
 }
 Map.defaultProps = {
   zoom: 13,
@@ -80,7 +109,8 @@ Map.defaultProps = {
   initialCenter: {
     lat: 37.774929,
     lng: -122.419416
-  }
+  },
+  centerAroundCurrentLocation: false,
 }
 
 

@@ -84,12 +84,11 @@ class Map extends Component {
 
       const evtNames = ['ready', 'click', 'dragend']
 
-      console.log('this.map', this.map)
-      // evtNames.forEach(e => {
-      //   this.map.addListener(e, this.handleEvent(e))
-      // })
+      evtNames.forEach(e => {
+        this.map.addListener(e, this._handleEvent(e))
+      })
 
-      // maps.event.trigger(this.map, 'ready')
+      maps.event.trigger(this.map, 'ready')
     }
   }
   

@@ -17,6 +17,17 @@ const styles = theme => ({
 })
 
 class Map extends Component {
+  constructor(props) {
+    super(props)
+    
+    const { lat, lng } = this.props.initialCenter
+    this.state ={
+      currentLocation: {
+        lat: lat,
+        lng: lng,
+      },
+    }
+  }
   componentDidMount() {
     this._loadMap()
   }
@@ -27,9 +38,13 @@ class Map extends Component {
   
   render() {
     const { classes } = this.props 
+    const { currentLocation } = this.state
 
     return (
       <div>
+        <div>
+          {currentLocation.lat} / {currentLocation.lng}
+        </div>
         <div ref={e => this.mapElement = e} className={classes.map}>
           Loading map...
         </div>
@@ -39,12 +54,11 @@ class Map extends Component {
 
   _loadMap = () => {
     if(this.props && this.props.google) {
-      const { google } = this.props
+      const { google, zoom } = this.props
+      const { lat, lng } = this.state.currentLocation
       const maps = google.maps 
+      
 
-      let zoom = 14
-      let lat = 37.774929
-      let lng = -122.419416
       const center = new maps.LatLng(lat, lng)
       const mapConfig = Object.assign({}, {
         center: center,
@@ -55,7 +69,19 @@ class Map extends Component {
   }
 }
 
-
+Map.propTypes = {
+  google: PropTypes.object,
+  zoom: PropTypes.number,
+  initialCenter: PropTypes.object
+}
+Map.defaultProps = {
+  zoom: 13,
+  // San Francisco, by default
+  initialCenter: {
+    lat: 37.774929,
+    lng: -122.419416
+  }
+}
 
 
 export default withStyles(styles)(Map)

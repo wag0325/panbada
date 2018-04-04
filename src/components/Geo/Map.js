@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { Link } from 'react-router-dom'
@@ -8,6 +7,7 @@ import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
 
 import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
+import { camelize } from '../../utils/stringFunctions'
 
 const styles = theme => ({
   map: {
@@ -79,7 +79,34 @@ class Map extends Component {
         center: center,
         zoom: zoom
       })
+      
       this.map = new maps.Map(this.mapElement, mapConfig)
+
+      const evtNames = ['ready', 'click', 'dragend']
+
+      console.log('this.map', this.map)
+      // evtNames.forEach(e => {
+      //   this.map.addListener(e, this.handleEvent(e))
+      // })
+
+      // maps.event.trigger(this.map, 'ready')
+    }
+  }
+  
+  _handleEvent = (evtName) => {
+    let timeout
+    const handlerName = `on${camelize(evtName)}`
+
+    return (e) => {
+      if (timeout) {
+        clearTimeout(timeout)
+        timeout = null
+      }
+      timeout = setTimeout(() => {
+        if (this.props[handlerName]) {
+          this.props[handlerName](this.props, this.map, e)
+        }
+      }, 0)
     }
   }
 
@@ -95,6 +122,19 @@ class Map extends Component {
         map.panTo(center)
     }
   }
+
+  _renderChildren = () => {
+    const { children } = this.props
+    if (!children) return
+
+    return React.Children.map(children, c => {
+      return React.cloneElement(c, {
+        map: this.map,
+        google: this.props.google,
+        mapCenter: this.state.currentLocation,
+      })
+    })
+  }
 }
 
 Map.propTypes = {
@@ -103,6 +143,7 @@ Map.propTypes = {
   initialCenter: PropTypes.object,
   centerAroundCurrentLocation: PropTypes.bool,
 }
+
 Map.defaultProps = {
   zoom: 13,
   // San Francisco, by default

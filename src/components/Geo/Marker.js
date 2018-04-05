@@ -5,16 +5,33 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
 
-import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
-import GoogleApiComponent from '../../utils/googleAPIHandler/GoogleApiComponent'
-
+import { camelize } from '../../utils/stringFunctions'
 
 const styles = theme => ({
 })
 
+const evtNames = [
+  'click',
+  'mouseover',
+]
+
 class Marker extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      marker: null,
+    }
+  }
+  
   componentDidMount() {
     this._renderMarker()
+  }
+
+  componentWillUnmount() {
+    if (this.state.marker) {
+      this.state.marker.setMap(null)
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -45,6 +62,22 @@ class Marker extends Component {
     
     this.marker = new google.maps.Marker(pref)
     console.log("marker ", this.marker)
+    
+    this.setState({marker: this.marker})
+
+    evtNames.forEach(e => {
+      this.marker.addListener(e, this._handleEvent(e))
+    })
+  }
+
+  _handleEvent = (evtName) => {
+    return (e) => {
+      const evtName = `on${camelize(e)}`
+      if (this.props[evtName]) {
+        this.props[evtName](this.props, this.state.marker, e)
+      }
+      console.log("marker props ", this.props)
+    }
   }
 }
 

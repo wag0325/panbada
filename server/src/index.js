@@ -6,7 +6,7 @@ const Query = require('./resolvers/Query')
 const Mutation = require('./resolvers/Mutation')
 
 const PRISMA_SECRET = process.env.PRISMA_SECRET
-const PRISMA_ENDPOINT = process.env.PRISMA_ENDPOINT;
+const PRISMA_ENDPOINT = process.env.PRISMA_ENDPOINT
 
 const resolvers = {
   Query,

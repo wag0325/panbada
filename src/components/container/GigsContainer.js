@@ -4,6 +4,7 @@ import { withStyles } from 'material-ui/styles'
 import Grid from 'material-ui/Grid'
 
 import GigList from '../Gig/GigList'
+import GigSearch from '../Gig/GigSearch'
 
 const styles = theme => ({
   root: {
@@ -29,6 +30,7 @@ class GigsContainer extends Component {
 
 		return(
 			<div className={classes.root}>
+				<GigSearch />
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={3}>
 	        </Grid>

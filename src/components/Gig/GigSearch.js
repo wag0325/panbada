@@ -6,11 +6,16 @@ import Input, { InputLabel, InputAdornment } from 'material-ui/Input'
 import IconButton from 'material-ui/IconButton'
 import Search from 'material-ui-icons/Search'
 
-class GigSearch extends Component {
+import GeoAutocompleteContainer from '../Geo/GeoAutocompleteContainer'
 
-  state = {
-    keyword: '',
-    location: '',
+class GigSearch extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      keyword: '',
+      location: '',
+    }
   }
 
   render() {
@@ -32,20 +37,7 @@ class GigSearch extends Component {
                 </InputAdornment>
               }
         />
-        <Input
-          type='text'
-          placeholder='city, state, or zip code'
-          onChange={(e) => this.setState({ location: e.target.value })}
-          endAdornment={
-                <InputAdornment position='end'>
-                  <IconButton 
-                    onClick={() => this._executeSearch()}
-                    aria-label='Search'>
-                    <Search />
-                  </IconButton>
-                </InputAdornment>
-              }
-        />
+        <GeoAutocompleteContainer />
       </div>
     )
   }
@@ -55,7 +47,7 @@ class GigSearch extends Component {
 
     if ( filter ) this.props.history.push(`/search/${filter}`)
   }
-
+  
 }
 
 

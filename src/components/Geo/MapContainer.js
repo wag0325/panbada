@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 import { withStyles } from 'material-ui/styles'
 
-import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
+import { GOOGLE_MAP_ACCESS_KEY } from '../../constants/config'
 import GoogleApiComponent from '../../utils/googleAPIHandler/GoogleApiComponent'
 
 import Map from './Map'
@@ -40,5 +40,6 @@ class MapContainer extends Component {
 }
 
 export default withStyles(styles)(GoogleApiComponent({
-  apiKey: 'AIzaSyBOMmzOiZa0TPrMEqGZOh0SxdM-lEO0BHU'
+  apiKey: GOOGLE_MAP_ACCESS_KEY,
+  libraries: ['places', 'visualization'],
 })(MapContainer))

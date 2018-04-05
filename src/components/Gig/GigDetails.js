@@ -127,7 +127,6 @@ class GigDetails extends Component {
     
     const { classes } = this.props
     const { gig } = this.props.gigQuery
-    console.log("gig props ", this.props)
     const user = gig.postedBy
     const { myGig, following, openModal, anchorEl } = this.state
 

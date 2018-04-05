@@ -22,6 +22,7 @@ class Map extends Component {
     
     const { lat, lng } = this.props.initialCenter
     this.state ={
+      map: null,
       currentLocation: {
         lat: lat,
         lng: lng,
@@ -62,6 +63,7 @@ class Map extends Component {
         </div>
         <div ref={e => this.mapElement = e} className={classes.map}>
           Loading map...
+          {this._renderChildren()}
         </div>
       </div>
     )
@@ -81,7 +83,7 @@ class Map extends Component {
       })
       
       this.map = new maps.Map(this.mapElement, mapConfig)
-
+      console.log("this.map ", this.map)
       const evtNames = ['ready', 'click', 'dragend']
 
       evtNames.forEach(e => {
@@ -89,6 +91,7 @@ class Map extends Component {
       })
 
       maps.event.trigger(this.map, 'ready')
+      this.setState({map: this.map})
     }
   }
   
@@ -103,19 +106,20 @@ class Map extends Component {
       }
       timeout = setTimeout(() => {
         if (this.props[handlerName]) {
-          this.props[handlerName](this.props, this.map, e)
+          this.props[handlerName](this.props, this.state.map, e)
         }
       }, 0)
     }
   }
 
   _recenterMap = () => {
-    const map = this.map
+    console.log("this.map recenterMap", this.map)
+    const map = this.state.map
     const curr = this.state.currentLocation
-
+    
     const google = this.props.google
     const maps = google.maps
-
+  
     if (map) {
         let center = new maps.LatLng(curr.lat, curr.lng)
         map.panTo(center)
@@ -125,10 +129,11 @@ class Map extends Component {
   _renderChildren = () => {
     const { children } = this.props
     if (!children) return
-
+    console.log("children", children)
+    console.log("children props ", this.map, this.props.google, this.state.currentLocation)  
     return React.Children.map(children, c => {
       return React.cloneElement(c, {
-        map: this.map,
+        map: this.state.map,
         google: this.props.google,
         mapCenter: this.state.currentLocation,
       })

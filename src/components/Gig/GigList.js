@@ -88,8 +88,12 @@ class GigList extends Component {
 }
 
 export const GIG_FEED_QUERY = gql`
-  query GigsConnectionQuery($first: Int, $after: String, $orderBy: GigOrderByInput) {
-    gigsConnection(first: $first, after: $after, orderBy: $orderBy,) {
+  query GigsConnectionQuery(
+    $first: Int, $after: String, $orderBy: GigOrderByInput,
+    $lat: Float, $lng: Float, $distance: Int) {
+    gigsConnection(first: $first, after: $after, orderBy: $orderBy,
+      lat: $lat, lng: $lng, distance: $distance
+    ) {
       pageInfo {
         endCursor
         hasNextPage
@@ -118,8 +122,18 @@ export default withStyles(styles)(graphql(GIG_FEED_QUERY, {
   name: 'gigFeedQuery',
   options: ownProps => {
     let after = ownProps.endCursor || null
+    let lat = 40.7585569
+    let lng = -73.76543670
+    let distance = 25
     return {
-      variables: { first: GIGS_PER_PAGE, after:after, orderBy: GIGS_ORDER_BY }
+      variables: { 
+        first: GIGS_PER_PAGE, 
+        after:after, 
+        orderBy: GIGS_ORDER_BY,
+        lat: lat,
+        lng: lng,
+        distance: distance,
+      }
     }
   },
 })(GigList))

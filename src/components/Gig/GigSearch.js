@@ -14,13 +14,15 @@ class GigSearch extends Component {
 
     this.state = {
       keyword: '',
-      location: '',
+      location: {
+        lat: 40.75855, 
+        lng: -73.76543,
+      },
+      distance: 25,
     }
   }
 
   render() {
-    const { users, filter } = this.state 
-
     return (
       <div>
         <Input
@@ -38,17 +40,18 @@ class GigSearch extends Component {
               }
         />
         <GeoAutocompleteContainer />
+        <button variant='primary' onClick={() => this._executeSearch()}>Find Gigs</button>
       </div>
     )
   }
 
   _executeSearch = async () => {
-    const { filter } = this.state
-
-    if ( filter ) this.props.history.push(`/search/${filter}`)
+    const { distance, location } = this.state
+    
+    this.props.history.push(`/s/g/?lat=${location.lat}&lng=${location.lng}&r=${distance}`)
   }
   
 }
 
 
-export default GigSearch
+export default withRouter(GigSearch)

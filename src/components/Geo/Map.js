@@ -1,12 +1,8 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo'
-import gql from 'graphql-tag'
-import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 import { withStyles } from 'material-ui/styles'
 
-import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
 import { camelize } from '../../utils/stringFunctions'
 
 const styles = theme => ({
@@ -54,13 +50,9 @@ class Map extends Component {
   
   render() {
     const { classes } = this.props 
-    const { currentLocation } = this.state
 
     return (
       <div>
-        <div>
-          {currentLocation.lat} / {currentLocation.lng}
-        </div>
         <div ref={e => this.mapElement = e} className={classes.map}>
           Loading map...
           {this._renderChildren()}

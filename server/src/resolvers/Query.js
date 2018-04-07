@@ -23,7 +23,7 @@ function gigsConnection(parent, args, context, info) {
   const { first, after, orderBy, lat, lng } = args
   let where = null
   const MILES_PER_DEGREE=69
-  const distance = args.distance || 20
+  const distance = args.distance || 25
   const diff = distance / MILES_PER_DEGREE
   
   console.log("diff ", diff)

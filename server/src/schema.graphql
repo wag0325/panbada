@@ -32,7 +32,7 @@ type Query {
   post(id: ID!): Post
   gigFeed(filter: String, skip: Int, first: Int): [Gig!]!
   gig(id: String!): Gig
-  gigsConnection(filter: String, after: String, first: Int, orderBy: GigOrderByInput): GigConnection
+  gigsConnection(filter: String, after: String, first: Int, orderBy: GigOrderByInput, lat: Float, lng: Float, distance: Int,): GigConnection
   users(filter: String, skip: Int, first: Int): [User!]!
   user(id: ID!): User
   me: User

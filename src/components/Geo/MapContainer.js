@@ -32,7 +32,6 @@ class MapContainer extends Component {
     return (
       <div className={classes.root}>
         <Map google={this.props.google} pos={pos}>
-          <Marker />
           <Marker position={pos} />
         </Map>
       </div>

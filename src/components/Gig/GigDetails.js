@@ -161,17 +161,22 @@ class GigDetails extends Component {
           <Typography variant='headline' component='h3'>
           Description:
           </Typography>
-          <Typography variant='subheading'>
-            {location.name}
-            {location.address}
-            {location.lat} - { location.lng }
-            {location.directions}
-          </Typography>
           <Typography component='p'>
             {gig.text}
           </Typography>
         </Paper>
-        <MapContainer pos={pos}/>
+        <Paper className={classes.location} elevation={4}>
+          <Typography component='p' className={classes.locationName}>
+            {location.name}          
+          </Typography>
+          <Typography component='p' className={classes.address}>
+            {location.address}
+          </Typography>
+          <Typography component='p' className={classes.directions}>
+            {location.directions}
+          </Typography>
+          <MapContainer pos={pos}/>
+        </Paper>
       </div>
     )
   }

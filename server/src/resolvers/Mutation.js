@@ -179,7 +179,7 @@ function createLocation(parent, args, context, info) {
 
   return context.db.mutation.createLocation({
     data: {...other, gig: {connect: {id: gigId} } }
-  })
+  }, info)
 }
 
 function deleteLocation(parent, { id }, context, info) {

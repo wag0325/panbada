@@ -53,6 +53,8 @@ type Mutation {
   deletePostComment(id: ID!): PostComment
   createGig(title: String!, text: String!, type: GIG_TYPE!, location: String): Gig
   deleteGig(id: ID!): Gig
+  createLocation(name: String!, lat: Float!, lng: Float!, address: String!, directions: String, gigId: ID!): Location
+  deleteLocation(id: ID!): Location
   signup(email: String!, password: String!, firstName: String!, lastName: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
   deleteUser(email: String!): User

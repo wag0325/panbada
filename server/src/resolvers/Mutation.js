@@ -173,6 +173,21 @@ function deleteGig(parent, { id }, context, info) {
   return context.db.mutation.deleteGig({ where: { id: id } }, info,)
 }
 
+function createLocation(parent, args, context, info) {
+  const userId = getUserId(context)
+  const { gigId, ...other} = args
+
+  return context.db.mutation.createLocation({
+    data: {...other, gig: {connect: {id: gigId} } }
+  })
+}
+
+function deleteLocation(parent, { id }, context, info) {
+  const userId = getUserId(context)
+
+  return context.db.mutation.deleteLocation({ where: { id: id } }, info,)
+}
+
 async function signup(parent, args, context, info) {
   const { firstName, lastName, email } = args
   const level = 'MEMBER'
@@ -371,6 +386,8 @@ module.exports = {
   deletePostComment,
   createGig,
   deleteGig,
+  createLocation,
+  deleteLocation,
   signup,
   login,
   deleteUser,

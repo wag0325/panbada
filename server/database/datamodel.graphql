@@ -36,9 +36,11 @@ type Gig {
   type: GIG_TYPE!
   createdAt: DateTime!
   updatedAt: DateTime!
+  startDateTime: DateTime
+  endDateTime: DateTime
+  location: Location
   title: String!
   text: String!
-  location: String
   url: String
   postedBy: User
 }
@@ -78,6 +80,16 @@ type Channel {
   messages: [Message!]! @relation(name: "MessagesInChannel")
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type Location {
+  id: ID! @unique 
+  name: String!
+  lat: Float!
+  lng: Float!
+  address: String!
+  directions: String
+  gig: Gig
 }
 
 enum USER_LEVEL {

@@ -18,11 +18,23 @@ type Gig implements Node {
   type: GIG_TYPE!
   createdAt: DateTime!
   updatedAt: DateTime!
+  startDateTime: DateTime
+  endDateTime: DateTime
+  location(where: LocationWhereInput): Location
   title: String!
   text: String!
-  location: String
   url: String
   postedBy(where: UserWhereInput): User
+}
+
+type Location implements Node {
+  id: ID!
+  name: String!
+  lat: Float!
+  lng: Float!
+  address: String!
+  directions: String
+  gig(where: GigWhereInput): Gig
 }
 
 type Message implements Node {
@@ -97,6 +109,10 @@ type AggregateChannel {
 }
 
 type AggregateGig {
+  count: Int!
+}
+
+type AggregateLocation {
   count: Int!
 }
 
@@ -441,9 +457,26 @@ type GigConnection {
 
 input GigCreateInput {
   type: GIG_TYPE!
+  startDateTime: DateTime
+  endDateTime: DateTime
   title: String!
   text: String!
-  location: String
+  url: String
+  location: LocationCreateOneWithoutGigInput
+  postedBy: UserCreateOneInput
+}
+
+input GigCreateOneWithoutLocationInput {
+  create: GigCreateWithoutLocationInput
+  connect: GigWhereUniqueInput
+}
+
+input GigCreateWithoutLocationInput {
+  type: GIG_TYPE!
+  startDateTime: DateTime
+  endDateTime: DateTime
+  title: String!
+  text: String!
   url: String
   postedBy: UserCreateOneInput
 }
@@ -471,12 +504,14 @@ enum GigOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  startDateTime_ASC
+  startDateTime_DESC
+  endDateTime_ASC
+  endDateTime_DESC
   title_ASC
   title_DESC
   text_ASC
   text_DESC
-  location_ASC
-  location_DESC
   url_ASC
   url_DESC
 }
@@ -486,9 +521,10 @@ type GigPreviousValues {
   type: GIG_TYPE!
   createdAt: DateTime!
   updatedAt: DateTime!
+  startDateTime: DateTime
+  endDateTime: DateTime
   title: String!
   text: String!
-  location: String
   url: String
 }
 
@@ -529,11 +565,37 @@ input GigSubscriptionWhereInput {
 
 input GigUpdateInput {
   type: GIG_TYPE
+  startDateTime: DateTime
+  endDateTime: DateTime
   title: String
   text: String
-  location: String
+  url: String
+  location: LocationUpdateOneWithoutGigInput
+  postedBy: UserUpdateOneInput
+}
+
+input GigUpdateOneWithoutLocationInput {
+  create: GigCreateWithoutLocationInput
+  connect: GigWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: GigUpdateWithoutLocationDataInput
+  upsert: GigUpsertWithoutLocationInput
+}
+
+input GigUpdateWithoutLocationDataInput {
+  type: GIG_TYPE
+  startDateTime: DateTime
+  endDateTime: DateTime
+  title: String
+  text: String
   url: String
   postedBy: UserUpdateOneInput
+}
+
+input GigUpsertWithoutLocationInput {
+  update: GigUpdateWithoutLocationDataInput!
+  create: GigCreateWithoutLocationInput!
 }
 
 input GigWhereInput {
@@ -669,6 +731,64 @@ input GigWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
+  startDateTime: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  startDateTime_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  startDateTime_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  startDateTime_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  startDateTime_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  startDateTime_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  startDateTime_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  startDateTime_gte: DateTime
+  endDateTime: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  endDateTime_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  endDateTime_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  endDateTime_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  endDateTime_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  endDateTime_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  endDateTime_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  endDateTime_gte: DateTime
   title: String
   """
   All values that are not equal to given value.
@@ -775,59 +895,6 @@ input GigWhereInput {
   All values not ending with the given string.
   """
   text_not_ends_with: String
-  location: String
-  """
-  All values that are not equal to given value.
-  """
-  location_not: String
-  """
-  All values that are contained in given list.
-  """
-  location_in: [String!]
-  """
-  All values that are not contained in given list.
-  """
-  location_not_in: [String!]
-  """
-  All values less than the given value.
-  """
-  location_lt: String
-  """
-  All values less than or equal the given value.
-  """
-  location_lte: String
-  """
-  All values greater than the given value.
-  """
-  location_gt: String
-  """
-  All values greater than or equal the given value.
-  """
-  location_gte: String
-  """
-  All values containing the given string.
-  """
-  location_contains: String
-  """
-  All values not containing the given string.
-  """
-  location_not_contains: String
-  """
-  All values starting with the given string.
-  """
-  location_starts_with: String
-  """
-  All values not starting with the given string.
-  """
-  location_not_starts_with: String
-  """
-  All values ending with the given string.
-  """
-  location_ends_with: String
-  """
-  All values not ending with the given string.
-  """
-  location_not_ends_with: String
   url: String
   """
   All values that are not equal to given value.
@@ -881,10 +948,442 @@ input GigWhereInput {
   All values not ending with the given string.
   """
   url_not_ends_with: String
+  location: LocationWhereInput
   postedBy: UserWhereInput
 }
 
 input GigWhereUniqueInput {
+  id: ID
+}
+
+"""
+A connection to a list of items.
+"""
+type LocationConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [LocationEdge]!
+  aggregate: AggregateLocation!
+}
+
+input LocationCreateInput {
+  name: String!
+  lat: Float!
+  lng: Float!
+  address: String!
+  directions: String
+  gig: GigCreateOneWithoutLocationInput
+}
+
+input LocationCreateOneWithoutGigInput {
+  create: LocationCreateWithoutGigInput
+  connect: LocationWhereUniqueInput
+}
+
+input LocationCreateWithoutGigInput {
+  name: String!
+  lat: Float!
+  lng: Float!
+  address: String!
+  directions: String
+}
+
+"""
+An edge in a connection.
+"""
+type LocationEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Location!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum LocationOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  lat_ASC
+  lat_DESC
+  lng_ASC
+  lng_DESC
+  address_ASC
+  address_DESC
+  directions_ASC
+  directions_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type LocationPreviousValues {
+  id: ID!
+  name: String!
+  lat: Float!
+  lng: Float!
+  address: String!
+  directions: String
+}
+
+type LocationSubscriptionPayload {
+  mutation: MutationType!
+  node: Location
+  updatedFields: [String!]
+  previousValues: LocationPreviousValues
+}
+
+input LocationSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [LocationSubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [LocationSubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: LocationWhereInput
+}
+
+input LocationUpdateInput {
+  name: String
+  lat: Float
+  lng: Float
+  address: String
+  directions: String
+  gig: GigUpdateOneWithoutLocationInput
+}
+
+input LocationUpdateOneWithoutGigInput {
+  create: LocationCreateWithoutGigInput
+  connect: LocationWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: LocationUpdateWithoutGigDataInput
+  upsert: LocationUpsertWithoutGigInput
+}
+
+input LocationUpdateWithoutGigDataInput {
+  name: String
+  lat: Float
+  lng: Float
+  address: String
+  directions: String
+}
+
+input LocationUpsertWithoutGigInput {
+  update: LocationUpdateWithoutGigDataInput!
+  create: LocationCreateWithoutGigInput!
+}
+
+input LocationWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [LocationWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [LocationWhereInput!]
+  id: ID
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  name: String
+  """
+  All values that are not equal to given value.
+  """
+  name_not: String
+  """
+  All values that are contained in given list.
+  """
+  name_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  name_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  name_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  name_lte: String
+  """
+  All values greater than the given value.
+  """
+  name_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  name_gte: String
+  """
+  All values containing the given string.
+  """
+  name_contains: String
+  """
+  All values not containing the given string.
+  """
+  name_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  name_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  name_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  name_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  name_not_ends_with: String
+  lat: Float
+  """
+  All values that are not equal to given value.
+  """
+  lat_not: Float
+  """
+  All values that are contained in given list.
+  """
+  lat_in: [Float!]
+  """
+  All values that are not contained in given list.
+  """
+  lat_not_in: [Float!]
+  """
+  All values less than the given value.
+  """
+  lat_lt: Float
+  """
+  All values less than or equal the given value.
+  """
+  lat_lte: Float
+  """
+  All values greater than the given value.
+  """
+  lat_gt: Float
+  """
+  All values greater than or equal the given value.
+  """
+  lat_gte: Float
+  lng: Float
+  """
+  All values that are not equal to given value.
+  """
+  lng_not: Float
+  """
+  All values that are contained in given list.
+  """
+  lng_in: [Float!]
+  """
+  All values that are not contained in given list.
+  """
+  lng_not_in: [Float!]
+  """
+  All values less than the given value.
+  """
+  lng_lt: Float
+  """
+  All values less than or equal the given value.
+  """
+  lng_lte: Float
+  """
+  All values greater than the given value.
+  """
+  lng_gt: Float
+  """
+  All values greater than or equal the given value.
+  """
+  lng_gte: Float
+  address: String
+  """
+  All values that are not equal to given value.
+  """
+  address_not: String
+  """
+  All values that are contained in given list.
+  """
+  address_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  address_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  address_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  address_lte: String
+  """
+  All values greater than the given value.
+  """
+  address_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  address_gte: String
+  """
+  All values containing the given string.
+  """
+  address_contains: String
+  """
+  All values not containing the given string.
+  """
+  address_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  address_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  address_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  address_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  address_not_ends_with: String
+  directions: String
+  """
+  All values that are not equal to given value.
+  """
+  directions_not: String
+  """
+  All values that are contained in given list.
+  """
+  directions_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  directions_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  directions_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  directions_lte: String
+  """
+  All values greater than the given value.
+  """
+  directions_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  directions_gte: String
+  """
+  All values containing the given string.
+  """
+  directions_contains: String
+  """
+  All values not containing the given string.
+  """
+  directions_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  directions_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  directions_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  directions_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  directions_not_ends_with: String
+  gig: GigWhereInput
+}
+
+input LocationWhereUniqueInput {
   id: ID
 }
 
@@ -1302,6 +1801,7 @@ type Mutation {
   createUser(data: UserCreateInput!): User!
   createMessage(data: MessageCreateInput!): Message!
   createChannel(data: ChannelCreateInput!): Channel!
+  createLocation(data: LocationCreateInput!): Location!
   updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
   updatePostComment(data: PostCommentUpdateInput!, where: PostCommentWhereUniqueInput!): PostComment
   updatePostLike(data: PostLikeUpdateInput!, where: PostLikeWhereUniqueInput!): PostLike
@@ -1310,6 +1810,7 @@ type Mutation {
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateMessage(data: MessageUpdateInput!, where: MessageWhereUniqueInput!): Message
   updateChannel(data: ChannelUpdateInput!, where: ChannelWhereUniqueInput!): Channel
+  updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
   deletePost(where: PostWhereUniqueInput!): Post
   deletePostComment(where: PostCommentWhereUniqueInput!): PostComment
   deletePostLike(where: PostLikeWhereUniqueInput!): PostLike
@@ -1318,6 +1819,7 @@ type Mutation {
   deleteUser(where: UserWhereUniqueInput!): User
   deleteMessage(where: MessageWhereUniqueInput!): Message
   deleteChannel(where: ChannelWhereUniqueInput!): Channel
+  deleteLocation(where: LocationWhereUniqueInput!): Location
   upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
   upsertPostComment(where: PostCommentWhereUniqueInput!, create: PostCommentCreateInput!, update: PostCommentUpdateInput!): PostComment!
   upsertPostLike(where: PostLikeWhereUniqueInput!, create: PostLikeCreateInput!, update: PostLikeUpdateInput!): PostLike!
@@ -1326,6 +1828,7 @@ type Mutation {
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertMessage(where: MessageWhereUniqueInput!, create: MessageCreateInput!, update: MessageUpdateInput!): Message!
   upsertChannel(where: ChannelWhereUniqueInput!, create: ChannelCreateInput!, update: ChannelUpdateInput!): Channel!
+  upsertLocation(where: LocationWhereUniqueInput!, create: LocationCreateInput!, update: LocationUpdateInput!): Location!
   updateManyPosts(data: PostUpdateInput!, where: PostWhereInput!): BatchPayload!
   updateManyPostComments(data: PostCommentUpdateInput!, where: PostCommentWhereInput!): BatchPayload!
   updateManyPostLikes(data: PostLikeUpdateInput!, where: PostLikeWhereInput!): BatchPayload!
@@ -1334,6 +1837,7 @@ type Mutation {
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput!): BatchPayload!
   updateManyMessages(data: MessageUpdateInput!, where: MessageWhereInput!): BatchPayload!
   updateManyChannels(data: ChannelUpdateInput!, where: ChannelWhereInput!): BatchPayload!
+  updateManyLocations(data: LocationUpdateInput!, where: LocationWhereInput!): BatchPayload!
   deleteManyPosts(where: PostWhereInput!): BatchPayload!
   deleteManyPostComments(where: PostCommentWhereInput!): BatchPayload!
   deleteManyPostLikes(where: PostLikeWhereInput!): BatchPayload!
@@ -1342,6 +1846,7 @@ type Mutation {
   deleteManyUsers(where: UserWhereInput!): BatchPayload!
   deleteManyMessages(where: MessageWhereInput!): BatchPayload!
   deleteManyChannels(where: ChannelWhereInput!): BatchPayload!
+  deleteManyLocations(where: LocationWhereInput!): BatchPayload!
 }
 
 enum MutationType {
@@ -2628,6 +3133,7 @@ type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message]!
   channels(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Channel]!
+  locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   post(where: PostWhereUniqueInput!): Post
   postComment(where: PostCommentWhereUniqueInput!): PostComment
   postLike(where: PostLikeWhereUniqueInput!): PostLike
@@ -2636,6 +3142,7 @@ type Query {
   user(where: UserWhereUniqueInput!): User
   message(where: MessageWhereUniqueInput!): Message
   channel(where: ChannelWhereUniqueInput!): Channel
+  location(where: LocationWhereUniqueInput!): Location
   postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
   postCommentsConnection(where: PostCommentWhereInput, orderBy: PostCommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostCommentConnection!
   postLikesConnection(where: PostLikeWhereInput, orderBy: PostLikeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostLikeConnection!
@@ -2644,6 +3151,7 @@ type Query {
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   messagesConnection(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MessageConnection!
   channelsConnection(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ChannelConnection!
+  locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
   """
   Fetches an object given its ID
   """
@@ -2662,6 +3170,7 @@ type Subscription {
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   message(where: MessageSubscriptionWhereInput): MessageSubscriptionPayload
   channel(where: ChannelSubscriptionWhereInput): ChannelSubscriptionPayload
+  location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
 }
 
 enum USER_LEVEL {

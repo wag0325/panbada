@@ -21,7 +21,8 @@ const styles = theme => ({
 class MapContainer extends Component {
   render() {
     const { classes } = this.props
-    const pos = {lat: 37.759703, lng: -122.428093}
+    // const pos = {lat: 37.759703, lng: -122.428093}
+    const pos = this.props.pos || {lat: 37.759703, lng: -122.428093}
 
     console.log("map props ", this.props)
     if (!this.props.loaded) {
@@ -30,7 +31,7 @@ class MapContainer extends Component {
 
     return (
       <div className={classes.root}>
-        <Map google={this.props.google}>
+        <Map google={this.props.google} pos={pos}>
           <Marker />
           <Marker position={pos} />
         </Map>

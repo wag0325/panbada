@@ -4,7 +4,6 @@ import { withStyles } from 'material-ui/styles'
 import Grid from 'material-ui/Grid'
 
 import GigDetails from '../Gig/GigDetails'
-import MapContainer from '../Geo/MapContainer'
 
 const styles = theme => ({
   root: {

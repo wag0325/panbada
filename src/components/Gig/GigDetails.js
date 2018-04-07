@@ -19,6 +19,7 @@ import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
 import { GigFragments, UserFragments } from '../../constants/gqlFragments'
 
 import SendMessageModal from '../Message/SendMessageModal'
+import MapContainer from '../Geo/MapContainer'
 
 const styles = theme => ({
   card: {
@@ -130,7 +131,7 @@ class GigDetails extends Component {
     const { location } = gig
     const user = gig.postedBy
     const { myGig, following, openModal, anchorEl } = this.state
-
+    const pos = {lat: location.lat, lng: location.lng }
     return (
       <div>
         <Card className={classes.card}>
@@ -170,6 +171,7 @@ class GigDetails extends Component {
             {gig.text}
           </Typography>
         </Paper>
+        <MapContainer pos={pos}/>
       </div>
     )
   }

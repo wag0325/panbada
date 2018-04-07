@@ -24,8 +24,8 @@ class Map extends Component {
     this.state ={
       map: null,
       currentLocation: {
-        lat: lat,
-        lng: lng,
+        lat: this.props.pos.lat || lat,
+        lng: this.props.pos.lng || lng,
       },
     }
   }

@@ -66,10 +66,21 @@ export const GigFragments = {
 	  fragment GigBasic on Gig {
 	    id
       createdAt
+      startDateTime
+      endDateTime
       type
       title
       text
-      location
 	  }
+	`,
+	location: gql`
+		fragment Location on Location {
+			id
+			name
+			lat
+			lng
+			address
+			directions
+		}
 	`,
 }

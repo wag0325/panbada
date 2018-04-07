@@ -55,15 +55,13 @@ class GeoAutocomplete extends Component {
       // fields in the form.
       autocomplete.addListener('place_changed', () => {
         let place = autocomplete.getPlace()
-
+        console.log("place ", place)
         this.setState({
           currentLocation: {
               lat: place.geometry.location.lat(),
               lng: place.geometry.location.lng()
           }
-        })
-        console.log("place ", place)
-        console.log("place lat", place.geometry.location.lat())
+        })      
       })
 
       this.setState({autocomplete: autocomplete})

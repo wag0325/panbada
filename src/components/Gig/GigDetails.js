@@ -127,6 +127,7 @@ class GigDetails extends Component {
     
     const { classes } = this.props
     const { gig } = this.props.gigQuery
+    const { location } = gig
     const user = gig.postedBy
     const { myGig, following, openModal, anchorEl } = this.state
 
@@ -142,7 +143,7 @@ class GigDetails extends Component {
             <CardContent className={classes.content}>
               <Typography variant="headline">{gig.title}</Typography>
               <Typography variant="subheading" color="textSecondary">
-                {gig.type} | {gig.location} | {user.firstName} {user.lastName}
+                {gig.type} | {location.name} | {user.firstName} {user.lastName}
               </Typography>
             </CardContent>
             <CardActions>
@@ -158,6 +159,12 @@ class GigDetails extends Component {
         <Paper className={classes.description} elevation={4}>
           <Typography variant='headline' component='h3'>
           Description:
+          </Typography>
+          <Typography variant='subheading'>
+            {location.name}
+            {location.address}
+            {location.lat} - { location.lng }
+            {location.directions}
           </Typography>
           <Typography component='p'>
             {gig.text}
@@ -216,9 +223,13 @@ export const GIG_QUERY = gql`
       postedBy {
         ...Avatar
       }
+      location {
+        ...Location
+      }
     }
   }
   ${GigFragments.gigBasic}
+  ${GigFragments.location}
   ${UserFragments.avatar}
 `
 

@@ -100,6 +100,9 @@ export const GIG_FEED_QUERY = gql`
           postedBy {
             ...Avatar
           }
+          location {
+            ...Location
+          }
         }
       }
       aggregate {
@@ -108,6 +111,7 @@ export const GIG_FEED_QUERY = gql`
     }
   }
   ${GigFragments.gigBasic}
+  ${GigFragments.location}
   ${UserFragments.avatar}
 `
 export default withStyles(styles)(graphql(GIG_FEED_QUERY, { 

@@ -30,8 +30,7 @@ class GigContainer extends Component {
 	        <Grid item xs={12} sm={6}>
 	        	<GigDetails gigId={id} />
 	        </Grid>
-	        <Grid item xs={12} sm={6}>
-	        	<MapContainer />
+	        <Grid item xs={12} sm={6}>	        	
 	        </Grid>
 				</Grid>
 			</div>

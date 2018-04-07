@@ -54,7 +54,7 @@ class Gig extends Component {
         </ListItemAvatar>
         <Link to={`/g/${gig.id}`}><ListItemText
           primary={gig.title}
-          secondary={gig.location}
+          secondary={gig.location.name}
         /></Link>
       </ListItem>
     )

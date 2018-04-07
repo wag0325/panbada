@@ -204,12 +204,16 @@ const CREATE_GIG_MUTATION = gql`
   mutation CreateGigMutation($type: GIG_TYPE!, $title: String!, $text: String!, $location: String) {
     createGig(type:$type, title: $title, text: $text, location: $location) {
       ...GigBasic
+      location {
+        ...Location
+      }
       postedBy {
         ...Avatar
       }
     }
   }
   ${GigFragments.gigBasic}
+  ${GigFragments.location}
   ${UserFragments.avatar}
 `
 

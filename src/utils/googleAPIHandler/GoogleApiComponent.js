@@ -1,5 +1,6 @@
 import React, { PropTypes as T } from 'react'
 import ReactDOM from 'react-dom'
+import { unmountComponentAtNode } from "react-dom"
 
 import cache from './ScriptCache'
 import GoogleApi from './GoogleApi'
@@ -22,12 +23,12 @@ export const wrapper = (options) => (WrappedComponent) => {
     }
 
     componentDidMount() {
-      console.log("window ", JSON.stringify(window))
       console.log("windowgoogle ", window.google)
       const refs = this.refs;
 
-      if (!window.google) return
-
+        
+      
+      console.log("cahe ", this.state.scriptCache)
       this.state.scriptCache.google.onLoad((err, tag) => {
         const maps = window.google.maps;
         const props = Object.assign({}, this.props, {
@@ -51,6 +52,7 @@ export const wrapper = (options) => (WrappedComponent) => {
           google: window.google
         })
       });
+  
     }
 
     componentWillMount() {
@@ -63,19 +65,20 @@ export const wrapper = (options) => (WrappedComponent) => {
         // google: 'https://maps.googleapis.com/maps/api/js?v=3.31&key=AIzaSyBOMmzOiZa0TPrMEqGZOh0SxdM-lEO0BHU'
       })
       })
-
-      console.log("window will ", JSON.stringify(window))
       console.log("window will ", window.google)
 
     }
 
     render() {
+      console.log("render ", this.state.google)
+      
       const props = Object.assign({}, this.props, {
         loaded: this.state.loaded,
         map: this.state.map,
         google: this.state.google,
         mapComponent: this.refs.map
-      })
+      })      
+
       return (
         <div>
           <WrappedComponent {...props} />

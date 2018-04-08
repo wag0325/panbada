@@ -5,7 +5,7 @@ export const GoogleApi = function(opts) {
   const libraries = opts.libraries || [];
   const client = opts.client;
   const URL = 'https://maps.googleapis.com/maps/api/js';
-
+  
   const googleVersion = '3.31';
   let script = null;
   let google = window.google = null;
@@ -13,7 +13,6 @@ export const GoogleApi = function(opts) {
   let channel = null;
   let language = null;
   let region = null;
-
   let onLoadEvents = [];
 
   const url = () => {

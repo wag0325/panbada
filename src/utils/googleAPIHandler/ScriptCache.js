@@ -4,6 +4,7 @@ let scriptMap = new Map();
 export const ScriptCache = (function(global) {
   return function ScriptCache (scripts) {
     const Cache = {}
+     console.log("cache out", window.google)
 
     Cache._onLoad = function (key) {
       return (cb) => {
@@ -15,6 +16,8 @@ export const ScriptCache = (function(global) {
         } else {
           // TODO:
         }
+        console.log("cache onload", window)
+        console.log("cache onload", window.google)
       }
     }
 
@@ -66,7 +69,9 @@ export const ScriptCache = (function(global) {
           // Pick off callback, if there is one
           if (src.match(/callback=CALLBACK_NAME/)) {
             src = src.replace(/(callback=)[^\&]+/, `$1${cbName}`)
+            console.log("cbName", cbName)
             cb = window[cbName] = tag.onload;
+            console.log("window in script", window)
           } else {
             tag.addEventListener('load', tag.onload)
           }
@@ -84,6 +89,8 @@ export const ScriptCache = (function(global) {
         }
         scriptMap.set(key, initialState);
       }
+      console.log("cache scripttag", window)
+      console.log("cache scripttag", window.google)
       return scriptMap.get(key);
     }
 

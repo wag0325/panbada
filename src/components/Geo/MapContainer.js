@@ -1,45 +1,54 @@
-import React, { Component } from 'react'
-import { graphql } from 'react-apollo'
-import gql from 'graphql-tag'
-import { Link } from 'react-router-dom'
-
-import { withStyles } from 'material-ui/styles'
+import React, {Component} from 'react'
+import { compose, withProps } from 'recompose'
+import { withScriptjs, withGoogleMap, GoogleMap, Marker } from 'react-google-maps'
 
 import { GOOGLE_MAP_ACCESS_KEY } from '../../constants/config'
-import GoogleApiComponent from '../../utils/googleAPIHandler/GoogleApiComponent'
 
-import Map from './Map'
-import Marker from './Marker'
+const MyMapComponent = withScriptjs(withGoogleMap((props) => {
+  console.log("props pos", props)
+  const pos = props.pos || { lat: -34.397, lng: 150.644 }
+  return (<GoogleMap
+    defaultZoom={14}
+    defaultCenter={pos}
+  >
+    {props.isMarkerShown && <Marker position={pos} />}
+  </GoogleMap>)
+}))
 
-const styles = theme => ({
-  map: {
-    width: '100vw',
-    height: '100vh'
- },
-})
 
 class MapContainer extends Component {
+  state = {
+    isMarkerShown: false,
+  }
+
+  componentDidMount() {
+    this.delayedShowMarker()
+  }
+
+  delayedShowMarker = () => {
+    setTimeout(() => {
+      this.setState({ isMarkerShown: true })
+    }, 3000)
+  }
+
+  handleMarkerClick = () => {
+    this.setState({ isMarkerShown: false })
+    this.delayedShowMarker()
+  }
+
   render() {
-    const { classes } = this.props
-    // const pos = {lat: 37.759703, lng: -122.428093}
-    const pos = this.props.pos || {lat: 37.759703, lng: -122.428093}
-
-    console.log("map props ", this.props)
-    if (!this.props.loaded && this.props.google) {
-      return <div>Loading...</div>
-    }
-
     return (
-      <div className={classes.root}>
-        <Map google={this.props.google} pos={pos}>
-          <Marker position={pos} />
-        </Map>
-      </div>
+      <MyMapComponent
+        pos={this.props.pos}
+        isMarkerShown={this.state.isMarkerShown}
+        onMarkerClick={this.handleMarkerClick}
+        googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_ACCESS_KEY}&v=3.exp&libraries=geometry,drawing,places`}
+        loadingElement={<div style={{ height: `100%` }} />}
+        containerElement={<div style={{ height: `400px` }} />}
+        mapElement={<div style={{ height: `100%` }} />}
+      />
     )
   }
 }
 
-export default withStyles(styles)(GoogleApiComponent({
-  apiKey: GOOGLE_MAP_ACCESS_KEY,
-  libraries: ['places', 'visualization'],
-})(MapContainer))
+export default MapContainer

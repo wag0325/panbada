@@ -20,6 +20,8 @@ class GigSearch extends Component {
       },
       distance: 25,
     }
+
+    this._handleGeo = this._handleGeo.bind(this)
   }
 
   render() {
@@ -39,10 +41,22 @@ class GigSearch extends Component {
                 </InputAdornment>
               }
         />
-        <GeoAutocompleteContainer />
+        <GeoAutocompleteContainer onSearchGeo={this._handleGeo}/>
         <button variant='primary' onClick={() => this._executeSearch()}>Find Gigs</button>
       </div>
     )
+  }
+  
+  _handleGeo(places) {
+    if (places.length === 0 || !places) return
+    const place = places[0]
+
+    this.setState({
+      location: {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      },
+    })
   }
 
   _executeSearch = async () => {

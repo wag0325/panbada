@@ -32,8 +32,10 @@ const PlacesWithStandaloneSearchBox = compose(
     },
   }),
   withScriptjs  
-)(props =>
-  <div data-standalone-searchbox="">
+)(props => { 
+  console.log("props ", props)
+  props.onSearchGeo(props.places)
+  return (<div data-standalone-searchbox="">
     <StandaloneSearchBox
       ref={props.onSearchBoxMounted}
       bounds={props.bounds}
@@ -65,13 +67,13 @@ const PlacesWithStandaloneSearchBox = compose(
         </li>
       )}
     </ol>
-  </div>
+  </div>)}
 );
 
 class GeoAutocomplete extends Component {
   render() {
     return (
-      <PlacesWithStandaloneSearchBox />
+      <PlacesWithStandaloneSearchBox onSearchGeo={this.props.onSearchGeo}/>
       )
   }
 }

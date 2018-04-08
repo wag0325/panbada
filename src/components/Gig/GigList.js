@@ -77,6 +77,7 @@ class GigList extends Component {
         </Link>
         <Paper className={classes.root} elevation={4}>
           <List dense={dense}>
+            {gigsToRender.length === 0 && 'No gigs near this location. Please select a different region or increase the search radius.'}
             {gigsToRender.map((gig, index) => 
             <Gig key={gig.node.id} index={index} gig={gig.node} />)}
           </List>
@@ -122,9 +123,9 @@ export default withStyles(styles)(graphql(GIG_FEED_QUERY, {
   name: 'gigFeedQuery',
   options: ownProps => {
     let after = ownProps.endCursor || null
-    let lat = 40.7585569
-    let lng = -73.76543670
-    let distance = 25
+    let lat = ownProps.location.lat || 40.7585569
+    let lng = ownProps.location.lng || -73.76543670
+    let distance = ownProps.location.r || 25
     return {
       variables: { 
         first: GIGS_PER_PAGE, 

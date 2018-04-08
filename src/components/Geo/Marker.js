@@ -25,7 +25,7 @@ class Marker extends Component {
   }
   
   componentDidMount() {
-    this._renderMarker()
+    if (this.props.map && this.props.google) this._renderMarker()
   }
 
   componentWillUnmount() {
@@ -37,7 +37,7 @@ class Marker extends Component {
   componentDidUpdate(prevProps) {
     if ((this.props.map !== prevProps.map) ||
       (this.props.position !== prevProps.position)) {
-        this._renderMarker()
+      if (this.props.map && this.props.google) this._renderMarker()
     }
   }
 
@@ -46,6 +46,7 @@ class Marker extends Component {
   }
 
   _renderMarker = () => {
+
     const evtNames = ['click', 'mouseover']
     let {
       map, google, position, mapCenter

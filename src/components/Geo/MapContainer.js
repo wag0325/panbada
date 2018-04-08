@@ -25,7 +25,7 @@ class MapContainer extends Component {
     const pos = this.props.pos || {lat: 37.759703, lng: -122.428093}
 
     console.log("map props ", this.props)
-    if (!this.props.loaded) {
+    if (!this.props.loaded && this.props.google) {
       return <div>Loading...</div>
     }
 

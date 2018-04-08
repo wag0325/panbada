@@ -43,7 +43,6 @@ class App extends Component {
             <Route exact path='/people' component={UsersContainer}/>
             <Route path='/u/:id' component={UserContainer}/>
             <Route path='/search/:filter' component={UsersContainer}/>
-            <Route path='/s/g/:filter' component={GigsContainer}/>
             <Route exact path='/myactivity' component={MyActivityContainer}/>
             <Route exact path='/mysettings' component={MySettingsContainer}/>
           </Switch>

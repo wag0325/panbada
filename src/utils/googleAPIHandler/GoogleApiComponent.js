@@ -16,13 +16,19 @@ export const wrapper = (options) => (WrappedComponent) => {
       this.state = {
         loaded: false,
         map: null,
-        google: null
+        google: null,
+        scriptCache: null,
       }
     }
 
     componentDidMount() {
+      console.log("window ", JSON.stringify(window))
+      console.log("windowgoogle ", window.google)
       const refs = this.refs;
-      this.scriptCache.google.onLoad((err, tag) => {
+
+      if (!window.google) return
+
+      this.state.scriptCache.google.onLoad((err, tag) => {
         const maps = window.google.maps;
         const props = Object.assign({}, this.props, {
           loaded: this.state.loaded
@@ -48,13 +54,19 @@ export const wrapper = (options) => (WrappedComponent) => {
     }
 
     componentWillMount() {
-      this.scriptCache = cache({
+      
+      this.setState({scriptCache: cache({
         google: GoogleApi({
           apiKey: apiKey,
           libraries: libraries
         })
         // google: 'https://maps.googleapis.com/maps/api/js?v=3.31&key=AIzaSyBOMmzOiZa0TPrMEqGZOh0SxdM-lEO0BHU'
       })
+      })
+
+      console.log("window will ", JSON.stringify(window))
+      console.log("window will ", window.google)
+
     }
 
     render() {

@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
 import Grid from 'material-ui/Grid'
 
+import { parse } from 'query-string'
+
 import GigList from '../Gig/GigList'
 import GigSearch from '../Gig/GigSearch'
 
@@ -21,13 +23,14 @@ const styles = theme => ({
 })
 
 class GigsContainer extends Component {
-	state = {
-		modalOpen: false,
-	}
 
 	render() {
 		const { classes } = this.props
+		let parsedLoc = null
+		
+		if (this.props.location) parsedLoc = parse(this.props.location.search)
 
+		
 		return(
 			<div className={classes.root}>
 				<GigSearch />
@@ -35,7 +38,7 @@ class GigsContainer extends Component {
 					<Grid item xs={12} sm={3}>
 	        </Grid>
 	        <Grid item xs={12} sm={6}>
-	        	<GigList />
+	        	<GigList location={parsedLoc}/>
 	        </Grid>
 	        <Grid item xs={12} sm={3}>
 	        </Grid>

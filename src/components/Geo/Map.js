@@ -85,6 +85,8 @@ class Map extends Component {
       maps.event.trigger(this.map, 'ready')
       this.setState({map: this.map})
     }
+
+    this.forceUpdate()
   }
   
   _handleEvent = (evtName) => {

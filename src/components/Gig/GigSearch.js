@@ -48,7 +48,7 @@ class GigSearch extends Component {
   _executeSearch = async () => {
     const { distance, location } = this.state
     
-    this.props.history.push(`/s/g/?lat=${location.lat}&lng=${location.lng}&r=${distance}`)
+    this.props.history.push(`/gigs?lat=${location.lat}&lng=${location.lng}&r=${distance}`)
   }
   
 }

@@ -176,6 +176,29 @@ function createGig(parent, args, context, info) {
   )
 }
 
+async function updateGig(parent, args, context, info) {
+  const {id, locationId, addressName, lat, lng, address, directions, ...other } = args
+  const userId = getUserId(context)
+  let location = {}
+  if (address) {
+    location = locationId
+      ? { connect: {id: locationId} } 
+      : { create: {name: addressName, lat, lng, address, directions}}
+  }
+
+  return context.db.mutation.updateGig(
+    { data: { 
+      ...other, 
+      location
+      },
+      where: {
+       id
+      }
+    },
+    info,
+  )
+}
+
 function deleteGig(parent, { id }, context, info) {
   const userId = getUserId(context)
 
@@ -394,6 +417,7 @@ module.exports = {
   createPostComment,
   deletePostComment,
   createGig,
+  updateGig,
   deleteGig,
   createLocation,
   deleteLocation,

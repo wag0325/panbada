@@ -93,13 +93,13 @@ class PostList extends Component {
 
   _loadMoreRows = () => {
     const { postsConnection, fetchMore } = this.props.postFeedQuery
-    const { postById } = this.state
+    const { postedById } = this.props
 
     fetchMore({
       variables: {  first: POSTS_PER_PAGE, 
                     after: postsConnection.pageInfo.endCursor,
                     orderBy: POSTS_ORDER_BY, 
-                    filter: postById, },
+                    filter: postedById, },
       updateQuery: (previousResult, { fetchMoreResult, queryVariables }) => {
 
         if (!fetchMoreResult) {
@@ -167,10 +167,10 @@ export default withStyles(styles)(graphql(POST_FEED_QUERY, {
   name: 'postFeedQuery',
   options: ownProps => {
     let after = ownProps.endCursor || null
-    let postById = ownProps.postById || null
+    let postedById = ownProps.postedById || null
     
     return {
-      variables: { first: POSTS_PER_PAGE, after:after, orderBy: POSTS_ORDER_BY, filter: postById }
+      variables: { first: POSTS_PER_PAGE, after:after, orderBy: POSTS_ORDER_BY, filter: postedById }
     }
   },
 })(PostList))

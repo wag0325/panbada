@@ -44,7 +44,8 @@ class GigList extends Component {
     const { dense, hasNextPage } = this.state
     const { classes } = this.props
     let $loadMoreButton = null 
-
+    
+    console.log("props gig ", this.props)
     if (this.props.gigFeedQuery && this.props.gigFeedQuery.loading) {
       // return <CircularProgress className={this.props.progress} size={50} />
       return (
@@ -67,7 +68,7 @@ class GigList extends Component {
     }
 
     const gigsToRender = this.props.gigFeedQuery.gigsConnection.edges
-    
+    const { postedById } = this.props
     return (
       <div>
         <Link to='/gigs/new'>
@@ -78,8 +79,9 @@ class GigList extends Component {
         <Paper className={classes.root} elevation={4}>
           <List dense={dense}>
             {gigsToRender.length === 0 && 'No gigs near this location. Please select a different region or increase the search radius.'}
-            {gigsToRender.map((gig, index) => 
-            <Gig key={gig.node.id} index={index} gig={gig.node} />)}
+            {gigsToRender.map((gig, index) => {
+                return (<Gig key={gig.node.id} index={index} gig={gig.node} />)
+              })}
           </List>
         </Paper>
         {$loadMoreButton}
@@ -91,9 +93,9 @@ class GigList extends Component {
 export const GIG_FEED_QUERY = gql`
   query GigsConnectionQuery(
     $first: Int, $after: String, $orderBy: GigOrderByInput,
-    $lat: Float, $lng: Float, $distance: Int) {
+    $lat: Float, $lng: Float, $distance: Int, $postedById: String) {
     gigsConnection(first: $first, after: $after, orderBy: $orderBy,
-      lat: $lat, lng: $lng, distance: $distance
+      lat: $lat, lng: $lng, distance: $distance, postedById: $postedById,
     ) {
       pageInfo {
         endCursor
@@ -123,9 +125,17 @@ export default withStyles(styles)(graphql(GIG_FEED_QUERY, {
   name: 'gigFeedQuery',
   options: ownProps => {
     let after = ownProps.endCursor || null
-    let lat = ownProps.location.lat || 40.7585569
-    let lng = ownProps.location.lng || -73.76543670
-    let distance = ownProps.location.r || 25
+    let lat = null
+    let lng = null
+    let distance = null
+    let postedById = ownProps.postedById || null 
+    let location = ownProps.location
+    if (location) {
+      lat = location.lat
+      lng = location.lng 
+      distance = location.r
+    }
+
     return {
       variables: { 
         first: GIGS_PER_PAGE, 
@@ -134,6 +144,7 @@ export default withStyles(styles)(graphql(GIG_FEED_QUERY, {
         lat: lat,
         lng: lng,
         distance: distance,
+        postedById,
       }
     }
   },

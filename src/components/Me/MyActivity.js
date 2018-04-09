@@ -9,6 +9,7 @@ import Tabs, { Tab } from 'material-ui/Tabs'
 import Typography from 'material-ui/Typography'
 
 import PostList from '../Post/PostList'
+import GigList from '../Gig/GigList'
 
 function TabContainer({ children }) {
   return (
@@ -55,7 +56,7 @@ class MyActivity extends Component {
     }
     
     const { me } = this.props.meQuery
-    
+    console.log("me ", me.id)
     return (
       <div className={classes.root}>
         <AppBar position='static' color='default'>
@@ -67,9 +68,12 @@ class MyActivity extends Component {
             fullWidth
           >
             <Tab label='My Posts'/>
+            <Tab label='My Gigs'/>
           </Tabs>
+
         </AppBar>
-        {value === 0 && <TabContainer><PostList postById={me.id} /></TabContainer>}
+        {value === 0 && <TabContainer><PostList postedById={me.id} /></TabContainer>}
+        {value === 1 && <TabContainer><GigList postedById={me.id} /></TabContainer>}
       </div>
     )
   }

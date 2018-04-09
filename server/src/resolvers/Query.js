@@ -20,15 +20,32 @@ function post(parent, { id }, context, info) {
 }
 
 function gigsConnection(parent, args, context, info) {
-  const { first, after, orderBy, lat, lng } = args
-  let where = null
+  const { first, after, orderBy, lat, lng, postedById } = args
   const MILES_PER_DEGREE=69
   const distance = args.distance || 25
   const diff = distance / MILES_PER_DEGREE
   
-  console.log("diff ", diff)
-  console.log("lat gte ", lat-diff)
-  if (lat && lng ) where = {location: {AND: [{ lat_gte: lat-diff}, {lng_gte: lng-diff}, {lat_lte: lat+diff}, {lng_lte: lng+diff}, ]}}
+  let where = {},
+      location = {},
+      postedBy = {}
+
+  if (lat && lng ) location = {AND: [{ lat_gte: lat-diff}, {lng_gte: lng-diff}, {lat_lte: lat+diff}, {lng_lte: lng+diff}, ]}
+  if (postedById) postedBy = { id: postedById }
+  // where = { location, postedBy }
+  // where = postedBy ? { postedBy } : {}
+  where = {location, postedBy}
+
+  // postedBy 
+  // location
+  // postedBy && location
+  // neither 
+  // if (lat && lng && postedById) {
+
+  // } else if ((lat && lng) || postedById) {
+
+  // } else {
+
+  // }
 
   return context.db.query.gigsConnection({ after, first, orderBy, where }, info)
 }

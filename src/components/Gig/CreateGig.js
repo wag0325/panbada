@@ -9,9 +9,10 @@ import { withStyles } from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
 import Button from 'material-ui/Button'
 import Select from 'material-ui/Select'
+import Switch from 'material-ui/Switch'
 import Input, { InputLabel } from 'material-ui/Input'
 import { MenuItem } from 'material-ui/Menu'
-import { FormControl, FormHelperText } from 'material-ui/Form'
+import { FormControl, FormHelperText, FormControlLabel } from 'material-ui/Form'
 import Paper from 'material-ui/Paper'
 import Typography from 'material-ui/Typography'
 
@@ -50,10 +51,13 @@ class CreateGig extends Component {
     addressName: '',
     address: '',
     directions: '',
+    addDateTime: false,
   }
 
   render() {
     const { classes } = this.props
+    const { addDateTime } = this.state
+
     const gigTypes = [
       {name: 'Creative', value: 'CREATIVE'}, 
       {name: 'Crew', value: 'CREW'}, 
@@ -66,6 +70,31 @@ class CreateGig extends Component {
     ]
     const start = moment().format('YYYY-MM-DD[T]hh:mm').toString()
     const end = moment().add(2, 'hours').format('YYYY-MM-DD[T]hh:mm').toString()
+    
+    const $dateTimeForm = (<FormControl fullWidth className={classes.margin} disabled>
+            <TextField
+              id='datetime-start'
+              label='Start Date & Time'
+              type='datetime-local'
+              defaultValue={start}
+              className={classes.textField}
+              onChange={e => this.setState({ startDateTime: e.target.value })}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <TextField
+              id='datetime-end'
+              label='End Date & Time'
+              type='datetime-local'
+              defaultValue={end}
+              className={classes.textField}
+              onChange={e => this.setState({ endDateTime: e.target.value })}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </FormControl>)
 
     return (
       <Paper className={classes.root} elevation={4}>
@@ -102,29 +131,19 @@ class CreateGig extends Component {
             />
           </FormControl>
           <FormControl fullWidth className={classes.margin}>
-            <TextField
-              id='datetime-start'
-              label='Start Date & Time'
-              type='datetime-local'
-              defaultValue={start}
-              className={classes.textField}
-              onChange={e => this.setState({ startDateTime: e.target.value })}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            <TextField
-              id='datetime-end'
-              label='End Date & Time'
-              type='datetime-local'
-              defaultValue={end}
-              className={classes.textField}
-              onChange={e => this.setState({ endDateTime: e.target.value })}
-              InputLabelProps={{
-                shrink: true,
-              }}
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={this.state.addDateTime}
+                  onChange={this._handleDateTimeOn('addDateTime')}
+                  value="addDateTime"
+                  color="primary"
+                />
+              }
+              label="Add Date & Time"
             />
           </FormControl>
+          {addDateTime && $dateTimeForm}
           <FormControl fullWidth className={classes.margin}>
             <TextField
               id="text"
@@ -162,8 +181,12 @@ class CreateGig extends Component {
     )
   }
   
+  _handleDateTimeOn = name => event => {
+    this.setState({ [name]: event.target.checked })
+  }
+
   _formatFilename = filename => {
-    const date = moment().format("YYYYMMDD");
+    const date = moment().format('YYYYMMDD')
     const randomString = Math.random()
       .toString(36)
       .substring(2, 7)

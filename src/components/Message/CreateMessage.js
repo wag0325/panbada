@@ -87,6 +87,7 @@ class CreateMessage extends Component {
     })
     
     this.setState({text: ''})
+    this.props.afterSubmit()
   }
 }
 

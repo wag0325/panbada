@@ -16,7 +16,7 @@ import Menu, { MenuItem } from 'material-ui/Menu'
 import IconButton from 'material-ui/IconButton'
 import MoreHorizIcon from 'material-ui-icons/MoreHoriz'
 
-import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
+import { AUTH_TOKEN, AVATAR_DEFAULT, ME_ID } from '../../constants'
 import { GigFragments, UserFragments } from '../../constants/gqlFragments'
 
 import SendMessageModal from '../Message/SendMessageModal'
@@ -87,7 +87,6 @@ class GigDetails extends Component {
     // console.log("me", props.meQuery.me)
     this.state = {
       following: false,
-      myGig: false,
       anchorEl: null,
       openModal: false,
     }
@@ -127,14 +126,18 @@ class GigDetails extends Component {
       return <div>Error</div>
     }     
     
+    const meId = localStorage.getItem(ME_ID)
     const { classes } = this.props
     const { gig } = this.props.gigQuery
     const { location, startDateTime, endDateTime } = gig
     const user = gig.postedBy
-    const { myGig, following, openModal, anchorEl } = this.state
+    const { following, openModal, anchorEl } = this.state
     const pos = {lat: location.lat, lng: location.lng }
     let $dateTimeDisplay = null
+    let myGig = false
     
+    if (meId === user.id) myGig = true 
+
     if (startDateTime || endDateTime) {
       $dateTimeDisplay = (
         <div>

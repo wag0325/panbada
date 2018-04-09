@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
+import {withRouter} from 'react-router-dom'
 
 import Button from 'material-ui/Button'
 import Dialog, {
@@ -32,7 +33,8 @@ class SendMessageModal extends Component {
     super(props)
 
     this.state = {
-      open: props.open
+      open: props.open,
+      id: props.id,
     }
   }
 
@@ -42,7 +44,12 @@ class SendMessageModal extends Component {
 
   handleClose = () => {
     this.setState({ open: false })
-  };
+  }
+
+  handleSubmit = () => {
+    console.log("submitted")
+    this.props.history.push(`/messaging/thread/${this.state.id}`)
+  }
 
   render() {
   	const { classes } = this.props
@@ -59,7 +66,7 @@ class SendMessageModal extends Component {
           <DialogContentText id='alert-dialog-description'>
             Send a thoughtful message and connect. 
           </DialogContentText>
-          <CreateMessage id={this.props.id} afterSubmit={this.handleClose}/>
+          <CreateMessage id={this.props.id} afterSubmit={this.handleSubmit}/>
         </DialogContent>
       </Dialog>
       
@@ -67,4 +74,4 @@ class SendMessageModal extends Component {
   }
 }
 
-export default withStyles(styles)(SendMessageModal)
+export default withStyles(styles)(withRouter(SendMessageModal))

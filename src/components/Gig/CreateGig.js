@@ -69,8 +69,9 @@ class CreateGig extends Component {
       {name: 'Writing', value: 'WRITING'}, 
       {name: 'Other', value: 'OTHER'}, 
     ]
+    const start = moment().format('YYYY-MM-DD[T]hh:mm').toString()
+    const end = moment().add(2, 'hours').format('YYYY-MM-DD[T]hh:mm').toString()
 
-    console.log("state ", this.state)
     return (
       <Paper className={classes.root} elevation={4}>
         <Typography variant='title' gutterBottom>
@@ -107,6 +108,28 @@ class CreateGig extends Component {
           </FormControl>
           <FormControl fullWidth className={classes.margin}>
             <TextField
+              id='datetime-start'
+              label='Start Date & Time'
+              type='datetime-local'
+              defaultValue={start}
+              className={classes.textField}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <TextField
+              id='datetime-end'
+              label='End Date & Time'
+              type='datetime-local'
+              defaultValue={end}
+              className={classes.textField}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </FormControl>
+          <FormControl fullWidth className={classes.margin}>
+            <TextField
               id="text"
               label="Description"
               multiline={true}
@@ -118,7 +141,9 @@ class CreateGig extends Component {
               margin="normal"
             />
           </FormControl>
-          <GeoAutocompleteContainer onSearchGeo={this._handleGeo}/>
+          <FormControl fullWidth className={classes.margin}>
+            <GeoAutocompleteContainer onSearchGeo={this._handleGeo}/>
+          </FormControl>
           <FormControl fullWidth className={classes.margin}>
             <TextField
               id='text'
@@ -189,21 +214,7 @@ class CreateGig extends Component {
         directions,
       },
       update: (store, { data: { createGig }}) => {
-        const after = null
-        const first = GIGS_PER_PAGE
-        const orderBy = GIGS_ORDER_BY
-        const distance = GIGS_DEFAULT_RADIUS 
-        
-
-        const data = store.readQuery({ query: GIG_FEED_QUERY, variables: { first, after, orderBy, lat, lng, distance  } })
-
-        data.gigsConnection.edges.splice(0, 0, {node: createGig} )
-        store.writeQuery({
-          query: GIG_FEED_QUERY,
-          data,
-          variables: { first, after, orderBy, lat, lng, distance },
-        })
-
+        console.log("createGig", createGig)
         this.props.history.push(`/g/${createGig.id}`)
       }
     })

@@ -112,12 +112,12 @@ class UserDetails extends Component {
     if ((this.props.userQuery && this.props.userQuery.loading) ||
         (this.props.meQuery && this.props.meQuery.loading)
         ) {
-      // return <CircularProgress className={this.props.progress} size={50} />
-      return (
-        <div className={this.props.root}>
-          <LinearProgress />
-        </div>
-        )
+      return <CircularProgress className={this.props.progress} size={30} />
+      // return (
+      //   <div className={this.props.root}>
+      //     <LinearProgress />
+      //   </div>
+      //   )
     }
 
     

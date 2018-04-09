@@ -114,12 +114,12 @@ class GigDetails extends Component {
 
   render() {
     if (this.props.gigQuery && this.props.gigQuery.loading) {
-      // return <CircularProgress className={this.props.progress} size={50} />
-      return (
-        <div className={this.props.root}>
-          <LinearProgress />
-        </div>
-        )
+      return <CircularProgress className={this.props.progress} size={30} />
+      // return (
+      //   <div className={this.props.root}>
+      //     <LinearProgress />
+      //   </div>
+      //   )
     }
 
     

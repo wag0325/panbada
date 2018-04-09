@@ -81,12 +81,12 @@ class ChannelList extends Component {
     let $loadMoreButton = null 
 
     if (this.props.messageFeedQuery && this.props.messageFeedQuery.loading) {
-      // return <CircularProgress className={this.props.progress} size={50} />
-      return (
-        <div className={this.props.root}>
-          <LinearProgress />
-        </div>
-        )
+      return <CircularProgress className={this.props.progress} size={30} />
+      // return (
+      //   <div className={this.props.root}>
+      //     <LinearProgress />
+      //   </div>
+      //   )
     }
     
     if (this.props.messageFeedQuery && this.props.messageFeedQuery.error) {

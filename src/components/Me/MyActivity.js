@@ -56,7 +56,7 @@ class MyActivity extends Component {
     }
     
     const { me } = this.props.meQuery
-    console.log("me ", me.id)
+    
     return (
       <div className={classes.root}>
         <AppBar position='static' color='default'>

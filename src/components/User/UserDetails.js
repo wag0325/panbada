@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
+import {withRouter} from 'react-router-dom'
 
 import classNames from 'classnames'
 import { withStyles } from 'material-ui/styles'
@@ -77,7 +78,6 @@ class UserDetails extends Component {
   constructor(props) {
     super(props)
 
-    // console.log("me", props.meQuery.me)
     this.state = {
       following: false,
       myProfile: false,
@@ -91,7 +91,6 @@ class UserDetails extends Component {
     const { me } = nextProps.meQuery 
   
     if (me && user) {
-      console.log("props ", me, user)
       if (me.id === user.id) {
         this.setState({myProfile: true})
       }
@@ -110,7 +109,6 @@ class UserDetails extends Component {
     const user = this.props.userQuery.user
     const { myProfile, following, openModal, anchorEl } = this.state
 
-    console.log("state ", myProfile, following)
     if ((this.props.userQuery && this.props.userQuery.loading) ||
         (this.props.meQuery && this.props.meQuery.loading)
         ) {
@@ -187,8 +185,11 @@ class UserDetails extends Component {
     this.setState({ anchorEl: null });
   };
   
+  _editProfile = () => {
+    this.props.history.push(`/mysettings`)
+  }
+
   _handleSendMessage = () => {
-    console.log("send message")
     this.setState({ openModal: true })
   }
 
@@ -245,4 +246,4 @@ export default withStyles(styles)(compose(
   graphql(FOLLOW_MUTATION, {name: 'followMutation',}),
   graphql(UNFOLLOW_MUTATION, {name: 'unfollowMutation',}),
   graphql(ME_QUERY, {name: 'meQuery'}),
-  )(UserDetails))
+  )(withRouter(UserDetails)))

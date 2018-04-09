@@ -12,9 +12,11 @@ import GeoAutocompleteContainer from '../Geo/GeoAutocompleteContainer'
 
 const styles = theme => ({
   root: {
-    textAlign: 'center'
+    textAlign: 'center',
+    marginBottom: 30,
   },
   searchbox: {
+    width: 240,
     display: 'inline-block'
   },
 })
@@ -24,7 +26,7 @@ class GigSearch extends Component {
     super(props)
 
     this.state = {
-      keyword: '',
+      keywords: '',
       location: {
         lat: 40.75855, 
         lng: -73.76543,
@@ -40,21 +42,9 @@ class GigSearch extends Component {
 
     return (
       <div className={classes.root}>
-        <Input
-          type='text'
-          placeholder='title, keywords, or company'
-          onChange={(e) => this.setState({ keyword: e.target.value })}
-          endAdornment={
-                <InputAdornment position='end'>
-                  <IconButton 
-                    onClick={() => this._executeSearch()}
-                    aria-label='Search'>
-                    <Search />
-                  </IconButton>
-                </InputAdornment>
-              }
-        />
-        <GeoAutocompleteContainer onSearchGeo={this._handleGeo} className={classes.searchbox}/>
+        <div className={classes.searchbox} style={{width: `240px`, display: `inline-block`}}>
+          <GeoAutocompleteContainer onSearchGeo={this._handleGeo}/>
+        </div>
         <Button color='primary' variant='raised' onClick={() => this._executeSearch()}>Find Gigs</Button>
       </div>
     )
@@ -73,7 +63,7 @@ class GigSearch extends Component {
   }
 
   _executeSearch = async () => {
-    const { distance, location } = this.state
+    const { distance, location, keywords } = this.state
     
     this.props.history.push(`/gigs?lat=${location.lat}&lng=${location.lng}&r=${distance}`)
   }

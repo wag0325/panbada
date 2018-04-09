@@ -12,12 +12,10 @@ import Select from 'material-ui/Select'
 import Switch from 'material-ui/Switch'
 import Input, { InputLabel } from 'material-ui/Input'
 import { MenuItem } from 'material-ui/Menu'
-import { FormControl, FormHelperText, FormControlLabel } from 'material-ui/Form'
+import { FormControl, FormControlLabel } from 'material-ui/Form'
 import Paper from 'material-ui/Paper'
 import Typography from 'material-ui/Typography'
 
-import { GIG_FEED_QUERY } from './GigList'
-import { GIGS_PER_PAGE, GIGS_ORDER_BY, GIGS_DEFAULT_RADIUS } from '../../constants'
 import { GigFragments, UserFragments } from '../../constants/gqlFragments'
 
 import GeoAutocompleteContainer from '../Geo/GeoAutocompleteContainer'
@@ -243,8 +241,6 @@ class CreateGig extends Component {
   _handleGeo = (places) => {
     if (places.length === 0 || !places) return
     const place = places[0]
-    
-    console.log("place ", place)
 
     this.setState({
       addressName: place.name,
@@ -257,7 +253,6 @@ class CreateGig extends Component {
   }
 
   _onDrop = async files => {
-    console.log("onDrop " + files[0])
     this.setState({ file: files[0] })
   }
 
@@ -266,8 +261,6 @@ class CreateGig extends Component {
     const file = e.target.files[0]
       
     reader.onload = (upload) => {
-      console.log("upload "+ upload.target.result)
-      console.log("file "+ file.name + " " + file.type)
       this.setState({
         image_uri: upload.target.result,
         // filename: file.name,

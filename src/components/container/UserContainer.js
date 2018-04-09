@@ -9,6 +9,7 @@ const styles = theme => ({
   root: {
     flexGrow: 1,
     position: 'relative',
+    marginTop: theme.spacing.unit * 4,
   },
   button: {
     margin: theme.spacing.unit,
@@ -24,7 +25,7 @@ class UserContainer extends Component {
 		const id = this.props.match.params.id
 
 		return(
-			<div>
+			<div className={classes.root}>
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={3}>
 	        </Grid>

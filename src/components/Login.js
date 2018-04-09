@@ -50,7 +50,6 @@ class Login extends Component {
     const { classes } = this.props
     const { errors } = this.state
     let $errorMessage = null
-    console.log('props ', this.props)
     if (errors.length > 0) {
       $errorMessage = (<FeedbackMessage type='error' message={errors[0].message} />)
     }

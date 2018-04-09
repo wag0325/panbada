@@ -19,9 +19,12 @@ const styles = theme => ({
   progress: {
     margin: theme.spacing.unit * 2,
   },
-   root: {
+  root: {
     flexGrow: 1,
   },
+  newGig: {
+    marginBottom: 10
+  },  
   loadMoreWrapper: {
     margin: 5,
     marginTop: 20,
@@ -45,7 +48,6 @@ class GigList extends Component {
     const { classes } = this.props
     let $loadMoreButton = null 
     
-    console.log("props gig ", this.props)
     if (this.props.gigFeedQuery && this.props.gigFeedQuery.loading) {
       // return <CircularProgress className={this.props.progress} size={50} />
       return (
@@ -71,11 +73,13 @@ class GigList extends Component {
     const { postedById } = this.props
     return (
       <div>
-        <Link to='/gigs/new'>
-          <Button variant="raised" color="primary" className={this.props.button}>
-          Post a gig
-          </Button>
-        </Link>
+        <div className={classes.newGig}>
+          <Link to='/gigs/new'>
+            <Button variant='raised' color='default' className={this.props.button}>
+            Post a gig
+            </Button>
+          </Link>
+        </div>
         <Paper className={classes.root} elevation={4}>
           <List dense={dense}>
             {gigsToRender.length === 0 && 'No gigs near this location. Please select a different region or increase the search radius.'}

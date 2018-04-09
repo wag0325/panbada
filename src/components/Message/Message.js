@@ -94,7 +94,7 @@ const meId = localStorage.getItem(ME_ID)
 class Channel extends Component {
   constructor(props) {
     super(props)
-    // console.log("me", props.meQuery.me)
+
     this.state = {
       me: meId === props.message.from.id ? true : false,
     }

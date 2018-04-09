@@ -95,7 +95,6 @@ class Channel extends Component {
     const lastMessage = channel.messages[this.props.channel.messages.length-1]
     
     if (user.id === currChannel) {
-      console.log("it's current channcle")
       activeChannel = true 
     }
 
@@ -120,7 +119,6 @@ class Channel extends Component {
   
   _clickChannel = () => {
     const { id } = this.state
-    console.log("clicked", id)
     if (id) this.props.history.push(`/messaging/thread/${id}`)
   }
 

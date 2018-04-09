@@ -55,7 +55,7 @@ class PostList extends Component {
 
   render() {
     if (this.props.postFeedQuery && this.props.postFeedQuery.loading) {
-      return <div>Loading</div>
+      return <CircularProgress className={this.props.progress} size={30} />
     }
 
     if (this.props.postFeedQuery && this.props.postFeedQuery.error) {

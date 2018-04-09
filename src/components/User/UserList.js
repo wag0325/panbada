@@ -45,16 +45,15 @@ class UserList extends Component {
     const { dense, hasNextPage } = this.state
     const { classes } = this.props
     const meId = localStorage.getItem(ME_ID)
-    console.log("meId", meId)
     let $loadMoreButton = null 
 
     if (this.props.userFeedQuery && this.props.userFeedQuery.loading) {
-      // return <CircularProgress className={this.props.progress} size={50} />
-      return (
-        <div className={this.props.root}>
-          <LinearProgress />
-        </div>
-        )
+      return <CircularProgress className={this.props.progress} size={50} />
+      // return (
+      //   <div className={this.props.root}>
+      //     <LinearProgress />
+      //   </div>
+      //   )
     }
     
     if (this.props.userFeedQuery && this.props.userFeedQuery.error) {

@@ -70,7 +70,6 @@ class ChannelList extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log("nextProps ", nextProps)
     const { hasPreviousPage } = nextProps.messageFeedQuery.messagesConnection.pageInfo
     this.setState({hasPreviousPage: hasPreviousPage })
   }
@@ -80,8 +79,6 @@ class ChannelList extends Component {
     const { classes } = this.props
     const meId = localStorage.getItem(ME_ID)
     let $loadMoreButton = null 
-
-    console.log("props ", this.props)
 
     if (this.props.messageFeedQuery && this.props.messageFeedQuery.loading) {
       // return <CircularProgress className={this.props.progress} size={50} />
@@ -128,7 +125,6 @@ class ChannelList extends Component {
   _onScroll = () => {
     const { messageList } = this.refs
     const { loadMore } = this.state
-    console.log("scroll ", messageList.scrollTop)
 
     if (messageList.scrollTop === 0) { 
       this.setState({loadMore: true})

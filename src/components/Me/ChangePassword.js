@@ -1,16 +1,12 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
 
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
-import classNames from 'classnames'
 import { withStyles } from 'material-ui/styles'
-import { CircularProgress } from 'material-ui/Progress'
-import { LinearProgress } from 'material-ui/Progress'
 import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
-import { FormControl, FormHelperText } from 'material-ui/Form'
+import { FormControl } from 'material-ui/Form'
 
 
 const styles = theme => ({

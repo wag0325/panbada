@@ -74,7 +74,6 @@ class Post extends Component {
     let bookmarkPostId = null
     let likePostId = null
     
-    console.log("meId post", meId)
     props.post.postBookmarks.filter(bookmark => {
       if (bookmark.user.id === meId) {
         bookmarkPostId = bookmark.id 
@@ -88,8 +87,6 @@ class Post extends Component {
       }
       return null
     })
-    
-    console.log("bookmarkPostId ", bookmarkPostId)
 
     this.state = {
       expanded: false, 
@@ -105,9 +102,6 @@ class Post extends Component {
 
     const { classes, post } = this.props
     const { dense, bookmarkPostId, likePostId, postLikeNum } = this.state
-    
-    console.log("post", this.props)
-    console.log("post", post)
     const commentsToRender = post.postComments
 
     return (
@@ -187,14 +181,11 @@ class Post extends Component {
     const { bookmarkPostId } = this.state
 
     if (bookmarkPostId) {
-      console.log("bookmarkId ", bookmarkPostId)
       await this.props.unbookmarkPostMutation({
         variables: {
           id: bookmarkPostId
         }, 
-        update: (store, {data: { bookmarkPost }}) => {
-          console.log("store ", store)
-          console.log("bookmarkPost ", bookmarkPost)
+        update: (store, {data: { bookmarkPost }}) => {          
           this.setState({bookmarkPostId: null})
         },
       })
@@ -204,8 +195,6 @@ class Post extends Component {
           id
         },
         update: (store, {data: { bookmarkPost }}) => {
-          console.log("store ", store)
-          console.log("bookmarkPost ", bookmarkPost)
           this.setState({bookmarkPostId: bookmarkPost.id})
         },
       })

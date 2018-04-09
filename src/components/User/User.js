@@ -47,7 +47,6 @@ class User extends Component {
   constructor(props) {
     super(props)
 
-    // console.log("me", props.meQuery.me)
     this.state = {
       secondary: false,
       userId: props.user.id,

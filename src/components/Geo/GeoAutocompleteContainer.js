@@ -33,13 +33,13 @@ const PlacesWithStandaloneSearchBox = compose(
   }),
   withScriptjs  
 )(props => { 
-  console.log("props ", props)
   props.onSearchGeo(props.places)
   return (<div data-standalone-searchbox="">
     <StandaloneSearchBox
       ref={props.onSearchBoxMounted}
       bounds={props.bounds}
       onPlacesChanged={props.onPlacesChanged}
+      style={{display: `inline-block !important`}}
     >
       <input
         type="text"
@@ -58,15 +58,6 @@ const PlacesWithStandaloneSearchBox = compose(
         }}
       />
     </StandaloneSearchBox>
-    <ol>
-      {props.places.map(({ place_id, formatted_address, geometry: { location } }) =>
-        <li key={place_id}>
-          {formatted_address}
-          {" at "}
-          ({location.lat()}, {location.lng()})
-        </li>
-      )}
-    </ol>
   </div>)}
 );
 

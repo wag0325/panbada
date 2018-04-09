@@ -46,9 +46,6 @@ class UpdateMe extends Component {
       avatar_url: '',
     }
 
-    componentDidMount() {
-      console.log("props ", this.props)
-    }
   // constructor(props) {
   //   super(props)
     

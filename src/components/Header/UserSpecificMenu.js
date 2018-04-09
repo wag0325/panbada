@@ -11,12 +11,8 @@ import { MenuItem, MenuList } from 'material-ui/Menu'
 import Paper from 'material-ui/Paper'
 import Grow from 'material-ui/transitions/Grow'
 import ClickAwayListener from 'material-ui/utils/ClickAwayListener'
-import AppBar from 'material-ui/AppBar'
-import Toolbar from 'material-ui/Toolbar'
-import Typography from 'material-ui/Typography'
 import Tooltip from 'material-ui/Tooltip'
 
-import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 import AccountCircle from 'material-ui-icons/AccountCircle'
 import Chat from 'material-ui-icons/Chat'
@@ -62,8 +58,7 @@ class UserSpecificMenu extends Component {
     let userId = null 
     
     if ( nextProps.meQuery.me ) {
-    const { me } = nextProps.meQuery
-    console.log("me", me)
+    const { me } = nextProps.meQuery    
     me.channels[me.channels.length-1].users.map(function(user){
       if (user.id != me.id) { 
         userId = user.id
@@ -79,7 +74,6 @@ class UserSpecificMenu extends Component {
 
   render() {
     const authToken = localStorage.getItem(AUTH_TOKEN)
-    console.log("authToken ", authToken)
     const { classes } = this.props
     const { open, lastMessageId, meId } = this.state
     const { me } = this.props.meQuery
@@ -87,8 +81,8 @@ class UserSpecificMenu extends Component {
     return (
       <div className={classes.loggedInMenu}>
         <Link to={`/messaging/thread/${lastMessageId}`}>
-          <Tooltip id="tooltip-icon" title="Messaging">
-            <IconButton aria-label="Messaging">
+          <Tooltip id='tooltip-icon' title='Messaging'>
+            <IconButton aria-label='Messaging'>
               <Chat />
             </IconButton>
           </Tooltip>

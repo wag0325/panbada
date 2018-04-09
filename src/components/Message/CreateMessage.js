@@ -29,7 +29,6 @@ class CreateMessage extends Component {
   constructor(props) {
     super(props)
     
-    console.log("props createmessage ", props)
     this.state = {
       id: props.id,
       text: '',
@@ -38,7 +37,6 @@ class CreateMessage extends Component {
     
   render() {
     const { classes } = this.props
-    console.log("create id ", this.state.id)
 
     return (
       <form className={this.props.container} noValidate autoComplete="off">

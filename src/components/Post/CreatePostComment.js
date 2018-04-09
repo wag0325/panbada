@@ -97,7 +97,6 @@ class CreatePostComment extends Component {
 
   _createPostComment = async () => {
     const { id, text } = this.state
-    console.log("create ", id, text)
 
     await this.props.postCommentMutation({
       variables: {
@@ -117,18 +116,9 @@ class CreatePostComment extends Component {
           return post.node.id === id
         })
         
-        console.log("index ", postIndex)
-        
-        console.log("createPostComment", createPostComment)
-        console.log("commentedPost ", commentedPost)
-      
         commentedPost.node.postComments.push(createPostComment)
-        console.log("commentedPost ", commentedPost)
-        
-        console.log("data", data)
         data.postsConnection.edges.splice(postIndex, 1, commentedPost )
         // postComments.push(createPostComment)
-        console.log("data", data)
         
 		    store.writeQuery({
 		      query: POST_FEED_QUERY,

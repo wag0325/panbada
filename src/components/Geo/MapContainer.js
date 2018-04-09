@@ -5,7 +5,6 @@ import { withScriptjs, withGoogleMap, GoogleMap, Marker } from 'react-google-map
 import { GOOGLE_MAP_ACCESS_KEY } from '../../constants/config'
 
 const MyMapComponent = withScriptjs(withGoogleMap((props) => {
-  console.log("props pos", props)
   const pos = props.pos || { lat: -34.397, lng: 150.644 }
   return (<GoogleMap
     defaultZoom={14}

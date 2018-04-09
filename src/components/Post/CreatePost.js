@@ -131,16 +131,10 @@ class CreatePost extends Component {
       update: (store, { data: { createPost }}) => {
         const after = null
         const first = POSTS_PER_PAGE
-        const orderBy = POSTS_ORDER_BY
-        
-        console.log("createPost ", createPost)
-        console.log("store ", store)
-        
+        const orderBy = POSTS_ORDER_BY        
         const data = store.readQuery({ query: POST_FEED_QUERY, variables: { first, after, orderBy } })
         
         data.postsConnection.edges.splice(0, 0, {node: createPost} )
-        
-        console.log("data ", data)
 
         store.writeQuery({
           query: POST_FEED_QUERY,

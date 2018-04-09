@@ -21,6 +21,7 @@ import { GigFragments, UserFragments } from '../../constants/gqlFragments'
 
 import SendMessageModal from '../Message/SendMessageModal'
 import MapContainer from '../Geo/MapContainer'
+import UpdateGigModal from './UpdateGigModal'
 
 const styles = theme => ({
   card: {
@@ -89,6 +90,7 @@ class GigDetails extends Component {
       following: false,
       anchorEl: null,
       openModal: false,
+      openModalGig: false,
     }
   }
 
@@ -131,7 +133,7 @@ class GigDetails extends Component {
     const { gig } = this.props.gigQuery
     const { location, startDateTime, endDateTime } = gig
     const user = gig.postedBy
-    const { following, openModal, anchorEl } = this.state
+    const { following, openModal, openModalGig, anchorEl } = this.state
     const pos = {lat: location.lat, lng: location.lng }
     let $dateTimeDisplay = null
     let myGig = false
@@ -192,6 +194,7 @@ class GigDetails extends Component {
           </Typography>
           <MapContainer pos={pos}/>
         </Paper>
+        { openModalGig && (<UpdateGigModal open={openModalGig} gig={gig} />)}
       </div>
     )
   }
@@ -209,7 +212,7 @@ class GigDetails extends Component {
   }
   
   _handleEditGig = () => {
-
+    this.setState({ openModalGig: true })
   }
 
   _followUser = async () => {

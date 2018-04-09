@@ -30,11 +30,6 @@ const styles = theme => ({
     padding: 20,
     marginTop: 20,
   },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: 200,
-  },
   button: {
     margin: theme.spacing.unit * 2,
   },
@@ -113,6 +108,7 @@ class CreateGig extends Component {
               type='datetime-local'
               defaultValue={start}
               className={classes.textField}
+              onChange={e => this.setState({ startDateTime: e.target.value })}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -123,6 +119,7 @@ class CreateGig extends Component {
               type='datetime-local'
               defaultValue={end}
               className={classes.textField}
+              onChange={e => this.setState({ endDateTime: e.target.value })}
               InputLabelProps={{
                 shrink: true,
               }}

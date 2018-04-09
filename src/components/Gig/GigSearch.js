@@ -2,11 +2,22 @@ import React, { Component } from 'react'
 import gql from 'graphql-tag'
 import {withRouter} from 'react-router-dom'
 
+import { withStyles } from 'material-ui/styles'
 import Input, { InputLabel, InputAdornment } from 'material-ui/Input'
 import IconButton from 'material-ui/IconButton'
 import Search from 'material-ui-icons/Search'
+import Button from 'material-ui/Button'
 
 import GeoAutocompleteContainer from '../Geo/GeoAutocompleteContainer'
+
+const styles = theme => ({
+  root: {
+    textAlign: 'center'
+  },
+  searchbox: {
+    display: 'inline-block'
+  },
+})
 
 class GigSearch extends Component {
   constructor(props) {
@@ -25,8 +36,10 @@ class GigSearch extends Component {
   }
 
   render() {
+    const { classes } = this.props
+
     return (
-      <div>
+      <div className={classes.root}>
         <Input
           type='text'
           placeholder='title, keywords, or company'
@@ -41,8 +54,8 @@ class GigSearch extends Component {
                 </InputAdornment>
               }
         />
-        <GeoAutocompleteContainer onSearchGeo={this._handleGeo}/>
-        <button variant='primary' onClick={() => this._executeSearch()}>Find Gigs</button>
+        <GeoAutocompleteContainer onSearchGeo={this._handleGeo} className={classes.searchbox}/>
+        <Button color='primary' variant='raised' onClick={() => this._executeSearch()}>Find Gigs</Button>
       </div>
     )
   }
@@ -68,4 +81,4 @@ class GigSearch extends Component {
 }
 
 
-export default withRouter(GigSearch)
+export default withStyles(styles)(withRouter(GigSearch))

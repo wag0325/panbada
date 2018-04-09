@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
+import moment from 'moment'
 
 import classNames from 'classnames'
 import { withStyles } from 'material-ui/styles'
@@ -128,10 +129,20 @@ class GigDetails extends Component {
     
     const { classes } = this.props
     const { gig } = this.props.gigQuery
-    const { location } = gig
+    const { location, startDateTime, endDateTime } = gig
     const user = gig.postedBy
     const { myGig, following, openModal, anchorEl } = this.state
     const pos = {lat: location.lat, lng: location.lng }
+    let $dateTimeDisplay = null
+    
+    if (startDateTime || endDateTime) {
+      $dateTimeDisplay = (
+        <div>
+          Start: {moment(startDateTime).format('LLL')} to {moment(null).format('LLL')}
+        </div>
+        )  
+    }
+
     return (
       <div>
         <Card className={classes.card}>
@@ -166,14 +177,15 @@ class GigDetails extends Component {
           </Typography>
         </Paper>
         <Paper className={classes.location} elevation={4}>
+          {$dateTimeDisplay}
           <Typography component='p' className={classes.locationName}>
-            {location.name}          
+            Location: {location.name}          
           </Typography>
           <Typography component='p' className={classes.address}>
-            {location.address}
+            Address: {location.address}
           </Typography>
           <Typography component='p' className={classes.directions}>
-            {location.directions}
+            Directions: {location.directions}
           </Typography>
           <MapContainer pos={pos}/>
         </Paper>

@@ -26,10 +26,12 @@ class GigContainer extends Component {
 		return(
 			<div>
 				<Grid container spacing={24}>
-	        <Grid item xs={12} sm={6}>
+					<Grid item xs={12} sm={2}>	        	
+	        </Grid>
+	        <Grid item xs={12} sm={10}>
 	        	<GigDetails gigId={id} />
 	        </Grid>
-	        <Grid item xs={12} sm={6}>	        	
+	        <Grid item xs={12} sm={2}>	        	
 	        </Grid>
 				</Grid>
 			</div>

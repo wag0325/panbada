@@ -160,9 +160,18 @@ function deletePostComment(parent, { id }, context, info) {
 }
 
 function createGig(parent, args, context, info) {
+  const {addressName, lat, lng, address, directions, ...other } = args
   const userId = getUserId(context)
+
   return context.db.mutation.createGig(
-    { data: { ...args, postedBy: { connect: { id: userId } } } },
+    { data: { 
+      ...other, 
+      postedBy: { connect: { id: userId } },
+      location: { 
+        create: { name: addressName, lat, lng, address, directions }
+        }
+      } 
+    },
     info,
   )
 }

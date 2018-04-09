@@ -16,8 +16,10 @@ import Paper from 'material-ui/Paper'
 import Typography from 'material-ui/Typography'
 
 import { GIG_FEED_QUERY } from './GigList'
-import { GIGS_PER_PAGE, GIGS_ORDER_BY } from '../../constants'
+import { GIGS_PER_PAGE, GIGS_ORDER_BY, GIGS_DEFAULT_RADIUS } from '../../constants'
 import { GigFragments, UserFragments } from '../../constants/gqlFragments'
+
+import GeoAutocompleteContainer from '../Geo/GeoAutocompleteContainer'
 
 const styles = theme => ({
   container: {
@@ -40,10 +42,19 @@ const styles = theme => ({
 
 class CreateGig extends Component {
   state = {
+    id: '',
     type: '',
     title: '',
-    location: '',
     text: '',  
+    startDateTime: null,
+    endDateTime: null,
+    location: {
+        lat: 0,
+        lng: 0,
+      },
+    addressName: '',
+    address: '',
+    directions: '',
   }
 
   render() {
@@ -96,16 +107,6 @@ class CreateGig extends Component {
           </FormControl>
           <FormControl fullWidth className={classes.margin}>
             <TextField
-              id="location"
-              label="Location"
-              className={this.props.textField}
-              value={this.state.location}
-              onChange={e => this.setState({ location: e.target.value })}
-              margin="normal"
-            />
-          </FormControl>
-          <FormControl fullWidth className={classes.margin}>
-            <TextField
               id="text"
               label="Description"
               multiline={true}
@@ -115,6 +116,20 @@ class CreateGig extends Component {
               value={this.state.text}
               onChange={e => this.setState({ text: e.target.value })}
               margin="normal"
+            />
+          </FormControl>
+          <GeoAutocompleteContainer onSearchGeo={this._handleGeo}/>
+          <FormControl fullWidth className={classes.margin}>
+            <TextField
+              id='text'
+              label='Directions'
+              multiline={true}
+              rows={5}
+              rowsMax={8}
+              className={this.props.textField}
+              value={this.state.directions}
+              onChange={e => this.setState({ directions: e.target.value })}
+              margin='normal'
             />
           </FormControl>
           <Button variant="raised" color="primary" className={this.props.button} onClick={() => this._createGig()}>
@@ -146,36 +161,69 @@ class CreateGig extends Component {
   }
 
   _createGig = async () => {
-    const { title, text, type, location, } = this.state
-    console.log("location ", location)
+    const { 
+      title, 
+      text, 
+      type, 
+      location,
+      startDateTime,
+      endDateTime,
+      addressName,
+      address,
+      directions, } = this.state
+
+    const lat = location.lat,
+          lng = location.lng 
 
     await this.props.createGigMutation({
       variables: {
         type,
         title,
         text,
-        location,
+        startDateTime,
+        endDateTime,
+        addressName,
+        lat,
+        lng,
+        address,
+        directions,
       },
       update: (store, { data: { createGig }}) => {
         const after = null
         const first = GIGS_PER_PAGE
         const orderBy = GIGS_ORDER_BY
+        const distance = GIGS_DEFAULT_RADIUS 
+        
 
-        const data = store.readQuery({ query: GIG_FEED_QUERY, variables: { first, after, orderBy } })
-        console.log("data ", data)
+        const data = store.readQuery({ query: GIG_FEED_QUERY, variables: { first, after, orderBy, lat, lng, distance  } })
 
         data.gigsConnection.edges.splice(0, 0, {node: createGig} )
         store.writeQuery({
           query: GIG_FEED_QUERY,
           data,
-          variables: { first, after, orderBy },
+          variables: { first, after, orderBy, lat, lng, distance },
         })
+
+        this.props.history.push(`/g/${createGig.id}`)
       }
     })
-    
-    this.props.history.push('/gigs')
   }
   
+  _handleGeo = (places) => {
+    if (places.length === 0 || !places) return
+    const place = places[0]
+    
+    console.log("place ", place)
+
+    this.setState({
+      addressName: place.name,
+      address: place.formatted_address,
+      location: {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      },
+    })
+  }
 
   _onDrop = async files => {
     console.log("onDrop " + files[0])
@@ -200,15 +248,38 @@ class CreateGig extends Component {
   }
 }
 
+
 const CREATE_GIG_MUTATION = gql`
-  mutation CreateGigMutation($type: GIG_TYPE!, $title: String!, $text: String!, $location: String) {
-    createGig(type:$type, title: $title, text: $text, location: $location) {
+  mutation CreateGigMutation(
+      $type: GIG_TYPE!, 
+      $title: String!, 
+      $text: String!,
+      $startDateTime: DateTime, 
+      $endDateTime: DateTime, 
+      $addressName: String, 
+      $lat: Float, 
+      $lng: Float, 
+      $address: String, 
+      $directions: String
+    ) {
+    createGig(
+      type:$type, 
+      title: $title, 
+      text: $text
+      startDateTime: $startDateTime, 
+      endDateTime: $endDateTime, 
+      addressName: $addressName, 
+      lat: $lat, 
+      lng: $lng, 
+      address: $address, 
+      directions: $directions,
+      ) {
       ...GigBasic
-      location {
-        ...Location
-      }
       postedBy {
         ...Avatar
+      }
+      location {
+        ...Location
       }
     }
   }

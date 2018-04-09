@@ -9,7 +9,9 @@ export const CHANNELS_PER_PAGE = 10
 export const CHANNELS_ORDER_BY = 'createdAt_DESC'
 export const MESSAGES_PER_PAGE = 10
 export const MESSAGES_ORDER_BY = 'createdAt_ASC'
+
 export const GIGS_PER_PAGE = 10
 export const GIGS_ORDER_BY = 'createdAt_DESC'
+export const GIGS_DEFAULT_RADIUS = 25
 
 export const CONTAINER_DEFAULT_MARGIN = 30

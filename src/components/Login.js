@@ -139,7 +139,68 @@ class Login extends Component {
   handleClickShowPassword = () => {
     this.setState({ showPassword: !this.state.showPassword });
   };
+  
 
+  // _confirm = async () => {
+  //   const { firstName, lastName, email, password} = this.state
+  //   if (this.state.login) {
+  //     const result = await this.props.loginMutation({
+  //       variables: {
+  //         email,
+  //         password,
+  //       },
+  //     }).then(res => {
+  //         if (!res.errors) {
+  //           // handle success
+  //           const { token, user } = result.data.login
+  //           this._saveUserData(token, user)
+
+  //           this.props.history.push(`/`)
+  //         } else {
+  //             // handle errors with status code 200
+  //             console.log('200 errors ', res.errors)
+  //             if (res.errors.length > 0) this.setState({errors: res.errors})
+  //         }
+  //     })
+  //     .catch(e => {
+  //         // GraphQL errors can be extracted here
+  //         if (e.graphQLErrors) {
+  //             console.log('catch errors ', e.graphQLErrors)
+  //             this.setState({errors: e.graphQLErrors})
+  //         }
+  //      })
+      
+  //   } else {
+  //     const result = await this.props.signupMutation({
+  //       variables: {
+  //         firstName,
+  //         lastName,
+  //         email,
+  //         password,
+  //       },
+  //     }).then(res => {
+  //         if (!res.errors) {
+  //           // handle success
+  //           const { token, user } = result.data.login
+  //           this._saveUserData(token, user)
+
+  //           this.props.history.push(`/`)
+  //         } else {
+  //             // handle errors with status code 200
+  //             console.log('200 errors ', res.errors)
+  //             if (res.errors.length > 0) this.setState({errors: res.errors})
+  //         }
+  //     })
+  //     .catch(e => {
+  //         // GraphQL errors can be extracted here
+  //         if (e.graphQLErrors) {
+  //             console.log('catch errors ', e.graphQLErrors)
+  //             this.setState({errors: e.graphQLErrors})
+  //         }
+  //      })
+  //   }
+  // }
+  
   _confirm = async () => {
     const { firstName, lastName, email, password} = this.state
     if (this.state.login) {
@@ -148,27 +209,9 @@ class Login extends Component {
           email,
           password,
         },
-      }).then(res => {
-          if (!res.errors) {
-            // handle success
-            const { token, user } = result.data.login
-            this._saveUserData(token, user)
-
-            this.props.history.push(`/`)
-          } else {
-              // handle errors with status code 200
-              console.log('200 errors ', res.errors)
-              if (res.errors.length > 0) this.setState({errors: res.errors})
-          }
       })
-      .catch(e => {
-          // GraphQL errors can be extracted here
-          if (e.graphQLErrors) {
-              console.log('catch errors ', e.graphQLErrors)
-              this.setState({errors: e.graphQLErrors})
-          }
-       })
-      
+      const { token, user } = result.data.login
+      this._saveUserData(token, user)
     } else {
       const result = await this.props.signupMutation({
         variables: {
@@ -177,29 +220,14 @@ class Login extends Component {
           email,
           password,
         },
-      }).then(res => {
-          if (!res.errors) {
-            // handle success
-            const { token, user } = result.data.login
-            this._saveUserData(token, user)
-
-            this.props.history.push(`/`)
-          } else {
-              // handle errors with status code 200
-              console.log('200 errors ', res.errors)
-              if (res.errors.length > 0) this.setState({errors: res.errors})
-          }
       })
-      .catch(e => {
-          // GraphQL errors can be extracted here
-          if (e.graphQLErrors) {
-              console.log('catch errors ', e.graphQLErrors)
-              this.setState({errors: e.graphQLErrors})
-          }
-       })
+      const { token, user } = result.data.signup
+      this._saveUserData(token, user)
     }
+    
+    this.props.history.push(`/`)
   }
-
+  
   _saveUserData = (token, user) => {
     localStorage.setItem(AUTH_TOKEN, token)
     localStorage.setItem(ME_ID, user.id)

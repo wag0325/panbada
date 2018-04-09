@@ -220,8 +220,6 @@ class UpdateGig extends Component {
 
     const lat = location.lat,
           lng = location.lng 
-    
-    console.log("gig ", id, title, text)
 
     await this.props.updateGigMutation({
       variables: {
@@ -239,7 +237,6 @@ class UpdateGig extends Component {
         directions,
       },
       update: (store, { data: { updateGig }}) => {
-        console.log("update", updateGig)
         this.props.history.push(`/g/${updateGig.id}`)
       }
     })

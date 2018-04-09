@@ -15,6 +15,8 @@ import Avatar from 'material-ui/Avatar'
 import Menu, { MenuItem } from 'material-ui/Menu'
 import IconButton from 'material-ui/IconButton'
 import MoreHorizIcon from 'material-ui-icons/MoreHoriz'
+import WatchLater from 'material-ui-icons/WatchLater'
+import LocationOn from 'material-ui-icons/LocationOn'
 
 import { AUTH_TOKEN, AVATAR_DEFAULT, ME_ID } from '../../constants'
 import { GigFragments, UserFragments } from '../../constants/gqlFragments'
@@ -33,6 +35,19 @@ const styles = theme => ({
   },
   content: {
     flex: '1 0 auto',
+  },
+  locationWrapper: {
+    padding: 15,
+    marginTop: 10,
+  },
+  address: {
+    color: theme.palette.text.secondary,
+  },
+  directions: {
+    color: theme.palette.text.secondary,
+  },
+  dateTimeWrapper: {
+    marginBottom: 20,
   },
   cover: {
     width: 151,
@@ -142,8 +157,10 @@ class GigDetails extends Component {
 
     if (startDateTime || endDateTime) {
       $dateTimeDisplay = (
-        <div>
-          Start: {moment(startDateTime).format('LLL')} to {moment(null).format('LLL')}
+        <div className={classes.dateTimeWrapper}>
+          <Typography component='p' className={classes.dateTime}>
+          <WatchLater /> From {moment(startDateTime).format('LLL')} to {moment(endDateTime).format('LLL')}
+          </Typography>
         </div>
         )  
     }
@@ -174,23 +191,23 @@ class GigDetails extends Component {
         </Card> 
         { openModal && (<SendMessageModal open={openModal} id={user.id} />)}
         <Paper className={classes.description} elevation={4}>
-          <Typography variant='headline' component='h3'>
-          Description:
+          <Typography variant='subheading' component='h5'>
+          Description
           </Typography>
           <Typography component='p'>
             {gig.text}
           </Typography>
         </Paper>
-        <Paper className={classes.location} elevation={4}>
+        <Paper className={classes.locationWrapper} elevation={4}>
           {$dateTimeDisplay}
           <Typography component='p' className={classes.locationName}>
-            Location: {location.name}          
+            <LocationOn /> {location.name}          
           </Typography>
           <Typography component='p' className={classes.address}>
-            Address: {location.address}
+            {location.address}
           </Typography>
           <Typography component='p' className={classes.directions}>
-            Directions: {location.directions}
+            {location.directions}
           </Typography>
           <MapContainer pos={pos}/>
         </Paper>

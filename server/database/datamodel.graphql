@@ -55,6 +55,7 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   avatarURL: String
+  experiences: [Experience!]! @relation(name: "MyExperiences")
   followers: [User!]! @relation(name: "Following")
   follows: [User!]! @relation(name: "Following")
   channels: [Channel!]! @relation(name: "MyConversations")
@@ -62,6 +63,18 @@ type User {
   receivedMessages: [Message!]! @relation(name: "ReceivedMessages")
   postLikes: [PostLike!]! @relation(name: "LikedUser")
   postBookmarks: [PostBookmark!]! @relation(name: "UserBookmarkedPost")
+}
+
+type Experience {
+  id: ID! @unique
+  user: User! @relation(name: "MyExperiences")
+  createdAt: DateTime!
+  title: String!
+  company: String
+  location: String
+  from: DateTime
+  to: DateTime
+  description: String
 }
 
 type Message {

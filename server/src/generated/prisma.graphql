@@ -13,6 +13,18 @@ type Channel implements Node {
   updatedAt: DateTime!
 }
 
+type Experience implements Node {
+  id: ID!
+  user(where: UserWhereInput): User!
+  createdAt: DateTime!
+  title: String!
+  company: String
+  location: String
+  from: DateTime
+  to: DateTime
+  description: String
+}
+
 type Gig implements Node {
   id: ID!
   type: GIG_TYPE!
@@ -90,6 +102,7 @@ type User implements Node {
   createdAt: DateTime!
   updatedAt: DateTime!
   avatarURL: String
+  experiences(where: ExperienceWhereInput, orderBy: ExperienceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Experience!]
   followers(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
   follows(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
   channels(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Channel!]
@@ -105,6 +118,10 @@ type User implements Node {
 #
 
 type AggregateChannel {
+  count: Int!
+}
+
+type AggregateExperience {
   count: Int!
 }
 
@@ -428,6 +445,533 @@ input ChannelWhereUniqueInput {
 }
 
 scalar DateTime
+
+"""
+A connection to a list of items.
+"""
+type ExperienceConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [ExperienceEdge]!
+  aggregate: AggregateExperience!
+}
+
+input ExperienceCreateInput {
+  title: String!
+  company: String
+  location: String
+  from: DateTime
+  to: DateTime
+  description: String
+  user: UserCreateOneWithoutExperiencesInput!
+}
+
+input ExperienceCreateManyWithoutUserInput {
+  create: [ExperienceCreateWithoutUserInput!]
+  connect: [ExperienceWhereUniqueInput!]
+}
+
+input ExperienceCreateWithoutUserInput {
+  title: String!
+  company: String
+  location: String
+  from: DateTime
+  to: DateTime
+  description: String
+}
+
+"""
+An edge in a connection.
+"""
+type ExperienceEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Experience!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum ExperienceOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  title_ASC
+  title_DESC
+  company_ASC
+  company_DESC
+  location_ASC
+  location_DESC
+  from_ASC
+  from_DESC
+  to_ASC
+  to_DESC
+  description_ASC
+  description_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ExperiencePreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  title: String!
+  company: String
+  location: String
+  from: DateTime
+  to: DateTime
+  description: String
+}
+
+type ExperienceSubscriptionPayload {
+  mutation: MutationType!
+  node: Experience
+  updatedFields: [String!]
+  previousValues: ExperiencePreviousValues
+}
+
+input ExperienceSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ExperienceSubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ExperienceSubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ExperienceWhereInput
+}
+
+input ExperienceUpdateInput {
+  title: String
+  company: String
+  location: String
+  from: DateTime
+  to: DateTime
+  description: String
+  user: UserUpdateOneWithoutExperiencesInput
+}
+
+input ExperienceUpdateManyWithoutUserInput {
+  create: [ExperienceCreateWithoutUserInput!]
+  connect: [ExperienceWhereUniqueInput!]
+  disconnect: [ExperienceWhereUniqueInput!]
+  delete: [ExperienceWhereUniqueInput!]
+  update: [ExperienceUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [ExperienceUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input ExperienceUpdateWithoutUserDataInput {
+  title: String
+  company: String
+  location: String
+  from: DateTime
+  to: DateTime
+  description: String
+}
+
+input ExperienceUpdateWithWhereUniqueWithoutUserInput {
+  where: ExperienceWhereUniqueInput!
+  data: ExperienceUpdateWithoutUserDataInput!
+}
+
+input ExperienceUpsertWithWhereUniqueWithoutUserInput {
+  where: ExperienceWhereUniqueInput!
+  update: ExperienceUpdateWithoutUserDataInput!
+  create: ExperienceCreateWithoutUserInput!
+}
+
+input ExperienceWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ExperienceWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ExperienceWhereInput!]
+  id: ID
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  createdAt: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  title: String
+  """
+  All values that are not equal to given value.
+  """
+  title_not: String
+  """
+  All values that are contained in given list.
+  """
+  title_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  title_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  title_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  title_lte: String
+  """
+  All values greater than the given value.
+  """
+  title_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  title_gte: String
+  """
+  All values containing the given string.
+  """
+  title_contains: String
+  """
+  All values not containing the given string.
+  """
+  title_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  title_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  title_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  title_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  title_not_ends_with: String
+  company: String
+  """
+  All values that are not equal to given value.
+  """
+  company_not: String
+  """
+  All values that are contained in given list.
+  """
+  company_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  company_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  company_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  company_lte: String
+  """
+  All values greater than the given value.
+  """
+  company_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  company_gte: String
+  """
+  All values containing the given string.
+  """
+  company_contains: String
+  """
+  All values not containing the given string.
+  """
+  company_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  company_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  company_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  company_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  company_not_ends_with: String
+  location: String
+  """
+  All values that are not equal to given value.
+  """
+  location_not: String
+  """
+  All values that are contained in given list.
+  """
+  location_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  location_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  location_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  location_lte: String
+  """
+  All values greater than the given value.
+  """
+  location_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  location_gte: String
+  """
+  All values containing the given string.
+  """
+  location_contains: String
+  """
+  All values not containing the given string.
+  """
+  location_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  location_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  location_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  location_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  location_not_ends_with: String
+  from: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  from_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  from_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  from_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  from_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  from_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  from_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  from_gte: DateTime
+  to: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  to_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  to_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  to_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  to_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  to_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  to_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  to_gte: DateTime
+  description: String
+  """
+  All values that are not equal to given value.
+  """
+  description_not: String
+  """
+  All values that are contained in given list.
+  """
+  description_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  description_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  description_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  description_lte: String
+  """
+  All values greater than the given value.
+  """
+  description_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  description_gte: String
+  """
+  All values containing the given string.
+  """
+  description_contains: String
+  """
+  All values not containing the given string.
+  """
+  description_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  description_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  description_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  description_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  description_not_ends_with: String
+  user: UserWhereInput
+}
+
+input ExperienceWhereUniqueInput {
+  id: ID
+}
 
 enum GIG_TYPE {
   CREATIVE
@@ -1799,6 +2343,7 @@ type Mutation {
   createPostBookmark(data: PostBookmarkCreateInput!): PostBookmark!
   createGig(data: GigCreateInput!): Gig!
   createUser(data: UserCreateInput!): User!
+  createExperience(data: ExperienceCreateInput!): Experience!
   createMessage(data: MessageCreateInput!): Message!
   createChannel(data: ChannelCreateInput!): Channel!
   createLocation(data: LocationCreateInput!): Location!
@@ -1808,6 +2353,7 @@ type Mutation {
   updatePostBookmark(data: PostBookmarkUpdateInput!, where: PostBookmarkWhereUniqueInput!): PostBookmark
   updateGig(data: GigUpdateInput!, where: GigWhereUniqueInput!): Gig
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateExperience(data: ExperienceUpdateInput!, where: ExperienceWhereUniqueInput!): Experience
   updateMessage(data: MessageUpdateInput!, where: MessageWhereUniqueInput!): Message
   updateChannel(data: ChannelUpdateInput!, where: ChannelWhereUniqueInput!): Channel
   updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
@@ -1817,6 +2363,7 @@ type Mutation {
   deletePostBookmark(where: PostBookmarkWhereUniqueInput!): PostBookmark
   deleteGig(where: GigWhereUniqueInput!): Gig
   deleteUser(where: UserWhereUniqueInput!): User
+  deleteExperience(where: ExperienceWhereUniqueInput!): Experience
   deleteMessage(where: MessageWhereUniqueInput!): Message
   deleteChannel(where: ChannelWhereUniqueInput!): Channel
   deleteLocation(where: LocationWhereUniqueInput!): Location
@@ -1826,6 +2373,7 @@ type Mutation {
   upsertPostBookmark(where: PostBookmarkWhereUniqueInput!, create: PostBookmarkCreateInput!, update: PostBookmarkUpdateInput!): PostBookmark!
   upsertGig(where: GigWhereUniqueInput!, create: GigCreateInput!, update: GigUpdateInput!): Gig!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertExperience(where: ExperienceWhereUniqueInput!, create: ExperienceCreateInput!, update: ExperienceUpdateInput!): Experience!
   upsertMessage(where: MessageWhereUniqueInput!, create: MessageCreateInput!, update: MessageUpdateInput!): Message!
   upsertChannel(where: ChannelWhereUniqueInput!, create: ChannelCreateInput!, update: ChannelUpdateInput!): Channel!
   upsertLocation(where: LocationWhereUniqueInput!, create: LocationCreateInput!, update: LocationUpdateInput!): Location!
@@ -1835,6 +2383,7 @@ type Mutation {
   updateManyPostBookmarks(data: PostBookmarkUpdateInput!, where: PostBookmarkWhereInput!): BatchPayload!
   updateManyGigs(data: GigUpdateInput!, where: GigWhereInput!): BatchPayload!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput!): BatchPayload!
+  updateManyExperiences(data: ExperienceUpdateInput!, where: ExperienceWhereInput!): BatchPayload!
   updateManyMessages(data: MessageUpdateInput!, where: MessageWhereInput!): BatchPayload!
   updateManyChannels(data: ChannelUpdateInput!, where: ChannelWhereInput!): BatchPayload!
   updateManyLocations(data: LocationUpdateInput!, where: LocationWhereInput!): BatchPayload!
@@ -1844,6 +2393,7 @@ type Mutation {
   deleteManyPostBookmarks(where: PostBookmarkWhereInput!): BatchPayload!
   deleteManyGigs(where: GigWhereInput!): BatchPayload!
   deleteManyUsers(where: UserWhereInput!): BatchPayload!
+  deleteManyExperiences(where: ExperienceWhereInput!): BatchPayload!
   deleteManyMessages(where: MessageWhereInput!): BatchPayload!
   deleteManyChannels(where: ChannelWhereInput!): BatchPayload!
   deleteManyLocations(where: LocationWhereInput!): BatchPayload!
@@ -3131,6 +3681,7 @@ type Query {
   postBookmarks(where: PostBookmarkWhereInput, orderBy: PostBookmarkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostBookmark]!
   gigs(where: GigWhereInput, orderBy: GigOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Gig]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  experiences(where: ExperienceWhereInput, orderBy: ExperienceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Experience]!
   messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message]!
   channels(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Channel]!
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
@@ -3140,6 +3691,7 @@ type Query {
   postBookmark(where: PostBookmarkWhereUniqueInput!): PostBookmark
   gig(where: GigWhereUniqueInput!): Gig
   user(where: UserWhereUniqueInput!): User
+  experience(where: ExperienceWhereUniqueInput!): Experience
   message(where: MessageWhereUniqueInput!): Message
   channel(where: ChannelWhereUniqueInput!): Channel
   location(where: LocationWhereUniqueInput!): Location
@@ -3149,6 +3701,7 @@ type Query {
   postBookmarksConnection(where: PostBookmarkWhereInput, orderBy: PostBookmarkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostBookmarkConnection!
   gigsConnection(where: GigWhereInput, orderBy: GigOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): GigConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  experiencesConnection(where: ExperienceWhereInput, orderBy: ExperienceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExperienceConnection!
   messagesConnection(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MessageConnection!
   channelsConnection(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ChannelConnection!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
@@ -3168,6 +3721,7 @@ type Subscription {
   postBookmark(where: PostBookmarkSubscriptionWhereInput): PostBookmarkSubscriptionPayload
   gig(where: GigSubscriptionWhereInput): GigSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  experience(where: ExperienceSubscriptionWhereInput): ExperienceSubscriptionPayload
   message(where: MessageSubscriptionWhereInput): MessageSubscriptionPayload
   channel(where: ChannelSubscriptionWhereInput): ChannelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
@@ -3200,6 +3754,7 @@ input UserCreateInput {
   email: String!
   password: String!
   avatarURL: String
+  experiences: ExperienceCreateManyWithoutUserInput
   followers: UserCreateManyWithoutFollowsInput
   follows: UserCreateManyWithoutFollowersInput
   channels: ChannelCreateManyWithoutUsersInput
@@ -3226,6 +3781,11 @@ input UserCreateManyWithoutFollowsInput {
 
 input UserCreateOneInput {
   create: UserCreateInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutExperiencesInput {
+  create: UserCreateWithoutExperiencesInput
   connect: UserWhereUniqueInput
 }
 
@@ -3256,8 +3816,25 @@ input UserCreateWithoutChannelsInput {
   email: String!
   password: String!
   avatarURL: String
+  experiences: ExperienceCreateManyWithoutUserInput
   followers: UserCreateManyWithoutFollowsInput
   follows: UserCreateManyWithoutFollowersInput
+  sentMessages: MessageCreateManyWithoutFromInput
+  receivedMessages: MessageCreateManyWithoutToInput
+  postLikes: PostLikeCreateManyWithoutUserInput
+  postBookmarks: PostBookmarkCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutExperiencesInput {
+  level: USER_LEVEL
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  avatarURL: String
+  followers: UserCreateManyWithoutFollowsInput
+  follows: UserCreateManyWithoutFollowersInput
+  channels: ChannelCreateManyWithoutUsersInput
   sentMessages: MessageCreateManyWithoutFromInput
   receivedMessages: MessageCreateManyWithoutToInput
   postLikes: PostLikeCreateManyWithoutUserInput
@@ -3271,6 +3848,7 @@ input UserCreateWithoutFollowersInput {
   email: String!
   password: String!
   avatarURL: String
+  experiences: ExperienceCreateManyWithoutUserInput
   follows: UserCreateManyWithoutFollowersInput
   channels: ChannelCreateManyWithoutUsersInput
   sentMessages: MessageCreateManyWithoutFromInput
@@ -3286,6 +3864,7 @@ input UserCreateWithoutFollowsInput {
   email: String!
   password: String!
   avatarURL: String
+  experiences: ExperienceCreateManyWithoutUserInput
   followers: UserCreateManyWithoutFollowsInput
   channels: ChannelCreateManyWithoutUsersInput
   sentMessages: MessageCreateManyWithoutFromInput
@@ -3301,6 +3880,7 @@ input UserCreateWithoutPostBookmarksInput {
   email: String!
   password: String!
   avatarURL: String
+  experiences: ExperienceCreateManyWithoutUserInput
   followers: UserCreateManyWithoutFollowsInput
   follows: UserCreateManyWithoutFollowersInput
   channels: ChannelCreateManyWithoutUsersInput
@@ -3316,6 +3896,7 @@ input UserCreateWithoutPostLikesInput {
   email: String!
   password: String!
   avatarURL: String
+  experiences: ExperienceCreateManyWithoutUserInput
   followers: UserCreateManyWithoutFollowsInput
   follows: UserCreateManyWithoutFollowersInput
   channels: ChannelCreateManyWithoutUsersInput
@@ -3331,6 +3912,7 @@ input UserCreateWithoutReceivedMessagesInput {
   email: String!
   password: String!
   avatarURL: String
+  experiences: ExperienceCreateManyWithoutUserInput
   followers: UserCreateManyWithoutFollowsInput
   follows: UserCreateManyWithoutFollowersInput
   channels: ChannelCreateManyWithoutUsersInput
@@ -3346,6 +3928,7 @@ input UserCreateWithoutSentMessagesInput {
   email: String!
   password: String!
   avatarURL: String
+  experiences: ExperienceCreateManyWithoutUserInput
   followers: UserCreateManyWithoutFollowsInput
   follows: UserCreateManyWithoutFollowersInput
   channels: ChannelCreateManyWithoutUsersInput
@@ -3443,6 +4026,7 @@ input UserUpdateDataInput {
   email: String
   password: String
   avatarURL: String
+  experiences: ExperienceUpdateManyWithoutUserInput
   followers: UserUpdateManyWithoutFollowsInput
   follows: UserUpdateManyWithoutFollowersInput
   channels: ChannelUpdateManyWithoutUsersInput
@@ -3459,6 +4043,7 @@ input UserUpdateInput {
   email: String
   password: String
   avatarURL: String
+  experiences: ExperienceUpdateManyWithoutUserInput
   followers: UserUpdateManyWithoutFollowsInput
   follows: UserUpdateManyWithoutFollowersInput
   channels: ChannelUpdateManyWithoutUsersInput
@@ -3504,6 +4089,14 @@ input UserUpdateOneInput {
   upsert: UserUpsertNestedInput
 }
 
+input UserUpdateOneWithoutExperiencesInput {
+  create: UserCreateWithoutExperiencesInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateWithoutExperiencesDataInput
+  upsert: UserUpsertWithoutExperiencesInput
+}
+
 input UserUpdateOneWithoutPostBookmarksInput {
   create: UserCreateWithoutPostBookmarksInput
   connect: UserWhereUniqueInput
@@ -3543,8 +4136,25 @@ input UserUpdateWithoutChannelsDataInput {
   email: String
   password: String
   avatarURL: String
+  experiences: ExperienceUpdateManyWithoutUserInput
   followers: UserUpdateManyWithoutFollowsInput
   follows: UserUpdateManyWithoutFollowersInput
+  sentMessages: MessageUpdateManyWithoutFromInput
+  receivedMessages: MessageUpdateManyWithoutToInput
+  postLikes: PostLikeUpdateManyWithoutUserInput
+  postBookmarks: PostBookmarkUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithoutExperiencesDataInput {
+  level: USER_LEVEL
+  firstName: String
+  lastName: String
+  email: String
+  password: String
+  avatarURL: String
+  followers: UserUpdateManyWithoutFollowsInput
+  follows: UserUpdateManyWithoutFollowersInput
+  channels: ChannelUpdateManyWithoutUsersInput
   sentMessages: MessageUpdateManyWithoutFromInput
   receivedMessages: MessageUpdateManyWithoutToInput
   postLikes: PostLikeUpdateManyWithoutUserInput
@@ -3558,6 +4168,7 @@ input UserUpdateWithoutFollowersDataInput {
   email: String
   password: String
   avatarURL: String
+  experiences: ExperienceUpdateManyWithoutUserInput
   follows: UserUpdateManyWithoutFollowersInput
   channels: ChannelUpdateManyWithoutUsersInput
   sentMessages: MessageUpdateManyWithoutFromInput
@@ -3573,6 +4184,7 @@ input UserUpdateWithoutFollowsDataInput {
   email: String
   password: String
   avatarURL: String
+  experiences: ExperienceUpdateManyWithoutUserInput
   followers: UserUpdateManyWithoutFollowsInput
   channels: ChannelUpdateManyWithoutUsersInput
   sentMessages: MessageUpdateManyWithoutFromInput
@@ -3588,6 +4200,7 @@ input UserUpdateWithoutPostBookmarksDataInput {
   email: String
   password: String
   avatarURL: String
+  experiences: ExperienceUpdateManyWithoutUserInput
   followers: UserUpdateManyWithoutFollowsInput
   follows: UserUpdateManyWithoutFollowersInput
   channels: ChannelUpdateManyWithoutUsersInput
@@ -3603,6 +4216,7 @@ input UserUpdateWithoutPostLikesDataInput {
   email: String
   password: String
   avatarURL: String
+  experiences: ExperienceUpdateManyWithoutUserInput
   followers: UserUpdateManyWithoutFollowsInput
   follows: UserUpdateManyWithoutFollowersInput
   channels: ChannelUpdateManyWithoutUsersInput
@@ -3618,6 +4232,7 @@ input UserUpdateWithoutReceivedMessagesDataInput {
   email: String
   password: String
   avatarURL: String
+  experiences: ExperienceUpdateManyWithoutUserInput
   followers: UserUpdateManyWithoutFollowsInput
   follows: UserUpdateManyWithoutFollowersInput
   channels: ChannelUpdateManyWithoutUsersInput
@@ -3633,6 +4248,7 @@ input UserUpdateWithoutSentMessagesDataInput {
   email: String
   password: String
   avatarURL: String
+  experiences: ExperienceUpdateManyWithoutUserInput
   followers: UserUpdateManyWithoutFollowsInput
   follows: UserUpdateManyWithoutFollowersInput
   channels: ChannelUpdateManyWithoutUsersInput
@@ -3659,6 +4275,11 @@ input UserUpdateWithWhereUniqueWithoutFollowsInput {
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutExperiencesInput {
+  update: UserUpdateWithoutExperiencesDataInput!
+  create: UserCreateWithoutExperiencesInput!
 }
 
 input UserUpsertWithoutPostBookmarksInput {
@@ -4097,6 +4718,9 @@ input UserWhereInput {
   All values not ending with the given string.
   """
   avatarURL_not_ends_with: String
+  experiences_every: ExperienceWhereInput
+  experiences_some: ExperienceWhereInput
+  experiences_none: ExperienceWhereInput
   followers_every: UserWhereInput
   followers_some: UserWhereInput
   followers_none: UserWhereInput

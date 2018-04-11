@@ -312,13 +312,9 @@ async function changePassword(parent, args, context, info) {
   )
 }
 
-async function updateMe(parent, args, context, info) {
+function updateMe(parent, args, context, info) {
   const { firstName, lastName, avatarURL } = args
   const userId = getUserId(context)
-  const user = await context.db.query.user({ where: { id: userId } })
-  if (!user) {
-    throw new Error(`Could not find user with email: ${args.email}`)
-  }
 
   return context.db.mutation.updateUser(
     { data: { firstName, lastName, avatarURL },
@@ -326,6 +322,22 @@ async function updateMe(parent, args, context, info) {
     },
     info,
   )
+}
+
+function createExperience(parent, args, context, info) {
+  const { ...other } = args
+  const userId = getUserId(context)
+  
+  return context.db.mutation.createExperience({
+    data: { ...other, user: {connect: {id: userId} } }
+  }, info)
+
+  // return context.db.mutation.updateUser(
+  //   { data: { experiences: {} },
+  //     where: { id: userId }
+  //   },
+  //   info,
+  // )
 }
 
 function follow(parent, { id }, context, info) {
@@ -426,6 +438,7 @@ module.exports = {
   deleteUser,
   changePassword,
   updateMe,
+  createExperience,
   follow,
   unfollow,
   signS3,

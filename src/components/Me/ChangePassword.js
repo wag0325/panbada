@@ -8,6 +8,7 @@ import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
 import { FormControl } from 'material-ui/Form'
 
+import FeedbackMessage from '../Util/FeedbackMessage'
 
 const styles = theme => ({
   container: {
@@ -34,14 +35,26 @@ const styles = theme => ({
 
 })
 
+
 class ChangePassword extends Component {
   state = {
     currPassword: '',
     newPassword: '',
+    errors: [],
+  }
+  
+  componentWillUpdate() {
+    if (this.state.errors.length > 0 ) this.setState({errors: []})
   }
 
   render() {
     const { classes } = this.props
+    
+    const { errors } = this.state
+    let $errorMessage = null
+    if (errors.length > 0) {
+      $errorMessage = (<FeedbackMessage type='error' message={errors[0].message} />)
+    }
 
     return (
       <div>
@@ -70,6 +83,7 @@ class ChangePassword extends Component {
               Update
           </Button>
         </form>
+        {$errorMessage}
       </div>
     )
   }
@@ -86,6 +100,22 @@ class ChangePassword extends Component {
         newPassword,
       }
     })
+    .then(res => {
+        if (!res.errors) {
+          this.setState({errors: [{message: 'Successfully updated the password.'}]})
+        } else {
+            // handle errors with status code 200
+            console.log('200 errors ', res.errors)
+            if (res.errors.length > 0) this.setState({errors: res.errors})
+        }
+      })
+      .catch(e => {
+        // GraphQL errors can be extracted here
+        if (e.graphQLErrors) {
+            console.log('catch errors ', e.graphQLErrors)
+            this.setState({errors: e.graphQLErrors})
+        }
+       }) 
   }
 }
 

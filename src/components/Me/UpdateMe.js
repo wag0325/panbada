@@ -13,6 +13,7 @@ import Avatar from 'material-ui/Avatar'
 import Dropzone from 'react-dropzone'
 
 import { AVATAR_DEFAULT } from '../../constants'
+import FeedbackMessage from '../Util/FeedbackMessage'
 
 const styles = theme => ({
   container: {
@@ -50,6 +51,7 @@ class UpdateMe extends Component {
     firstName: '',
     lastName: '',
     avatarURL: '',
+    errors: [],
   }
 
   componentWillReceiveProps(nextProps) {
@@ -62,9 +64,19 @@ class UpdateMe extends Component {
       })
     }
   }
+  
+  componentWillUpdate() {
+    if (this.state.errors.length > 0 ) this.setState({errors: []})
+  }
 
   render() {
     const { classes } = this.props
+
+    const { errors } = this.state
+    let $errorMessage = null
+    if (errors.length > 0) {
+      $errorMessage = (<FeedbackMessage type='error' message={errors[0].message} />)
+    }
 
     if (this.props.meQuery && this.props.meQuery.loading) {
       // return <CircularProgress className={this.props.progress} size={50} />
@@ -121,6 +133,7 @@ class UpdateMe extends Component {
               Update
           </Button>
         </form>
+        {$errorMessage}
       </div>
     )
   }
@@ -150,6 +163,23 @@ class UpdateMe extends Component {
         avatarURL,
       }
     })
+    .then(res => {
+        if (!res.errors) {
+          this.setState({errors: [{message: 'Successfully updated my profile.'}]})
+        } else {
+            // handle errors with status code 200
+            console.log('200 errors ', res.errors)
+            if (res.errors.length > 0) this.setState({errors: res.errors})
+        }
+      })
+      .catch(e => {
+        // GraphQL errors can be extracted here
+        if (e.graphQLErrors) {
+            console.log('catch errors ', e.graphQLErrors)
+            this.setState({errors: e.graphQLErrors})
+        }
+       }) 
+
   }
 }
 

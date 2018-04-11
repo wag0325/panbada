@@ -60,6 +60,7 @@ class UserSpecificMenu extends Component {
     if (!nextProps.meQuery.me ) return 
     
     const { me } = nextProps.meQuery    
+    this.setState({meId: me.id})    
     
     if (!me.channels.length > 0) return 
 
@@ -69,7 +70,7 @@ class UserSpecificMenu extends Component {
       }
     })
 
-    this.setState({meId: me.id, lastMessageId: userId}) 
+    this.setState({lastMessageId: userId}) 
     
   }
 

@@ -54,6 +54,10 @@ class CreateGig extends Component {
     errors: [],
   }
 
+  componentWillUpdate() {
+    if (this.state.errors.length > 0 ) this.setState({errors: []})
+  }
+
   render() {
     const { classes } = this.props
     const { addDateTime } = this.state

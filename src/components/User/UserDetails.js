@@ -105,10 +105,6 @@ class UserDetails extends Component {
   }
 
   render() {
-    const { classes } = this.props
-    const user = this.props.userQuery.user
-    const { myProfile, following, openModal, anchorEl } = this.state
-
     if ((this.props.userQuery && this.props.userQuery.loading) ||
         (this.props.meQuery && this.props.meQuery.loading)
         ) {
@@ -126,6 +122,11 @@ class UserDetails extends Component {
         ) {
       return <div>Error</div>
     }     
+
+    const { classes } = this.props
+    const user = this.props.userQuery.user
+    const { myProfile, following, openModal, anchorEl } = this.state
+
     
     return (
       <div>

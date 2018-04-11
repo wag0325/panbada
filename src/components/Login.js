@@ -72,6 +72,7 @@ class Login extends Component {
               value={this.state.firstName}
               onChange={e => this.setState({ firstName: e.target.value })}
               margin="normal"
+              required
             />
             </FormControl>
             )}
@@ -84,6 +85,7 @@ class Login extends Component {
               value={this.state.lastName}
               onChange={e => this.setState({ lastName: e.target.value })}
               margin="normal"
+              required
             />
             </FormControl>
             )}
@@ -95,11 +97,13 @@ class Login extends Component {
             value={this.state.email}
             onChange={e => this.setState({ email: e.target.value })}
             margin="normal"
+            required
           />
           </FormControl>
           <FormControl fullWidth className={classes.formControl}>
             <InputLabel htmlFor="password">Password</InputLabel>
             <Input
+              required
               id="adornment-password"
               type={this.state.showPassword ? 'text' : 'password'}
               value={this.state.password}

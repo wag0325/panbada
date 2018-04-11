@@ -57,15 +57,20 @@ class UserSpecificMenu extends Component {
   componentWillReceiveProps(nextProps) {
     let userId = null 
     
-    if ( nextProps.meQuery.me ) {
+    if (!nextProps.meQuery.me ) return 
+    
     const { me } = nextProps.meQuery    
+    
+    if (!me.channels.length > 0) return 
+
     me.channels[me.channels.length-1].users.map(function(user){
       if (user.id != me.id) { 
         userId = user.id
       }
     })
+
     this.setState({meId: me.id, lastMessageId: userId}) 
-    }
+    
   }
 
   componentWillUnmount() {
@@ -80,13 +85,13 @@ class UserSpecificMenu extends Component {
 
     return (
       <div className={classes.loggedInMenu}>
-        <Link to={`/messaging/thread/${lastMessageId}`}>
+        {lastMessageId && (<Link to={`/messaging/thread/${lastMessageId}`}>
           <Tooltip id='tooltip-icon' title='Messaging'>
             <IconButton aria-label='Messaging'>
               <Chat />
             </IconButton>
           </Tooltip>
-        </Link>
+        </Link>) }
         <Manager>
           <Target>
             <IconButton

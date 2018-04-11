@@ -18,6 +18,7 @@ import Typography from 'material-ui/Typography'
 
 import { GigFragments, UserFragments } from '../../constants/gqlFragments'
 
+import FeedbackMessage from '../Util/FeedbackMessage'
 import GeoAutocompleteContainer from '../Geo/GeoAutocompleteContainer'
 
 const styles = theme => ({
@@ -50,6 +51,7 @@ class CreateGig extends Component {
     address: '',
     directions: '',
     addDateTime: false,
+    errors: [],
   }
 
   render() {
@@ -93,6 +95,12 @@ class CreateGig extends Component {
               }}
             />
           </FormControl>)
+    
+    const { errors } = this.state
+    let $errorMessage = null
+    if (errors.length > 0) {
+      $errorMessage = (<FeedbackMessage type='error' message={errors[0].message} />)
+    }
 
     return (
       <Paper className={classes.root} elevation={4}>
@@ -175,6 +183,7 @@ class CreateGig extends Component {
               Submit
           </Button>
         </form>
+        {$errorMessage}
       </Paper>
     )
   }
@@ -232,10 +241,24 @@ class CreateGig extends Component {
         directions,
       },
       update: (store, { data: { createGig }}) => {
-        console.log("createGig", createGig)
         this.props.history.push(`/g/${createGig.id}`)
       }
     })
+    .then(res => {
+        if (!res.errors) {
+        } else {
+            // handle errors with status code 200
+            console.log('200 errors ', res.errors)
+            if (res.errors.length > 0) this.setState({errors: res.errors})
+        }
+      })
+      .catch(e => {
+        // GraphQL errors can be extracted here
+        if (e.graphQLErrors) {
+            console.log('catch errors ', e.graphQLErrors)
+            this.setState({errors: e.graphQLErrors})
+        }
+       }) 
   }
   
   _handleGeo = (places) => {

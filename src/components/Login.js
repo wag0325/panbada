@@ -52,6 +52,7 @@ class Login extends Component {
 
   render() {
     const { classes } = this.props
+
     const { errors } = this.state
     let $errorMessage = null
     if (errors.length > 0) {
@@ -60,7 +61,6 @@ class Login extends Component {
 
     return (
       <div>
-        {$errorMessage}
         <h4 className="mv3">{this.state.login ? 'Login' : 'Sign Up'}</h4>
         <form className={this.props.container} noValidate autoComplete="off">
           {!this.state.login && (
@@ -131,6 +131,7 @@ class Login extends Component {
             </Button>
           </div>
         </form>
+        {$errorMessage}
       </div>
     )
   }

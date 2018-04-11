@@ -12,8 +12,10 @@ import { FormControl, FormHelperText } from 'material-ui/Form'
 
 import { PostFragments, UserFragments } from '../../constants/gqlFragments'
 import { POST_FEED_QUERY } from './PostList'
-import { POSTS_PER_PAGE, POSTS_ORDER_BY } from '../../constants'
+import { POSTS_PER_PAGE, POSTS_ORDER_BY, POSTS_IMAGE_MAX_SIZE, } from '../../constants'
 import { formatFilename, uploadToS3 } from '../../utils/handleFile'
+
+import FeedbackMessage from '../Util/FeedbackMessage'
 
 const styles = theme => ({
   container: {
@@ -39,6 +41,7 @@ class CreatePost extends Component {
     pictureURL: '',
     picturePreviewURL: '',
     file: null,
+    errors: [],
   }
 
   render() {
@@ -49,11 +52,19 @@ class CreatePost extends Component {
     if( picturePreviewURL ) {
       $picturePreview = (<img src={picturePreviewURL} />)
     }
+    
+    const { errors } = this.state
+    let $errorMessage = null
+    if (errors.length > 0) {
+      $errorMessage = (<FeedbackMessage type='error' message={errors[0].message} />)
+    }
 
     return (
+      <div>
       <form className={this.props.container} noValidate autoComplete="off">
         <FormControl fullWidth className={classes.margin}>
           <TextField
+            required
             id="title"
             label="Title"
             className={this.props.textField}
@@ -83,6 +94,8 @@ class CreatePost extends Component {
           Post
         </Button>
       </form>
+      {$errorMessage}
+      </div>
     )
   }
   
@@ -90,6 +103,11 @@ class CreatePost extends Component {
     let reader = new FileReader()
     let file = data.target.files[0]
     
+    if (file && file.size > POSTS_IMAGE_MAX_SIZE) {
+      this.setState({errors: [{message: 'File size too big.'}]})
+      return
+    }
+
     reader.onloadend = () => {
       this.setState({
         pictureFile: file, 
@@ -102,10 +120,12 @@ class CreatePost extends Component {
 
   _createPost = async () => {
     const { title, text, pictureFile, pictureURL } = this.state
-    const maxSize = 1024 * 1024 // 1MB
     let pic_url = ''
+    
+    if (pictureFile && pictureFile.size > POSTS_IMAGE_MAX_SIZE) 
+      this.setState({errors: [{message: 'File size too big'}]})
 
-    if ( pictureFile && pictureFile.size < maxSize) {
+    if ( pictureFile && pictureFile.size < POSTS_IMAGE_MAX_SIZE) {
       const response = await this.props.s3SignMutation({
         variables: {
           filename: formatFilename(pictureFile.name+'.'+pictureFile.type),
@@ -132,19 +152,35 @@ class CreatePost extends Component {
         const after = null
         const first = POSTS_PER_PAGE
         const orderBy = POSTS_ORDER_BY        
-        const data = store.readQuery({ query: POST_FEED_QUERY, variables: { first, after, orderBy } })
+        const filter = null 
+
+        const data = store.readQuery({ query: POST_FEED_QUERY, variables: { first, after, orderBy, filter, } })
         
         data.postsConnection.edges.splice(0, 0, {node: createPost} )
 
         store.writeQuery({
           query: POST_FEED_QUERY,
           data,
-          variables: { first, after, orderBy },
+          variables: { first, after, orderBy, filter, },
         })
       }
     })
-
-    this.props.onClose()
+    .then(res => {
+        if (!res.errors) {
+          this.props.onClose()
+        } else {
+            // handle errors with status code 200
+            console.log('200 errors ', res.errors)
+            if (res.errors.length > 0) this.setState({errors: res.errors})
+        }
+      })
+      .catch(e => {
+        // GraphQL errors can be extracted here
+        if (e.graphQLErrors) {
+            console.log('catch errors ', e.graphQLErrors)
+            this.setState({errors: e.graphQLErrors})
+        }
+       }) 
   }
 
   // _handleTextChange = data => {

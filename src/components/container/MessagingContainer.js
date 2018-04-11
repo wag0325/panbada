@@ -30,12 +30,13 @@ class UsersContainer extends Component {
 	render() {
 		const { classes } = this.props
 		const id = this.props.match.params.id
+		const $noChannels = (<div>There is no conversations.</div>)
 
 		return(
 			<div>
 				<Grid container spacing={24} className={classes.root}>
 	        <Grid item xs={12} sm={3}>
-	        	<ChannelList currChannel={id}/>
+	        	{id ? <ChannelList currChannel={id}/> : $noChannels}
 	        </Grid>
 	        <Grid item xs={12} sm={6}>
 	        	<ChannelDetails id={id}/>

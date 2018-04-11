@@ -45,6 +45,10 @@ class Login extends Component {
     showPassword: false,
     errors: [],
   }
+  
+  componentWillUpdate() {
+    if (this.state.errors.length > 0 ) this.setState({errors: []})
+  }
 
   render() {
     const { classes } = this.props
@@ -56,6 +60,7 @@ class Login extends Component {
 
     return (
       <div>
+        {$errorMessage}
         <h4 className="mv3">{this.state.login ? 'Login' : 'Sign Up'}</h4>
         <form className={this.props.container} noValidate autoComplete="off">
           {!this.state.login && (
@@ -122,13 +127,12 @@ class Login extends Component {
             </Button>
           </div>
         </form>
-        {$errorMessage}
       </div>
     )
   }
   
   handleChange = prop => event => {
-    this.setState({ [prop]: event.target.value });
+    this.setState({ [prop]: event.target.value })
   };
 
   handleMouseDownPassword = event => {
@@ -136,81 +140,39 @@ class Login extends Component {
   };
 
   handleClickShowPassword = () => {
-    this.setState({ showPassword: !this.state.showPassword });
+    this.setState({ showPassword: !this.state.showPassword })
   };
   
 
-  // _confirm = async () => {
-  //   const { firstName, lastName, email, password} = this.state
-  //   if (this.state.login) {
-  //     const result = await this.props.loginMutation({
-  //       variables: {
-  //         email,
-  //         password,
-  //       },
-  //     }).then(res => {
-  //         if (!res.errors) {
-  //           // handle success
-  //           const { token, user } = result.data.login
-  //           this._saveUserData(token, user)
-
-  //           this.props.history.push(`/`)
-  //         } else {
-  //             // handle errors with status code 200
-  //             console.log('200 errors ', res.errors)
-  //             if (res.errors.length > 0) this.setState({errors: res.errors})
-  //         }
-  //     })
-  //     .catch(e => {
-  //         // GraphQL errors can be extracted here
-  //         if (e.graphQLErrors) {
-  //             console.log('catch errors ', e.graphQLErrors)
-  //             this.setState({errors: e.graphQLErrors})
-  //         }
-  //      })
-      
-  //   } else {
-  //     const result = await this.props.signupMutation({
-  //       variables: {
-  //         firstName,
-  //         lastName,
-  //         email,
-  //         password,
-  //       },
-  //     }).then(res => {
-  //         if (!res.errors) {
-  //           // handle success
-  //           const { token, user } = result.data.login
-  //           this._saveUserData(token, user)
-
-  //           this.props.history.push(`/`)
-  //         } else {
-  //             // handle errors with status code 200
-  //             console.log('200 errors ', res.errors)
-  //             if (res.errors.length > 0) this.setState({errors: res.errors})
-  //         }
-  //     })
-  //     .catch(e => {
-  //         // GraphQL errors can be extracted here
-  //         if (e.graphQLErrors) {
-  //             console.log('catch errors ', e.graphQLErrors)
-  //             this.setState({errors: e.graphQLErrors})
-  //         }
-  //      })
-  //   }
-  // }
-  
   _confirm = async () => {
     const { firstName, lastName, email, password} = this.state
+    
     if (this.state.login) {
       const result = await this.props.loginMutation({
         variables: {
           email,
           password,
         },
+      }).then(res => {
+        if (!res.errors) {
+          const { token, user } = res.data.login
+          this._saveUserData(token, user)
+
+          this.props.history.push(`/`)
+
+        } else {
+            // handle errors with status code 200
+            console.log('200 errors ', res.errors)
+            if (res.errors.length > 0) this.setState({errors: res.errors})
+        }
       })
-      const { token, user } = result.data.login
-      this._saveUserData(token, user)
+      .catch(e => {
+        // GraphQL errors can be extracted here
+        if (e.graphQLErrors) {
+            console.log('catch errors ', e.graphQLErrors)
+            this.setState({errors: e.graphQLErrors})
+        }
+       })      
     } else {
       const result = await this.props.signupMutation({
         variables: {
@@ -219,12 +181,27 @@ class Login extends Component {
           email,
           password,
         },
+      }).then(res => {
+          if (!res.errors) {
+            const { token, user } = res.data.signup
+            this._saveUserData(token, user)
+
+            this.props.history.push(`/`)
+          } else {
+              // handle errors with status code 200
+              console.log('200 errors ', res.errors)
+              if (res.errors.length > 0) this.setState({errors: res.errors})
+          }
       })
-      const { token, user } = result.data.signup
-      this._saveUserData(token, user)
+      .catch(e => {
+          // GraphQL errors can be extracted here
+          if (e.graphQLErrors) {
+              console.log('catch errors ', e.graphQLErrors)
+              this.setState({errors: e.graphQLErrors})
+          }
+      })
+
     }
-    
-    this.props.history.push(`/`)
   }
   
   _saveUserData = (token, user) => {

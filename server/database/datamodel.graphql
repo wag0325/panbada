@@ -72,8 +72,8 @@ type Experience {
   title: String!
   company: String
   location: String
-  from: DateTime
-  to: DateTime
+  start: DateTime
+  end: DateTime
   description: String
 }
 

@@ -20,8 +20,8 @@ type Experience implements Node {
   title: String!
   company: String
   location: String
-  from: DateTime
-  to: DateTime
+  start: DateTime
+  end: DateTime
   description: String
 }
 
@@ -465,8 +465,8 @@ input ExperienceCreateInput {
   title: String!
   company: String
   location: String
-  from: DateTime
-  to: DateTime
+  start: DateTime
+  end: DateTime
   description: String
   user: UserCreateOneWithoutExperiencesInput!
 }
@@ -480,8 +480,8 @@ input ExperienceCreateWithoutUserInput {
   title: String!
   company: String
   location: String
-  from: DateTime
-  to: DateTime
+  start: DateTime
+  end: DateTime
   description: String
 }
 
@@ -510,10 +510,10 @@ enum ExperienceOrderByInput {
   company_DESC
   location_ASC
   location_DESC
-  from_ASC
-  from_DESC
-  to_ASC
-  to_DESC
+  start_ASC
+  start_DESC
+  end_ASC
+  end_DESC
   description_ASC
   description_DESC
   updatedAt_ASC
@@ -526,8 +526,8 @@ type ExperiencePreviousValues {
   title: String!
   company: String
   location: String
-  from: DateTime
-  to: DateTime
+  start: DateTime
+  end: DateTime
   description: String
 }
 
@@ -570,8 +570,8 @@ input ExperienceUpdateInput {
   title: String
   company: String
   location: String
-  from: DateTime
-  to: DateTime
+  start: DateTime
+  end: DateTime
   description: String
   user: UserUpdateOneWithoutExperiencesInput
 }
@@ -589,8 +589,8 @@ input ExperienceUpdateWithoutUserDataInput {
   title: String
   company: String
   location: String
-  from: DateTime
-  to: DateTime
+  start: DateTime
+  end: DateTime
   description: String
 }
 
@@ -855,64 +855,64 @@ input ExperienceWhereInput {
   All values not ending with the given string.
   """
   location_not_ends_with: String
-  from: DateTime
+  start: DateTime
   """
   All values that are not equal to given value.
   """
-  from_not: DateTime
+  start_not: DateTime
   """
   All values that are contained in given list.
   """
-  from_in: [DateTime!]
+  start_in: [DateTime!]
   """
   All values that are not contained in given list.
   """
-  from_not_in: [DateTime!]
+  start_not_in: [DateTime!]
   """
   All values less than the given value.
   """
-  from_lt: DateTime
+  start_lt: DateTime
   """
   All values less than or equal the given value.
   """
-  from_lte: DateTime
+  start_lte: DateTime
   """
   All values greater than the given value.
   """
-  from_gt: DateTime
+  start_gt: DateTime
   """
   All values greater than or equal the given value.
   """
-  from_gte: DateTime
-  to: DateTime
+  start_gte: DateTime
+  end: DateTime
   """
   All values that are not equal to given value.
   """
-  to_not: DateTime
+  end_not: DateTime
   """
   All values that are contained in given list.
   """
-  to_in: [DateTime!]
+  end_in: [DateTime!]
   """
   All values that are not contained in given list.
   """
-  to_not_in: [DateTime!]
+  end_not_in: [DateTime!]
   """
   All values less than the given value.
   """
-  to_lt: DateTime
+  end_lt: DateTime
   """
   All values less than or equal the given value.
   """
-  to_lte: DateTime
+  end_lte: DateTime
   """
   All values greater than the given value.
   """
-  to_gt: DateTime
+  end_gt: DateTime
   """
   All values greater than or equal the given value.
   """
-  to_gte: DateTime
+  end_gte: DateTime
   description: String
   """
   All values that are not equal to given value.

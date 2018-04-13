@@ -5,6 +5,7 @@ import {withRouter} from 'react-router-dom'
 
 import classNames from 'classnames'
 import { withStyles } from 'material-ui/styles'
+import Paper from 'material-ui/Paper'
 import Card, { CardActions, CardContent, CardMedia } from 'material-ui/Card'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
@@ -14,11 +15,22 @@ import Avatar from 'material-ui/Avatar'
 import Menu, { MenuItem } from 'material-ui/Menu'
 import IconButton from 'material-ui/IconButton'
 import MoreHorizIcon from 'material-ui-icons/MoreHoriz'
+import Add from 'material-ui-icons/Add'
+import List, {
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+  ListSubheader,
+} from 'material-ui/List';
 
 import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
 import { FOLLOW_MUTATION, UNFOLLOW_MUTATION, ME_QUERY} from './User'
+import { UserFragments } from '../../constants/gqlFragments'
 
 import SendMessageModal from '../Message/SendMessageModal'
+import CreateExperienceModal from '../User/CreateExperienceModal'
+import Experience from './Experience'
 
 const styles = theme => ({
   card: {
@@ -72,6 +84,13 @@ const styles = theme => ({
     width: 60,
     height: 60,
   },
+  section: {
+    padding: 20,
+  },
+  sectionList: {
+    listStyle: 'none',
+    padding: 0,
+  },
 })
 
 class UserDetails extends Component {
@@ -83,6 +102,17 @@ class UserDetails extends Component {
       myProfile: false,
       anchorEl: null,
       openModal: false,
+      openExperienceModal: false,
+    }
+  }
+  
+  componentWillUpdate() {
+    if (this.state.openModal || this.state.openExperienceModal) {
+      this.setState({
+        anchorEl: null,
+        openModal: false,
+        openExperienceModal: false,
+      })
     }
   }
 
@@ -95,6 +125,8 @@ class UserDetails extends Component {
         this.setState({myProfile: true})
       }
       
+      if( me.follows.length === 0 ) return
+
       me.follows.map(follow => {
         if (follow.id === user.id) {
           this.setState({following: true})
@@ -124,8 +156,9 @@ class UserDetails extends Component {
     }     
 
     const { classes } = this.props
+    console.log("user details ", this.props)
     const user = this.props.userQuery.user
-    const { myProfile, following, openModal, anchorEl } = this.state
+    const { myProfile, following, openModal, openExperienceModal, anchorEl } = this.state
 
     
     return (
@@ -173,21 +206,47 @@ class UserDetails extends Component {
             </div>
           </div>
         </Card> 
+        <Paper className={classes.experience} elevation={4}>
+          <div className={classes.section}>
+            <div className={classes.subheader}>
+              <Typography variant='subheading'>Experiences</Typography>
+              <div className={classes.sectionAction}>
+                <IconButton 
+                  onClick={()=>this._handleCreateExperience()} 
+                  aria-label='Create Experience'>
+                  <Add/>
+                </IconButton>
+              </div>
+            </div>
+            <ul className={classes.sectionList}>
+              {user.experiences.length > 0 ? (user.experiences.map(experience => {
+                return (
+                  <Experience key={experience.id} experience={experience} myProfile={myProfile} />
+                )
+              })) : <li>There is no listed experience.</li>}
+            </ul>
+          </div>
+        </Paper>
         { openModal && (<SendMessageModal open={openModal} id={user.id} />)}
+        { openExperienceModal && (<CreateExperienceModal open={openExperienceModal} id={user.id} />)}
       </div>
     )
   }
   
   handleClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
+    this.setState({ anchorEl: event.currentTarget })
   };
 
   handleClose = () => {
-    this.setState({ anchorEl: null });
+    this.setState({ anchorEl: null })
   };
   
   _editProfile = () => {
     this.props.history.push(`/mysettings`)
+  }
+  
+  _handleCreateExperience = () => {
+    this.setState({ openExperienceModal: true })
   }
 
   _handleSendMessage = () => {
@@ -222,19 +281,20 @@ class UserDetails extends Component {
 export const USER_QUERY = gql`
   query UserQuery($id: ID!) {
     user(id: $id) {
-      firstName
-      lastName
-      id
-      email
-      avatarURL
+      ...BasicUserInfo
       followers {
         id
       }
       follows {
         id
       }
+      experiences {
+        ...Experience
+      }
     }
   }
+  ${UserFragments.basicInfo}
+  ${UserFragments.experience}
 `
 
 export default withStyles(styles)(compose(

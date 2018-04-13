@@ -18,6 +18,16 @@ export const UserFragments = {
 	    avatarURL
 	  }
 	`,
+	experience: gql`
+		fragment Experience on Experience {
+			id
+			title
+			company
+			start
+			end
+			description
+		}
+	`,
 }
 
 export const PostFragments = {

@@ -132,12 +132,12 @@ class CreateGig extends Component {
           </FormControl>
           <FormControl fullWidth className={classes.margin}>
             <TextField
-              id="title"
-              label="Title"
+              id='title'
+              label='Title'
               className={this.props.textField}
               value={this.state.title}
               onChange={e => this.setState({ title: e.target.value })}
-              margin="normal"
+              margin='normal'
             />
           </FormControl>
           <FormControl fullWidth className={classes.margin}>
@@ -146,11 +146,11 @@ class CreateGig extends Component {
                 <Switch
                   checked={this.state.addDateTime}
                   onChange={this._handleDateTimeOn('addDateTime')}
-                  value="addDateTime"
-                  color="primary"
+                  value='addDateTime'
+                  color='primary'
                 />
               }
-              label="Add Date & Time"
+              label='Add Date & Time'
             />
           </FormControl>
           {addDateTime && $dateTimeForm}

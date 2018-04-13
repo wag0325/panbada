@@ -56,7 +56,14 @@ class Experience extends Component {
       myProfile: props.myProfile,
     }
   }
-
+  
+  componentWillUpdate() {
+    if (this.state.openModal) 
+      this.setState({
+        anchorEl: null,
+        openModal: false
+      })
+  }
 
   // componentWillMount() {
   //   this.setState({userId: this.props.user.id})

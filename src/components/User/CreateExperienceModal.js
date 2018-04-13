@@ -37,7 +37,7 @@ class CreateExperienceModal extends Component {
       id: props.id,
     }
   }
-
+  
   handleClickOpen = () => {
     this.setState({ open: true })
   };

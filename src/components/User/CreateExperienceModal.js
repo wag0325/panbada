@@ -47,8 +47,8 @@ class CreateExperienceModal extends Component {
   }
 
   render() {
-  	const { classes } = this.props
-
+  	const { classes, experience } = this.props
+    
     return (
       <Dialog
         open={this.state.open}
@@ -61,7 +61,9 @@ class CreateExperienceModal extends Component {
           <DialogContentText id='alert-dialog-description'>
             Create a new work experience.
           </DialogContentText>
-          <CreateExperience id={this.props.id} handleClose={this.handleClose}/>
+          {experience 
+            ? <CreateExperience id={this.props.id} handleClose={this.handleClose} experience={experience}/>
+            : <CreateExperience id={this.props.id} handleClose={this.handleClose}/> }
         </DialogContent>
       </Dialog>
       

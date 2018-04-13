@@ -221,7 +221,7 @@ class UserDetails extends Component {
             <ul className={classes.sectionList}>
               {user.experiences.length > 0 ? (user.experiences.map(experience => {
                 return (
-                  <Experience key={experience.id} experience={experience} myProfile={myProfile} />
+                  <Experience key={experience.id} experience={experience} myProfile={myProfile} userId={user.id}/>
                 )
               })) : <li>There is no listed experience.</li>}
             </ul>

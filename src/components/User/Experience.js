@@ -21,7 +21,7 @@ import IconButton from 'material-ui/IconButton'
 import Create from 'material-ui-icons/Create'
 
 import { AUTH_TOKEN, AVATAR_DEFAULT } from '../../constants'
-import SendMessageModal from '../Message/SendMessageModal'
+import CreateExperienceModal from './CreateExperienceModal'
 
 const styles = theme => ({
   root: {
@@ -65,7 +65,7 @@ class Experience extends Component {
   render() {
     const authToken = localStorage.getItem(AUTH_TOKEN)
     const { secondary, anchorEl, openModal, myProfile, } = this.state
-    const { experience, classes } = this.props
+    const { experience, classes, userId } = this.props
     
     let { start, end } = experience
     if (start && !end) end = 'Present'
@@ -86,95 +86,22 @@ class Experience extends Component {
               onClick={() => this._editExperience()}
               ><Create /></IconButton>)}
         </div>
-        { openModal && (<SendMessageModal open={openModal} />)}
+        { openModal && (<CreateExperienceModal experience={experience} id={userId} open={openModal} />)}
       </li>
     )
   }
 
   handleClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
+    this.setState({ anchorEl: event.currentTarget })
   };
 
   handleClose = () => {
-    this.setState({ anchorEl: null });
+    this.setState({ anchorEl: null })
   };
   
   _editExperience = () => {
-    
-  }
-
-  _handleSendMessage = () => {
-    console.log("send message")
     this.setState({ openModal: true })
-  }
-
-  _likePost = async () => {
-    const postId = this.props.post.id
-    await this.props.postLikeMutation({
-      variables: {
-        postId
-      },
-      update: (store, {data: {postLike}}) => {
-        this.props.updateStoreAfterPostLike(store, postLike, postId)
-      },
-    })
-  }
-
-  _followUser = async () => {
-    const id = this.props.user.id
-    await this.props.followMutation({
-      variables: {
-        id
-      },
-      update: (store, {data: {follow}}) => {
-        this.setState({ following: true })
-      },
-    })
-  }
-
-  _unfollowUser = async () => {
-    const id = this.props.user.id
-    await this.props.unfollowMutation({
-      variables: {
-        id
-      },
-      update: (store, {data: {unfollow}}) => {
-        this.setState({ following: false })
-      },
-    })
   }
 }
 
-export const FOLLOW_MUTATION = gql`
-  mutation FollowMutation($id: ID!) {
-    follow(id: $id) {
-      id
-    }
-  }
-`
-
-export const UNFOLLOW_MUTATION = gql`
-  mutation UnfollowMutation($id: ID!) {
-    unfollow(id: $id) {
-      id
-    }
-  }
-`
-
-export const ME_QUERY = gql`
-  query MeQuery {
-    me {
-      id
-      follows {
-        id
-      }
-    }
-  }
-`
-
-
-export default withStyles(styles)(compose(
-  graphql(FOLLOW_MUTATION, {name: 'followMutation',}),
-  graphql(UNFOLLOW_MUTATION, {name: 'unfollowMutation',}),
-  graphql(ME_QUERY, {name: 'meQuery'}),
-)(Experience))
+export default withStyles(styles)(Experience)

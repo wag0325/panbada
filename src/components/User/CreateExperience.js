@@ -31,15 +31,39 @@ class CreateExperience extends Component {
   constructor(props) {
     super(props)
     
+    let title = '',
+        company = '',
+        start = '',
+        end = '',
+        untilPresent = true,
+        location = '',
+        description = ''
+    
+    const { experience } = props
+    
+    console.log("props experience ", props)
+    
+    if (experience) {
+      console.log("experience", experience)
+      title = experience.title
+      company = experience.company
+      start = experience.start
+      end = experience.end
+      location = experience.location
+      description = experience.description
+
+      if (end !== '' || !end) untilPresent = false
+    }
+    
     this.state = {
       id: props.id,
-      title: '',
-      company: '',
-      start: '',
-      end: '',
-      untilPresent: true,
-      location: '',
-      description: '',
+      title,
+      company,
+      start,
+      end,
+      untilPresent,
+      location,
+      description,
     }
   }
     

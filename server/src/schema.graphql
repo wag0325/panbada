@@ -62,6 +62,7 @@ type Mutation {
   deleteUser(email: String!): User
   changePassword(currPassword: String!, newPassword: String!): User
   createExperience(title: String!, company: String, location: String, start: DateTime, end: DateTime, description: String): Experience
+  updateExperience(id: ID!, title: String!, company: String, location: String, start: DateTime, end: DateTime, description: String): Experience
   follow(id: ID!): User
   unfollow(id: ID!): User
   updateMe(firstName:String, lastName: String, avatarURL: String): User

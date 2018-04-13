@@ -340,6 +340,16 @@ function createExperience(parent, args, context, info) {
   // )
 }
 
+function updateExperience(parent, args, context, info) {
+  const { id, ...other } = args
+  const userId = getUserId(context)
+  
+  return context.db.mutation.updateExperience({
+    data: { ...other, user: {connect: {id: userId} } },
+    where: { id }
+  }, info)
+}
+
 function follow(parent, { id }, context, info) {
   const userId = getUserId(context)
 
@@ -439,6 +449,7 @@ module.exports = {
   changePassword,
   updateMe,
   createExperience,
+  updateExperience,
   follow,
   unfollow,
   signS3,

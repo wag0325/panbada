@@ -31,13 +31,15 @@ class CreateExperience extends Component {
   constructor(props) {
     super(props)
     
-    let title = '',
+    let id = '',
+        title = '',
         company = '',
         start = '',
         end = '',
         untilPresent = true,
         location = '',
-        description = ''
+        description = '',
+        edit = false
     
     const { experience } = props
     
@@ -45,18 +47,21 @@ class CreateExperience extends Component {
     
     if (experience) {
       console.log("experience", experience)
+      id = experience.id
       title = experience.title
       company = experience.company
       start = experience.start
       end = experience.end
       location = experience.location
       description = experience.description
+      edit = true 
 
       if (end !== '' || !end) untilPresent = false
     }
     
     this.state = {
-      id: props.id,
+      id,
+      userId: props.id,
       title,
       company,
       start,
@@ -64,12 +69,13 @@ class CreateExperience extends Component {
       untilPresent,
       location,
       description,
+      edit,
     }
   }
     
   render() {
     const { classes } = this.props
-    const { untilPresent, start, end } = this.state
+    const { untilPresent, start, end, edit } = this.state
     const startDate = moment().format('YYYY-MM-DD').toString()
     const endDate = moment().format('YYYY-MM-DD').toString()
 
@@ -153,9 +159,9 @@ class CreateExperience extends Component {
             margin='normal'
           />
         </FormControl>
-        <Button variant='raised' color='primary' className={this.props.button} onClick={() => this._createExperience()}>
-          Post
-        </Button>
+          <Button variant='raised' color='primary' className={this.props.button} onClick={() => this._confirm()}>
+            {edit ? 'Edit' : 'Post' }
+          </Button>
       </form>
     )
   }
@@ -164,13 +170,15 @@ class CreateExperience extends Component {
     this.setState({ [name]: event.target.checked })
   }
 
-  _createExperience = async () => {
+  _confirm = async () => {
     const { 
         id,
         title,
         company,
         location, 
-        description, } = this.state
+        description,
+        userId,
+        edit } = this.state
     
     const start = moment(this.state.start).format('YYYY-MM-DD HH:mm')
     const end = moment(this.state.end).format('YYYY-MM-DD HH:mm')
@@ -180,29 +188,58 @@ class CreateExperience extends Component {
         start,
         end,
         description,)
+    
+    if(edit) {
+      await this.props.updateExperienceMutation({
+        variables: {
+          id,
+          title,
+          company,
+          location,
+          description,
+        }, 
+        update: (store, { data: { updateExperience }}) => {
+          
+          const data = store.readQuery({ query: USER_QUERY, variables: { id: userId } })
+          
+          console.log("data user ", data)
+          data.user.experiences.map((experience, index) => {
+            if (experience.id === updateExperience.id)
+              data.user.experiences[index] = { ...updateExperience, _typename: 'Experience' }
+          })
+          console.log("data user ", data)
 
-    await this.props.createExperienceMutation({
-      variables: {
-        title,
-        company,
-        location,
-        description,
-      }, 
-      update: (store, { data: { createExperience }}) => {
-        
-        const data = store.readQuery({ query: USER_QUERY, variables: { id } })
-        
-        console.log("data user ", data)
-        data.user.experiences.splice(0, 0, { ...createExperience, _typename: 'Experience', } )
-        console.log("data user ", data)
+          store.writeQuery({
+            query: USER_QUERY,
+            data,
+            variables: { id: userId },
+          })
+        }
+      })
+    } else {
+      await this.props.createExperienceMutation({
+        variables: {
+          title,
+          company,
+          location,
+          description,
+        }, 
+        update: (store, { data: { createExperience }}) => {
+          
+          const data = store.readQuery({ query: USER_QUERY, variables: { id: userId } })
+          
+          console.log("data user ", data)
+          data.user.experiences.splice(0, 0, { ...createExperience, _typename: 'Experience', } )
+          console.log("data user ", data)
 
-        store.writeQuery({
-          query: USER_QUERY,
-          data,
-          variables: { id },
-        })
-      }
-    })
+          store.writeQuery({
+            query: USER_QUERY,
+            data,
+            variables: { id: userId },
+          })
+        }
+      })
+    }
 
     this.props.handleClose()
   }
@@ -231,6 +268,32 @@ const CREATE_EXPERIENCE_MUTATION = gql`
   ${UserFragments.experience}
 `
 
+const UPDATE_EXPERIENCE_MUTATION = gql`
+  mutation UpdateExperienceMutation(
+    $id: ID!,
+    $title: String!, 
+    $company: String, 
+    $location: String,
+    $start: DateTime,
+    $end: DateTime,
+    $description: String,
+    ) {
+    updateExperience(
+      id: $id,
+      title: $title,
+      company: $company,
+      location: $location,
+      start: $start,
+      end: $end,
+      description: $description
+    ) {
+      ...Experience
+    }
+  }
+  ${UserFragments.experience}
+`
+
 export default withStyles(styles)(compose(
   graphql(CREATE_EXPERIENCE_MUTATION, {name: 'createExperienceMutation'}),
+  graphql(UPDATE_EXPERIENCE_MUTATION, {name: 'updateExperienceMutation'}),
 )(CreateExperience))

@@ -56,7 +56,7 @@ class CreateExperienceModal extends Component {
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'
       >
-        <DialogTitle id='alert-dialog-title'>{'New Work Experience'}</DialogTitle>
+        <DialogTitle id='alert-dialog-title'>{experience ? 'Edit Experience' : 'New Work Experience'}</DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
             Create a new work experience.

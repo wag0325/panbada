@@ -15,6 +15,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 
 import Header from './Header/Header'
 import LoginContainer from './container/LoginContainer'
+import ResetContainer from './container/ResetContainer'
 import HomeContainer from './container/HomeContainer'
 import UsersContainer from './container/UsersContainer'
 import UserContainer from './container/UserContainer'
@@ -35,6 +36,7 @@ class App extends Component {
           <Switch>
             <Route exact path='/' component={HomeContainer}/>
             <Route exact path='/login' component={LoginContainer}/>
+            <Route exact path='/forgot' component={ResetContainer}/>
             <Route exact path='/gigs' component={GigsContainer}/>
             <Route exact path='/gigs/new' component={CreateGigContainer}/>
             <Route path='/g/:id' component={GigContainer}/>

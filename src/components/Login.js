@@ -124,11 +124,14 @@ class Login extends Component {
             <Button variant="raised" color="primary" className={this.props.button} onClick={() => this._confirm()}>
               {this.state.login ? 'login' : 'create account'}
             </Button>
+          </div>
+          <div className={classes.actions}>
             <Button className={this.props.button} onClick={() => this.setState({ login: !this.state.login })}>
               {this.state.login
-                ? 'need to create an account?'
+                ? 'sign up'
                 : 'already have an account?'}
             </Button>
+            <Button className={this.props.button} onClick={() => this._handleForgotPW()}>Forgot Password?</Button>
           </div>
         </form>
         {$errorMessage}
@@ -138,16 +141,19 @@ class Login extends Component {
   
   handleChange = prop => event => {
     this.setState({ [prop]: event.target.value })
-  };
+  }
 
   handleMouseDownPassword = event => {
     event.preventDefault()
-  };
+  }
 
   handleClickShowPassword = () => {
     this.setState({ showPassword: !this.state.showPassword })
-  };
+  }
   
+  _handleForgotPW = () => {
+    this.props.history.push(`/forgot`)
+  }
 
   _confirm = async () => {
     const { firstName, lastName, email, password} = this.state

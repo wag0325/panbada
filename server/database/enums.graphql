@@ -1,8 +1,0 @@
-enum USER_LEVEL {
-  MEMBER
-  ADMIN
-}
-
-enum NOTIFICATION_TYPE {
-  MESSAGES
-}

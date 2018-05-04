@@ -1,22 +1,34 @@
 {
-  "name": "panbada",
+  "name": "server",
+  "version": "0.0.1",
+  "main": "server.js",
+  "author": "Lydia Kwag",
+  "license": "MIT",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "npm-run-all --parallel start playground",
-    "playground": "graphql playground",
-    "prisma": "prisma"
+    "start": "cross-env babel-node server.js",
+    "dev": "cross-env NODE_ENV=dev nodemon --exec babel-node server.js",
+    "prettier": "prettier --single-quote --print-width 80 --trailing-comma all --write 'src/**/*.js'"
   },
   "dependencies": {
-    "aws-sdk": "^2.215.1",
-    "bcryptjs": "^2.4.3",
-    "dotenv": "^5.0.1",
-    "graphql-yoga": "1.6.0",
-    "jsonwebtoken": "^8.2.0",
-    "prisma-binding": "1.5.16"
+    "apollo-server-express": "^1.2.0",
+    "bcrypt-nodejs": "^0.0.3",
+    "body-parser": "^1.18.2",
+    "cross-env": "^5.1.1",
+    "express": "^4.16.2",
+    "faker": "^4.1.0",
+    "graphql": "^0.11.7",
+    "graphql-date": "^1.0.3",
+    "graphql-tools": "^2.8.0",
+    "jsonwebtoken": "^8.1.0",
+    "mongoose": "^4.13.5"
   },
   "devDependencies": {
-    "graphql-cli": "2.15.8",
-    "npm-run-all": "4.1.2",
-    "prisma": "1.4.1"
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "eslint": "^4.11.0",
+    "eslint-config-equimper": "^2.2.1",
+    "eslint-config-prettier": "^2.8.0",
+    "prettier": "^1.8.2"
   }
 }

@@ -39,11 +39,16 @@ class PostList extends Component {
       hasNextPage: true,
       filter: props.postById || null,
     }
+
+    console.log("props ", props)
   }
   
   componentWillReceiveProps(nextProps) {
-    const { hasNextPage } = nextProps.postFeedQuery.postsConnection.pageInfo
-    this.setState({hasNextPage: hasNextPage })
+    console.log("props ", nextProps.postFeedQuery)
+    if (nextProps.postFeedQuery.postsConnection) {
+      const { hasNextPage } = nextProps.postFeedQuery.postsConnection.pageInfo
+      this.setState({hasNextPage: hasNextPage })
+    }
   }
   componentWillMount() {
     document.addEventListener('scroll', this._trackScrolling)

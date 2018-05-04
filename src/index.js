@@ -12,7 +12,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { AUTH_TOKEN } from './constants'
 import { ApolloLink } from 'apollo-link'
 
-const httpLink = new HttpLink({ uri: 'http://localhost:4000' })
+const httpLink = new HttpLink({ uri: 'http://panba-Publi-IE5BLD08PBI5-61422249.us-east-1.elb.amazonaws.com/server/dev' })
 
 const middlewareAuthLink = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem(AUTH_TOKEN)

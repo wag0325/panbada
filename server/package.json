@@ -5,7 +5,6 @@
   "author": "Lydia Kwag",
   "license": "MIT",
   "scripts": {
-    "start": "cross-env NODE_ENV=production nodemon --exec babel-node babel-node server.js",
     "dev": "cross-env NODE_ENV=dev nodemon --exec babel-node server.js",
     "prettier": "prettier --single-quote --print-width 80 --trailing-comma all --write 'src/**/*.js'"
   },

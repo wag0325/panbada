@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import { graphiqlExpress, graphqlExpress } from 'apollo-server-express';
 import { makeExecutableSchema } from 'graphql-tools';
 
@@ -31,6 +32,7 @@ async function auth(req, res, next) {
 
 export default app => {
 	// middleware
+	app.use(cors());
 	app.use(bodyParser.json());
 	app.use(auth);
 	app.use(

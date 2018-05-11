@@ -3,6 +3,7 @@ import GraphQLDate from 'graphql-date';
 import TweetResolvers from './tweet-resolvers';
 import UserResolvers from './user-resolvers';
 import PostResolvers from './post-resolvers';
+import GigResolvers from './gig-resolvers';
 import User from '../../models/User';
 
 export default {
@@ -18,6 +19,7 @@ export default {
     getPost: PostResolvers.getPost,
     getPosts: PostResolvers.getPosts,
     getUserPosts: PostResolvers.getUserPosts,
+    getGigs: GigResolvers.getGigs,
     me: UserResolvers.me,
   },
   Mutation: {
@@ -27,6 +29,9 @@ export default {
     createPost: PostResolvers.createPost,
     updatePost: PostResolvers.updatePost,
     deletePost: PostResolvers.deletePost,
+    createGig: GigResolvers.createGig,
+    updateGig: GigResolvers.updateGig,
+    deleteGig: GigResolvers.deleteGig,
   	signup: UserResolvers.signup,
   	login: UserResolvers.login
   }

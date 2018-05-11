@@ -1,5 +1,17 @@
 export default `
 	scalar Date
+	scalar DateTime 
+
+	enum GIG_TYPE {
+	  CREATIVE
+	  CREW
+	  EVENT
+	  LABOR
+	  TALENT
+	  TECHNICAL
+	  WRITING
+	  OTHER
+	}
 
 	type Status {
 		message: String!
@@ -46,7 +58,43 @@ export default `
 		createdAt: Date!
 		updatedAt: Date!
 	}
+	
+	type Project {
+		_id: ID!
+		title: String!
+		desc: String
+		url: String
+		gigs: [Gig]
+		members: [User]
+		postedBy: User
+		createdAt: Date!
+		updatedAt: Date!
+	}
 
+	type Gig {
+		_id: ID!
+		title: String!
+		type: GIG_TYPE!
+		desc: String
+		url: String
+		createdAt: Date!
+		updatedAt: Date!
+		startDateTime: DateTime
+		endDateTime: DateTime
+  	location: Location
+  	directions: String
+  	favoriteCount: Int
+  	user: User!
+	}
+	
+	type Location {
+	  _id: ID!
+	  name: String!
+	  lat: Float!
+	  lng: Float!
+	  address: String!
+	}
+	
 	type Query {
 		getTweet(_id: ID!): Tweet
 		getTweets: [Tweet]
@@ -54,6 +102,9 @@ export default `
 		getPost(_id: ID!): Post
 		getPosts: [Post]
 		getUserPosts: [Post]
+		getGig(_id: ID!): Gig
+		getGigs: [Gig]
+		getUserGigs: [Gig]
 		me: Me
 	}
 
@@ -64,6 +115,9 @@ export default `
 		createPost(text: String!): Post
 		updatePost(_id: ID!, text: String): Post
 		deletePost(_id: ID!): Status
+		createGig(title: String!, desc: String): Gig
+		updateGig(_id: ID!, title: String!, desc: String): Gig
+		deleteGig(_id: ID!): Status
 		signup(email: String!, fullName: String!, password: String!, avatar: String, username: String): Auth
 		login(email: String!, password: String!): Auth
 	}

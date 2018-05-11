@@ -13,7 +13,10 @@ const UserSchema = new Schema({
 	lastName: String,
 	avatar: String,
 	password: String, 
-	email: String
+	email: {
+		type: String,
+		unique: true
+	},
 }, { timestamps: true });
 
 // before saving perform the following options

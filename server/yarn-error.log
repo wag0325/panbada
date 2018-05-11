@@ -1,14 +1,14 @@
 Arguments: 
-  /usr/local/Cellar/node/9.8.0/bin/node /usr/local/Cellar/yarn/1.5.1_1/libexec/bin/yarn.js start
+  /usr/local/Cellar/node@8/8.11.1/bin/node /usr/local/Cellar/yarn/1.5.1_1/libexec/bin/yarn.js dev
 
 PATH: 
-  /usr/local/bin:/Users/lydia/Library/Python/2.7/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/Users/lydia/bin
+  /usr/local/opt/node@8/bin:/usr/local/opt/node@8/bin:/usr/local/bin:/Users/lydia/Library/Python/2.7/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/Users/lydia/bin
 
 Yarn version: 
   1.5.1
 
 Node version: 
-  8.10.0
+  8.11.1
 
 Platform: 
   darwin x64
@@ -21,7 +21,6 @@ npm manifest:
     "author": "Lydia Kwag",
     "license": "MIT",
     "scripts": {
-      "start": "cross-env NODE_ENV babel-node server.js",
       "dev": "cross-env NODE_ENV=dev nodemon --exec babel-node server.js",
       "prettier": "prettier --single-quote --print-width 80 --trailing-comma all --write 'src/**/*.js'"
     },
@@ -3499,10 +3498,10 @@ Lockfile:
 
 Trace: 
   Error: Command failed.
-  Exit code: 1
+  Exit code: 127
   Command: sh
-  Arguments: -c cross-env NODE_ENV babel-node server.js
-  Directory: /Users/lydia/Documents/workspace/react/modsetter/server
+  Arguments: -c cross-env NODE_ENV=dev nodemon --exec babel-node server.js
+  Directory: /Users/lydia/Documents/workspace/react/panbada/server
   Output:
   
       at ProcessTermError.MessageError (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:186:110)
